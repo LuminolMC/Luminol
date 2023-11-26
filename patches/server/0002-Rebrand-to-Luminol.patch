@@ -1,0 +1,91 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 08:20:54 +0800
+Subject: [PATCH] Rebrand to Luminol
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
+index cb60d58d4a7556dd896f31d0cd249f860bb3ef84..b52a805150e95d7d27403d3c18088b335a355011 100644
+--- a/src/main/java/com/destroystokyo/paper/Metrics.java
++++ b/src/main/java/com/destroystokyo/paper/Metrics.java
+@@ -593,7 +593,7 @@ public class Metrics {
+             boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
+             // Only start Metrics, if it's enabled in the config
+             if (config.getBoolean("enabled", true)) {
+-                Metrics metrics = new Metrics("Folia", serverUUID, logFailedRequests, Bukkit.getLogger()); // Folia - we have our own bstats page
++                Metrics metrics = new Metrics("Luminol", serverUUID, logFailedRequests, Bukkit.getLogger()); // Folia - we have our own bstats page //Luminol
+ 
+                 metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
+                     String minecraftVersion = Bukkit.getVersion();
+@@ -611,7 +611,7 @@ public class Metrics {
+                 } else {
+                     paperVersion = "unknown";
+                 }
+-                metrics.addCustomChart(new Metrics.SimplePie("folia_version", () -> paperVersion)); // Folia - we have our own bstats page
++                metrics.addCustomChart(new Metrics.SimplePie("luminol_version", () -> paperVersion)); // Folia - we have our own bstats page //Luminol
+ 
+                 metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
+                     Map<String, Map<String, Integer>> map = new HashMap<>();
+diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+index e2f704c115fd6e00960bb56bb0779f1100c89c17..72b9343979de5aa8bb399cbe7cb8a795df9830ab 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
++++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
+ public class PaperVersionFetcher implements VersionFetcher {
+     private static final java.util.regex.Pattern VER_PATTERN = java.util.regex.Pattern.compile("^([0-9\\.]*)\\-.*R"); // R is an anchor, will always give '-R' at end
+     private static final String GITHUB_BRANCH_NAME = "master";
+-    private static final String DOWNLOAD_PAGE = "https://papermc.io/downloads/paper";
++    private static final String DOWNLOAD_PAGE = "https://github.com/Era4FunMC/Luminol"; //Luminol
+     private static @Nullable String mcVer;
+ 
+     @Override
+@@ -31,8 +31,8 @@ public class PaperVersionFetcher implements VersionFetcher {
+     @Nonnull
+     @Override
+     public Component getVersionMessage(@Nonnull String serverVersion) {
+-        String[] parts = serverVersion.substring("git-Folia-".length()).split("[-\\s]"); // Folia
+-        final Component updateMessage = getUpdateStatusMessage("PaperMC/Folia", GITHUB_BRANCH_NAME, parts[0]); // Folia
++        String[] parts = serverVersion.substring("git-Luminol-".length()).split("[-\\s]"); // Folia //Luminol
++        final Component updateMessage = getUpdateStatusMessage("Era4FunMC/Luminol", GITHUB_BRANCH_NAME, parts[0]); // Folia //Luminol
+         final Component history = getHistory();
+ 
+         return history != null ? TextComponent.ofChildren(updateMessage, Component.newline(), history) : updateMessage;
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 4b189b54c8f326939a7b9ffdfb35edfb7d8cee63..781612b6fc3d020e832164ebce231961dd68e24e 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1833,7 +1833,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+ 
+     @DontObfuscate
+     public String getServerModName() {
+-        return "Folia"; // Folia - Folia > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
++        return "Luminol"; //Luminol - Luminol > // Folia - Folia > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+     }
+ 
+     public SystemReport fillSystemReport(SystemReport details) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index bc778637c7d4371cafa9bcda67f8965f57cc66d6..5fe36cbb14f0f0e9692cfa40381cebdb4e142bbe 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -269,7 +269,7 @@ import javax.annotation.Nullable; // Paper
+ import javax.annotation.Nonnull; // Paper
+ 
+ public final class CraftServer implements Server {
+-    private final String serverName = "Folia"; // Folia // Paper
++    private final String serverName = "Luminol"; // Folia // Paper //Luminol
+     private final String serverVersion;
+     private final String bukkitVersion = Versioning.getBukkitVersion();
+     private final Logger logger = Logger.getLogger("Minecraft");
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index e9b6ca3aa25e140467ae866d572483050ea3fa0e..9699d7dcca5cf67f50ad05c0e875de424a4e00c5 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/dev.folia/folia-api/pom.properties"); // Folia
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/me.earthme.luminol/luminol-api/pom.properties"); // Folia //Luminol
+         Properties properties = new Properties();
+ 
+         if (stream != null) {

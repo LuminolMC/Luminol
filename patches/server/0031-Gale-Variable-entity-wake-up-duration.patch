@@ -1,0 +1,75 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 17:08:22 +0800
+Subject: [PATCH] Gale Variable entity wake-up duration
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 4f6af1fa55047e7be9e57c1dd1c60e9d96d12187..793dc5b35e9a0665d486a74ce5b776b43b941ee2 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -56,6 +56,7 @@ public class LuminolConfig {
+     public static int startDistanceSquared;
+     public static int maximumActivationPrio;
+     public static int activationDistanceMod;
++    public static double entityWakeUpDurationRatioStandardDeviation = 0.2;
+ 
+ 
+     public static void init() throws IOException {
+@@ -167,6 +168,7 @@ public class LuminolConfig {
+         maxProjectileLoadsPerTick = get("optimizations.projectile.max-loads-per-tick", maxProjectileLoadsPerTick, "Controls how many chunks are allowed \nto be sync loaded by projectiles in a tick.");
+         maxProjectileLoadsPerProjectile = get("optimizations.projectile.max-loads-per-projectile", maxProjectileLoadsPerProjectile, "Controls how many chunks a projectile \n can load in its lifetime before it gets \nautomatically removed.");
+         initDAB();
++        entityWakeUpDurationRatioStandardDeviation = get("optimizations.entity_wakeup_duration_ratio_standard_deviation",entityWakeUpDurationRatioStandardDeviation);
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
+index e77e1c60a611c49489c65d66e54236a86c3093e3..51adf24b9274b6bc78ef94e77a0b2d73b1f2bbbb 100644
+--- a/src/main/java/org/spigotmc/ActivationRange.java
++++ b/src/main/java/org/spigotmc/ActivationRange.java
+@@ -76,28 +76,40 @@ public class ActivationRange
+         if (entity.activationType == ActivationType.VILLAGER) {
+             if (inactiveFor > config.wakeUpInactiveVillagersEvery && worldData.wakeupInactiveRemainingVillagers > 0) { // Folia - threaded regions
+                 worldData.wakeupInactiveRemainingVillagers--; // Folia - threaded regions
+-                return config.wakeUpInactiveVillagersFor;
++                return getWakeUpDurationWithVariance(entity, config.wakeUpInactiveVillagersFor); // Gale - variable entity wake-up duration
+             }
+         } else if (entity.activationType == ActivationType.ANIMAL) {
+             if (inactiveFor > config.wakeUpInactiveAnimalsEvery && worldData.wakeupInactiveRemainingAnimals > 0) { // Folia - threaded regions
+                 worldData.wakeupInactiveRemainingAnimals--; // Folia - threaded regions
+-                return config.wakeUpInactiveAnimalsFor;
++                return getWakeUpDurationWithVariance(entity, config.wakeUpInactiveAnimalsFor); // Gale - variable entity wake-up duration
+             }
+         } else if (entity.activationType == ActivationType.FLYING_MONSTER) {
+             if (inactiveFor > config.wakeUpInactiveFlyingEvery && worldData.wakeupInactiveRemainingFlying > 0) { // Folia - threaded regions
+                 worldData.wakeupInactiveRemainingFlying--; // Folia - threaded regions
+-                return config.wakeUpInactiveFlyingFor;
++                return getWakeUpDurationWithVariance(entity, config.wakeUpInactiveFlyingFor); // Gale - variable entity wake-up duration
+             }
+         } else if (entity.activationType == ActivationType.MONSTER || entity.activationType == ActivationType.RAIDER) {
+             if (inactiveFor > config.wakeUpInactiveMonstersEvery && worldData.wakeupInactiveRemainingMonsters > 0) { // Folia - threaded regions
+                 worldData.wakeupInactiveRemainingMonsters--; // Folia - threaded regions
+-                return config.wakeUpInactiveMonstersFor;
++                return getWakeUpDurationWithVariance(entity, config.wakeUpInactiveMonstersFor); // Gale - variable entity wake-up duration
+             }
+         }
+         return -1;
+     }
+     // Paper end
+ 
++    // Gale start - variable entity wake-up duration
++    private static final java.util.Random wakeUpDurationRandom = new java.util.Random();
++
++    private static int getWakeUpDurationWithVariance(Entity entity, int wakeUpDuration) {
++        double deviation = LuminolConfig.entityWakeUpDurationRatioStandardDeviation;
++        if (deviation <= 0) {
++            return wakeUpDuration;
++        }
++        return (int) Math.min(Integer.MAX_VALUE, Math.max(1, Math.round(wakeUpDuration * wakeUpDurationRandom.nextGaussian(1, deviation))));
++    }
++    // Gale end - variable entity wake-up duration
++
+     static AABB maxBB = new AABB( 0, 0, 0, 0, 0, 0 );
+ 
+     /**

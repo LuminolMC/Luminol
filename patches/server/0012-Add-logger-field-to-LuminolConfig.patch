@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sat, 25 Nov 2023 19:26:01 +0800
+Subject: [PATCH] Add logger field to LuminolConfig
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 89d8ffc947d265e0e81943ad851e868b622de168..74573c50c903cfbe5f9617be5b75c21647f05a91 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -2,11 +2,14 @@ package me.earthme.luminol;
+ 
+ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+ import net.minecraft.server.level.ServerLevel;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
+ 
+ import java.io.File;
+ import java.io.IOException;
+ 
+ public class LuminolConfig {
++    private static final Logger logger = LogManager.getLogger();
+     private static final File PARENT_FOLDER = new File("luminol_config");
+     private static final File MAIN_CONFIG_FILE = new File(PARENT_FOLDER,"luminol_global.toml");
+     private static CommentedFileConfig MAIN_CONFIG;

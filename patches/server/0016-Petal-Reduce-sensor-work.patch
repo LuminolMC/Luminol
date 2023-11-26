@@ -1,0 +1,55 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 15:36:59 +0800
+Subject: [PATCH] Petal Reduce sensor work
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 0657fce8aabb956a400b3cead53c28ef52e67fe9..c3a481cb7bea0619b1af0e3203e9d88514e84c62 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -40,6 +40,8 @@ public class LuminolConfig {
+     public static int linearFlushFrequency = 10;
+     public static int linearFlushThreads = 1;
+ 
++    public static boolean reduceSensorWork = true;
++
+     public static void init() throws IOException {
+         PARENT_FOLDER.mkdir();
+ 
+@@ -98,6 +100,8 @@ public class LuminolConfig {
+             linearFlushThreads = Math.max(Runtime.getRuntime().availableProcessors() + linearFlushThreads, 1);
+         else
+             linearFlushThreads = Math.max(linearFlushThreads, 1);
++
++        reduceSensorWork = get("optimizations.reduce_sensor_work",reduceSensorWork,"This optimization is from petal.You can find out more about it on petal's repository");
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index 4e9d510646abbc2d2b6f2d935f7416b6872eb234..d3f8aa29b05a3813c0ec6e2ea5a253868abd6b07 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -9,6 +9,8 @@ import java.util.Optional;
+ import java.util.UUID;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.core.Vec3i;
+@@ -924,10 +926,11 @@ public abstract class Mob extends LivingEntity implements Targeting {
+             return;
+         }
+         // Paper end
++        int i = this.tickCount + this.getId(); // Folia - region threading //Luminol - Petal - Move up
++
+         this.level().getProfiler().push("sensing");
+-        this.sensing.tick();
++        if (i % 10 == 0 || !LuminolConfig.reduceSensorWork)this.sensing.tick(); //Luminol - Petal - Reduce sensor work
+         this.level().getProfiler().pop();
+-        int i = this.tickCount + this.getId(); // Folia - region threading
+ 
+         if (i % 2 != 0 && this.tickCount > 1) {
+             this.level().getProfiler().push("targetSelector");

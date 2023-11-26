@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sat, 25 Nov 2023 18:17:52 +0800
+Subject: [PATCH] Add config for sand duping
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 36ca0b94d29d81e5f1f2aff4a38ead0b363dd1c7..9db3bdd7a7d0b2a110e927ee4781eee489d0da9b 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -15,6 +15,7 @@ public class LuminolConfig {
+     public static boolean fakeVanillaModeEnabled = false;
+ 
+     public static boolean safeTeleportation = true;
++    public static boolean enableSandDuping = false;
+ 
+     public static void init() throws IOException {
+         PARENT_FOLDER.mkdir();
+@@ -35,6 +36,7 @@ public class LuminolConfig {
+         fakeVanillaModeEnabled = get("misc.enable_fake_vanilla_mode",fakeVanillaModeEnabled,"Enable this to make the ping response of your server like a vanilla server");
+ 
+         safeTeleportation = get("fixes.enable_safe_teleportation",safeTeleportation,"If this enabled,the end portals will not teleport removed entities.");
++        enableSandDuping = get("fixes.enable_sand_duping",enableSandDuping,"If this enabled,The value of safe teleportation will always be false and sand duping will be enabled");
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
+index 8e348099d6b3eb4510405d76453d70e7cadeebf6..cf72aa13fce00bf21c036c14a605ea7c6090d5f0 100644
+--- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
++++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
+@@ -4,6 +4,8 @@ import com.mojang.logging.LogUtils;
+ import java.util.Iterator;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.CrashReportCategory;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+@@ -133,7 +135,7 @@ public class FallingBlockEntity extends Entity {
+     @Override
+     public void tick() {
+         // Paper start - fix sand duping
+-        if (this.isRemoved()) {
++        if (!LuminolConfig.enableSandDuping && this.isRemoved()) { //Luminol - Add config for sand duping
+             return;
+         }
+         // Paper end - fix sand duping
+@@ -150,7 +152,7 @@ public class FallingBlockEntity extends Entity {
+             this.move(MoverType.SELF, this.getDeltaMovement());
+ 
+             // Paper start - fix sand duping
+-            if (this.isRemoved()) {
++            if (!LuminolConfig.enableSandDuping && this.isRemoved()) { //Luminol - Add config for sand duping
+                 return;
+             }
+             // Paper end - fix sand duping

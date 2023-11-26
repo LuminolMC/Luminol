@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 15:59:49 +0800
+Subject: [PATCH] Pufferfish Optimize entity coordinate key
+
+
+diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
+index 8f91b7f44baaf62b829a81afc0633311e6c13f19..a149d98be7b4744f18d4ed4940881e13a76e4a7c 100644
+--- a/src/main/java/io/papermc/paper/util/MCUtil.java
++++ b/src/main/java/io/papermc/paper/util/MCUtil.java
+@@ -213,7 +213,7 @@ public final class MCUtil {
+     }
+ 
+     public static long getCoordinateKey(final Entity entity) {
+-        return ((long)(MCUtil.fastFloor(entity.getZ()) >> 4) << 32) | ((MCUtil.fastFloor(entity.getX()) >> 4) & 0xFFFFFFFFL);
++        return ((long)(entity.blockPosition.getZ() >> 4) << 32) | ((entity.blockPosition.getX() >> 4) & 0xFFFFFFFFL); // Pufferfish - eliminate double->long cast in hotpath
+     }
+ 
+     public static long getCoordinateKey(final ChunkPos pair) {

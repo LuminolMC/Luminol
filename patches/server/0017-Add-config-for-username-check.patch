@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 15:56:26 +0800
+Subject: [PATCH] Add config for username check
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index c3a481cb7bea0619b1af0e3203e9d88514e84c62..0929a5a167691bde7dedaa1e2812b34ad69913d6 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -28,6 +28,7 @@ public class LuminolConfig {
+     public static String tpsBarFormat = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms";
+     public static String[] tpsColors = new String[]{"GREEN","YELLOW","RED","PURPLE"};
+     public static String[] pingColors = new String[]{"GREEN","YELLOW","RED","PURPLE"};
++    public static boolean disableUsernameCheck = false;
+ 
+     public static boolean safeTeleportation = true;
+     public static boolean enableSandDuping = false;
+@@ -71,6 +72,7 @@ public class LuminolConfig {
+         tpsBarFormat = get("misc.tpsbar_title_format",tpsBarFormat,"The format of tpsbar.");
+         tpsColors = get("misc.tpsbar_range_colors", List.of(tpsColors),"The bar and text color of each tps ranges.The last is the color of initial bar's color").toArray(String[]::new);
+         pingColors = get("misc.tpsbar_ping_range_colors",List.of(pingColors),"As same as the tpsColors").toArray(String[]::new);
++        disableUsernameCheck = get("misc.disable_username_check",disableUsernameCheck,"Disable username check that can accept usernames with other characters(such as Chinese).Not recommended to use");
+ 
+         if (tpsbarEnabled){
+             initTpsbar();
+diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+index f7c2d6d82ee1b5975cd114934b7beaec3d5d490d..f26c44bb8c4e3d8556c8c5ac7389e02381239594 100644
+--- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
+ import javax.annotation.Nullable;
+ import javax.crypto.Cipher;
+ import javax.crypto.SecretKey;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.DefaultUncaughtExceptionHandler;
+ import net.minecraft.core.UUIDUtil;
+ import net.minecraft.network.Connection;
+@@ -162,10 +164,10 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+     @Override
+     public void handleHello(ServerboundHelloPacket packet) {
+         Validate.validState(this.state == ServerLoginPacketListenerImpl.State.HELLO, "Unexpected hello packet", new Object[0]);
+-        Validate.validState(ServerLoginPacketListenerImpl.isValidUsername(packet.name()), "Invalid characters in username", new Object[0]);
++        if (!LuminolConfig.disableUsernameCheck) Validate.validState(ServerLoginPacketListenerImpl.isValidUsername(packet.name()), "Invalid characters in username", new Object[0]); //Luminol - Add config for usename check
+         // Paper start - validate usernames
+         if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() && io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.performUsernameValidation) {
+-            if (!this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation && !validateUsername(packet.name())) {
++            if (!this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation && !validateUsername(packet.name()) && !LuminolConfig.disableUsernameCheck) { //Luminol - Add config for username check
+                 ServerLoginPacketListenerImpl.this.disconnect("Failed to verify username!");
+                 return;
+             }

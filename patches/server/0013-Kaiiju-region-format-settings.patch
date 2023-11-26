@@ -1,0 +1,98 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sat, 25 Nov 2023 21:28:45 +0800
+Subject: [PATCH] Kaiiju region format settings
+
+
+diff --git a/src/main/java/dev/kaiijumc/kaiiju/region/RegionFileFormat.java b/src/main/java/dev/kaiijumc/kaiiju/region/RegionFileFormat.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..7164d9cd03186f0657783f83de3d6435cda2b17e
+--- /dev/null
++++ b/src/main/java/dev/kaiijumc/kaiiju/region/RegionFileFormat.java
+@@ -0,0 +1,16 @@
++package dev.kaiijumc.kaiiju.region;
++
++public enum RegionFileFormat {
++    ANVIL,
++    LINEAR,
++    INVALID;
++
++    public static RegionFileFormat fromString(String format) {
++        for (RegionFileFormat rff : values()) {
++            if (rff.name().equalsIgnoreCase(format)) {
++                return rff;
++            }
++        }
++        return RegionFileFormat.INVALID;
++    }
++}
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 74573c50c903cfbe5f9617be5b75c21647f05a91..3d526d7cfb313e419de89be1b275651982be42c7 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -1,10 +1,13 @@
+ package me.earthme.luminol;
+ 
++import dev.kaiijumc.kaiiju.region.RegionFileFormat;
+ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+ import net.minecraft.server.level.ServerLevel;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import java.util.Arrays;
++import java.util.logging.Level;
+ import java.io.File;
+ import java.io.IOException;
+ 
+@@ -24,6 +27,9 @@ public class LuminolConfig {
+     public static boolean allowIncorrectTripwireUpdating = false;
+     public static boolean useVanillaRandomSource = false;
+ 
++    public static RegionFileFormat regionFormatName = RegionFileFormat.ANVIL;
++    public static int regionFormatLinearCompressionLevel = 1;
++
+     public static void init() throws IOException {
+         PARENT_FOLDER.mkdir();
+ 
+@@ -48,6 +54,19 @@ public class LuminolConfig {
+         enableVoidTrading = get("fixes.enable_void_trading",enableVoidTrading);
+         allowIncorrectTripwireUpdating = get("fixes.allow_incorrect_trip_wire_updaing",allowIncorrectTripwireUpdating);
+         useVanillaRandomSource = get("fixes.use_vanilla_random_source",useVanillaRandomSource,"RNG feature related");
++
++        regionFormatName = RegionFileFormat.fromString(get("save.region-format.format", regionFormatName.name()));
++        if (regionFormatName.equals(RegionFileFormat.INVALID)) {
++            logger.error("Unknown region format in luminol global config: " + regionFormatName);
++            logger.error("Falling back to ANVIL region file format.");
++            regionFormatName = RegionFileFormat.ANVIL;
++        }
++        regionFormatLinearCompressionLevel = get("save.region-format.linear.compression-level", regionFormatLinearCompressionLevel);
++        if (regionFormatLinearCompressionLevel > 23 || regionFormatLinearCompressionLevel < 1) {
++            logger.error("Linear region compression level should be between 1 and 22 in luminol global config: " + regionFormatLinearCompressionLevel);
++            logger.error("Falling back to compression level 1.");
++            regionFormatLinearCompressionLevel = 1;
++        }
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 03165a7791aeac54e44391bbb0f432b613369bfa..675bbf1f69011f7f95fabc050c9877d6e70070b2 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -882,7 +882,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+             // Paper start - rewrite chunk system
+             worldserver.save((ProgressListener) null, flush, worldserver.noSave && !force, close);
+             if (flush) {
+-                MinecraftServer.LOGGER.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", worldserver.getChunkSource().chunkMap.getStorageName());
++                MinecraftServer.LOGGER.info("ThreadedChunkStorage ({}): All chunks are saved", worldserver.getChunkSource().chunkMap.getStorageName()); // Kaiiju
+             }
+             // Paper end - rewrite chunk system
+         }
+@@ -906,7 +906,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+                 //MinecraftServer.LOGGER.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", worldserver2.getChunkSource().chunkMap.getStorageName()); // Paper - move up
+             }
+ 
+-            MinecraftServer.LOGGER.info("ThreadedAnvilChunkStorage: All dimensions are saved");
++            MinecraftServer.LOGGER.info("ThreadedChunkStorage: All dimensions are saved"); // Kaiiju
+         }
+ 
+         return flag3;

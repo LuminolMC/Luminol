@@ -1,0 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sat, 25 Nov 2023 19:03:34 +0800
+Subject: [PATCH] Kaiiju Don't pathfind outside region
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java b/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java
+index 1ab77f3518d1df30f66ae44d7d4fa69e5b32d93a..98bf17441da3169d49de55fe89d79ebe250a2b7e 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java
+@@ -107,7 +107,9 @@ public class MoveToTargetSink extends Behavior<Mob> {
+ 
+     private boolean tryComputePath(Mob entity, WalkTarget walkTarget, long time) {
+         BlockPos blockPos = walkTarget.getTarget().currentBlockPosition();
++        if (io.papermc.paper.util.TickThread.isTickThreadFor((ServerLevel) entity.level(), blockPos)) // Kaiiju - Don't pathfind outside region
+         this.path = entity.getNavigation().createPath(blockPos, 0);
++        else this.path = null; // Kaiiju - Don't pathfind outside region
+         this.speedModifier = walkTarget.getSpeedModifier();
+         Brain<?> brain = entity.getBrain();
+         if (this.reachedTarget(entity, walkTarget)) {

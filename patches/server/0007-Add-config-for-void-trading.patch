@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sat, 25 Nov 2023 18:22:09 +0800
+Subject: [PATCH] Add config for void trading
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 9db3bdd7a7d0b2a110e927ee4781eee489d0da9b..dffa9db569fcef2feec75072fe86c9a6ded80aa4 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -16,6 +16,7 @@ public class LuminolConfig {
+ 
+     public static boolean safeTeleportation = true;
+     public static boolean enableSandDuping = false;
++    public static boolean enableVoidTrading = false;
+ 
+     public static void init() throws IOException {
+         PARENT_FOLDER.mkdir();
+@@ -37,6 +38,7 @@ public class LuminolConfig {
+ 
+         safeTeleportation = get("fixes.enable_safe_teleportation",safeTeleportation,"If this enabled,the end portals will not teleport removed entities.");
+         enableSandDuping = get("fixes.enable_sand_duping",enableSandDuping,"If this enabled,The value of safe teleportation will always be false and sand duping will be enabled");
++        enableVoidTrading = get("fixes.enable_void_trading",enableVoidTrading);
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
+index e274c501e2455845f6f9a4614802336205362b69..722a5ec7f8e4995ac7025ca0785145d46bd66fcd 100644
+--- a/src/main/java/net/minecraft/server/level/ServerLevel.java
++++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
+@@ -3026,7 +3026,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+             // Spigot Start
+             if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(entity instanceof ServerPlayer) || entity.getRemovalReason() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
+                 // Paper start
+-                if (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null) {
++                if (!LuminolConfig.enableVoidTrading && (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null)) { //Luminol - Add config for void trading
+                     merchant.getTrader().closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.UNLOADED);
+                 }
+                 // Paper end

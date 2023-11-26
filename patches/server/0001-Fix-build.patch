@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 08:20:14 +0800
+Subject: [PATCH] Fix build
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 0cd12a854e544e867abfd94c18a9f138ba57e587..d295ee01481b088a376691de7c0927e95d7a68a8 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -14,7 +14,7 @@ val alsoShade: Configuration by configurations.creating
+ 
+ dependencies {
+     // Folia start
+-    implementation(project(":folia-api"))
++    implementation(project(":luminol-api")) //Luminol
+     implementation("io.papermc.paper:paper-mojangapi:${project.version}") {
+         exclude("io.papermc.paper", "paper-api")
+     }
+@@ -74,7 +74,7 @@ tasks.jar {
+         attributes(
+             "Main-Class" to "org.bukkit.craftbukkit.Main",
+             "Implementation-Title" to "CraftBukkit",
+-            "Implementation-Version" to "git-Folia-$implementationVersion", // Folia
++            "Implementation-Version" to "git-Luminol-$implementationVersion", // Folia //Luminol
+             "Implementation-Vendor" to date, // Paper
+             "Specification-Title" to "Bukkit",
+             "Specification-Version" to project.version,

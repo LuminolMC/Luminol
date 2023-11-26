@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 18:04:47 +0800
+Subject: [PATCH] Added maven publish
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 639651972fddce4dff63a0f0a7e566a15b9e2dd6..890820cb36e4cadeadb4c2d7cd961a73b065a217 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -168,3 +168,23 @@ tasks.check {
+     dependsOn(scanJar)
+ }
+ // Paper end
++
++// Luminol start
++publishing {
++    repositories {
++        maven {
++            name = "githubPackage"
++            url = uri("https://maven.pkg.github.com/LuminolMC/Luminol")
++
++            credentials.username = System.getenv("GITHUB_USERNAME")
++            credentials.password = System.getenv("GITHUB_TOKEN")
++        }
++
++        publications {
++            register<MavenPublication>("gpr") {
++                from(components["java"])
++            }
++        }
++    }
++}
++// Luminol end
+\ No newline at end of file

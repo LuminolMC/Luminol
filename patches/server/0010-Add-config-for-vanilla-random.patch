@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sat, 25 Nov 2023 19:03:34 +0800
+Subject: [PATCH] Add config for vanilla random
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 8d1ce8eae252fcf05b6a62d2dc467d6d503d3df4..89d8ffc947d265e0e81943ad851e868b622de168 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -19,6 +19,7 @@ public class LuminolConfig {
+     public static boolean enableSandDuping = false;
+     public static boolean enableVoidTrading = false;
+     public static boolean allowIncorrectTripwireUpdating = false;
++    public static boolean useVanillaRandomSource = false;
+ 
+     public static void init() throws IOException {
+         PARENT_FOLDER.mkdir();
+@@ -43,6 +44,7 @@ public class LuminolConfig {
+         enableSandDuping = get("fixes.enable_sand_duping",enableSandDuping,"If this enabled,The value of safe teleportation will always be false and sand duping will be enabled");
+         enableVoidTrading = get("fixes.enable_void_trading",enableVoidTrading);
+         allowIncorrectTripwireUpdating = get("fixes.allow_incorrect_trip_wire_updaing",allowIncorrectTripwireUpdating);
++        useVanillaRandomSource = get("fixes.use_vanilla_random_source",useVanillaRandomSource,"RNG feature related");
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index e357ed9607889536ecd0e6ea8b59c97d3dab631f..cb32a3851a315f1f1b4fb6d26fdffbcb471bfc06 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -569,7 +569,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+         this.bb = Entity.INITIAL_AABB;
+         this.stuckSpeedMultiplier = Vec3.ZERO;
+         this.nextStep = 1.0F;
+-        this.random = SHARED_RANDOM; // Paper
++        this.random = LuminolConfig.useVanillaRandomSource ? RandomSource.create() : SHARED_RANDOM;//Luminol - Add config for vanilla random SHARED_RANDOM; // Paper
+         this.remainingFireTicks = -this.getFireImmuneTicks();
+         this.fluidHeight = new Object2DoubleArrayMap(2);
+         this.fluidOnEyes = new HashSet();

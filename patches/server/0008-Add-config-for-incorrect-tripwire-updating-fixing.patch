@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sat, 25 Nov 2023 18:25:37 +0800
+Subject: [PATCH] Add config for incorrect tripwire updating fixing
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index dffa9db569fcef2feec75072fe86c9a6ded80aa4..a49da370c91211d4e2274f72d62c911a1912296a 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -17,6 +17,7 @@ public class LuminolConfig {
+     public static boolean safeTeleportation = true;
+     public static boolean enableSandDuping = false;
+     public static boolean enableVoidTrading = false;
++    public static boolean allowIncorrectTripwireUpdating = false;
+ 
+     public static void init() throws IOException {
+         PARENT_FOLDER.mkdir();
+@@ -39,6 +40,7 @@ public class LuminolConfig {
+         safeTeleportation = get("fixes.enable_safe_teleportation",safeTeleportation,"If this enabled,the end portals will not teleport removed entities.");
+         enableSandDuping = get("fixes.enable_sand_duping",enableSandDuping,"If this enabled,The value of safe teleportation will always be false and sand duping will be enabled");
+         enableVoidTrading = get("fixes.enable_void_trading",enableVoidTrading);
++        allowIncorrectTripwireUpdating = get("fixes.allow_incorrect_trip_wire_updaing",allowIncorrectTripwireUpdating);
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
+index 004dce26ff073f1de52a84cd425c4f60fdab5e50..ef150d50ff076c80ee62c3c413745fa312c9d289 100644
+--- a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
+@@ -2,6 +2,8 @@ package net.minecraft.world.level.block;
+ 
+ import com.google.common.base.MoreObjects;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.server.level.ServerLevel;
+@@ -147,7 +149,7 @@ public class TripWireHookBlock extends Block {
+                 boolean flag7 = (Boolean) iblockdata2.getValue(TripWireBlock.POWERED);
+ 
+                 flag5 |= flag6 && flag7;
+-                if (k != i || !tripWireBeingRemoved || !flag6) // Paper - don't update the tripwire again if being removed and not disarmed
++                if (k != i || !tripWireBeingRemoved || !flag6 || LuminolConfig.allowIncorrectTripwireUpdating) // Paper - don't update the tripwire again if being removed and not disarmed //Luminol - Add config for incorrect tripwire updating fixing
+                 aiblockdata[k] = iblockdata2;
+                 if (k == i) {
+                     world.scheduleTick(pos, (Block) this, 10);

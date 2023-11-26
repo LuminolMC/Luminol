@@ -1,0 +1,118 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sat, 25 Nov 2023 18:31:24 +0800
+Subject: [PATCH] Add config for chat sign
+
+
+diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
+index 772e3a864e0e70288a1c010d8bbb809d34d16a41..68bd66aad880c81d1f8eaf88525597c878350961 100644
+--- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
++++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
+@@ -15,6 +15,8 @@ import java.util.Objects;
+ import java.util.Set;
+ import java.util.concurrent.ExecutionException;
+ import java.util.function.Function;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.kyori.adventure.audience.Audience;
+ import net.kyori.adventure.audience.ForwardingAudience;
+ import net.kyori.adventure.key.Key;
+@@ -355,7 +357,7 @@ public final class ChatProcessor {
+ 
+         private void sendToServer(final ChatType.Bound chatType, final @Nullable Function<Audience, net.minecraft.network.chat.Component> msgFunction) {
+             final PlayerChatMessage toConsoleMessage = msgFunction == null ? ChatProcessor.this.message : ChatProcessor.this.message.withUnsignedContent(msgFunction.apply(ChatProcessor.this.server.console));
+-            ChatProcessor.this.server.logChatMessage(toConsoleMessage.decoratedContent(), chatType, ChatProcessor.this.server.getPlayerList().verifyChatTrusted(toConsoleMessage) ? null : "Not Secure");
++            ChatProcessor.this.server.logChatMessage(toConsoleMessage.decoratedContent(), chatType, ChatProcessor.this.server.getPlayerList().verifyChatTrusted(toConsoleMessage) || LuminolConfig.disableChatSign ? null : "Not Secure"); //Luminol - Add config for chat sign
+         }
+     }
+ 
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index a49da370c91211d4e2274f72d62c911a1912296a..8d1ce8eae252fcf05b6a62d2dc467d6d503d3df4 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -13,6 +13,7 @@ public class LuminolConfig {
+ 
+     public static String serverModName = "Luminol";
+     public static boolean fakeVanillaModeEnabled = false;
++    public static boolean disableChatSign = false;
+ 
+     public static boolean safeTeleportation = true;
+     public static boolean enableSandDuping = false;
+@@ -36,6 +37,7 @@ public class LuminolConfig {
+     public static void initValues(){
+         serverModName = get("misc.server_mod_name",serverModName,"The servermod name will be sent to players,and you can see it in F3 or motd responses");
+         fakeVanillaModeEnabled = get("misc.enable_fake_vanilla_mode",fakeVanillaModeEnabled,"Enable this to make the ping response of your server like a vanilla server");
++        disableChatSign = get("misc.disable_chat_sign",disableChatSign,"Set this to true to disable mojang's chat sign");
+ 
+         safeTeleportation = get("fixes.enable_safe_teleportation",safeTeleportation,"If this enabled,the end portals will not teleport removed entities.");
+         enableSandDuping = get("fixes.enable_sand_duping",enableSandDuping,"If this enabled,The value of safe teleportation will always be false and sand duping will be enabled");
+diff --git a/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java b/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
+index 72a8aa676836fcb3b4578689d16af65e18f55bbe..04653d58f2493d796e61bc97f0481cb628539c37 100644
+--- a/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
++++ b/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
+@@ -4,6 +4,8 @@ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Objects;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.network.chat.MessageSignature;
+ import net.minecraft.network.chat.SignableCommand;
+@@ -14,8 +16,16 @@ public record ArgumentSignatures(List<ArgumentSignatures.Entry> entries) {
+     private static final int MAX_ARGUMENT_NAME_LENGTH = 16;
+ 
+     public ArgumentSignatures(FriendlyByteBuf buf) {
+-        this(buf.readCollection(FriendlyByteBuf.limitValue(ArrayList::new, 8), ArgumentSignatures.Entry::new));
++        this(readSign(buf));
++    }
++
++    //Luminol start - Add config for chat sign
++    private static List<ArgumentSignatures.Entry> readSign(FriendlyByteBuf buf) {
++        var entries = buf.readCollection(FriendlyByteBuf.limitValue(ArrayList::new, 8), Entry::new);
++        return LuminolConfig.disableChatSign ? List.of() : entries;
+     }
++    //Luminol end
++
+ 
+     @Nullable
+     public MessageSignature get(String argumentName) {
+diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
+index 2e395962b555bef0ce1a98e1d768e7738f011535..11a9bc78c34b9f6bfff1ebf979be55b9bbbbed55 100644
+--- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
++++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
+@@ -48,6 +48,8 @@ import java.util.function.Function;
+ import java.util.function.IntFunction;
+ import java.util.function.ToIntFunction;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.Util;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+@@ -65,6 +67,7 @@ import net.minecraft.nbt.NbtIo;
+ import net.minecraft.nbt.Tag;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.MutableComponent;
++import net.minecraft.network.protocol.status.ServerStatus;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.util.Crypt;
+@@ -137,6 +140,17 @@ public class FriendlyByteBuf extends ByteBuf {
+     public <T> void writeJsonWithCodec(Codec<T> codec, T value) {
+         DataResult<JsonElement> dataresult = codec.encodeStart(JsonOps.INSTANCE, value);
+ 
++
++        //Luminol start - Add config for chat sign
++        if (codec == ServerStatus.CODEC) {
++            JsonElement element = Util.getOrThrow(dataresult, string -> new EncoderException("Failed to encode: " + string + " " + value));
++            element.getAsJsonObject().addProperty("preventsChatReports", LuminolConfig.disableChatSign);
++
++            this.writeUtf(GSON.toJson(element));
++            return;
++        }
++        //Luminol end
++
+         this.writeUtf(FriendlyByteBuf.GSON.toJson((JsonElement) Util.getOrThrow(dataresult, (s) -> {
+             return new EncoderException("Failed to encode: " + s + " " + value);
+         })));

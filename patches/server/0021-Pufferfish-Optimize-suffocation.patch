@@ -1,0 +1,86 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 16:05:32 +0800
+Subject: [PATCH] Pufferfish Optimize suffocation
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 0929a5a167691bde7dedaa1e2812b34ad69913d6..de0855656ad3882b182aa5674fd0117288268e71 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -42,6 +42,7 @@ public class LuminolConfig {
+     public static int linearFlushThreads = 1;
+ 
+     public static boolean reduceSensorWork = true;
++    public static boolean enableSuffocationOptimization = true;
+ 
+     public static void init() throws IOException {
+         PARENT_FOLDER.mkdir();
+@@ -104,6 +105,7 @@ public class LuminolConfig {
+             linearFlushThreads = Math.max(linearFlushThreads, 1);
+ 
+         reduceSensorWork = get("optimizations.reduce_sensor_work",reduceSensorWork,"This optimization is from petal.You can find out more about it on petal's repository");
++        enableSuffocationOptimization = get("optimizations.optimize_suffocation_check",enableSuffocationOptimization);
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index 51dee7adc0dc534fac66bf3e8709865157dd763b..f13d26b280f095d006ffccb36af66bb7487cb8da 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -19,6 +19,8 @@ import java.util.Optional;
+ import java.util.UUID;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.BlockUtil;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.commands.arguments.EntityAnchorArgument;
+@@ -420,7 +422,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+             boolean flag = this instanceof net.minecraft.world.entity.player.Player;
+ 
+             if (!this.level().isClientSide) {
+-                if (this.isInWall()) {
++                if (shouldCheckForSuffocation() && this.isInWall()) { // Pufferfish - optimize suffocation
+                     this.hurt(this.damageSources().inWall(), 1.0F);
+                 } else if (flag && !this.level().getWorldBorder().isWithinBounds(this.getBoundingBox())) {
+                     double d0 = this.level().getWorldBorder().getDistanceToBorder(this) + this.level().getWorldBorder().getDamageSafeZone();
+@@ -1410,6 +1412,19 @@ public abstract class LivingEntity extends Entity implements Attackable {
+         return this.getHealth() <= 0.0F;
+     }
+ 
++    // Pufferfish start - optimize suffocation
++    public boolean couldPossiblyBeHurt(float amount) {
++        if ((float) this.invulnerableTime > (float) this.invulnerableDuration / 2.0F && amount <= this.lastHurt) {
++            return false;
++        }
++        return true;
++    }
++
++    public boolean shouldCheckForSuffocation() {
++        return !LuminolConfig.enableSuffocationOptimization || (tickCount % 10 == 0 && couldPossiblyBeHurt(1.0F));
++    }
++    // Pufferfish end
++
+     @Override
+     public boolean hurt(DamageSource source, float amount) {
+         if (this.isInvulnerableTo(source)) {
+diff --git a/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java b/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
+index 1e07febcf7a3dfb281728cc5e3e4f15dd776d7e0..c65ab566c6241dd6a44bd11a449ef0c4b2f6dc65 100644
+--- a/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
++++ b/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
+@@ -150,6 +150,13 @@ public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob
+         this.bossEvent.setName(this.getDisplayName());
+     }
+ 
++    // Pufferfish start - optimize suffocation
++    @Override
++    public boolean shouldCheckForSuffocation() {
++        return true;
++    }
++    // Pufferfish end
++
+     @Override
+     protected SoundEvent getAmbientSound() {
+         return SoundEvents.WITHER_AMBIENT;
