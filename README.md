@@ -5,20 +5,20 @@
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/LuminolMC/Luminol?style=flat-square)
 ![GitHub all releases](https://img.shields.io/github/downloads/LuminolMC/Luminol/total?style=flat-square)
 
-<h4>Luminol is a folia fork that with many useful optimizations, configurable vanilla features, more API supports, and it was designed for survival and anarchy servers</h4>
+<h4>Luminol is a folia fork with many useful optimizations, configurable vanilla features, and more API supports, and it was designed for survival and anarchy servers</h4>
 
 ## Features
  - Configurable vanilla features
  - Tpsbar support
  - Linear region file format(from kaiiju)
  - Useful optimizations to improve the performance of single threaded region
- - More API supports for plugin developing(W.I.P)
+ - More API support for plugin development (W.I.P)
 
 ## Download
-Any versions are available in [release](https://github.com/LuminolMC/Luminol/releases),also you can build it by yourself through the following steps.
+Any versions are available in the [release](https://github.com/LuminolMC/Luminol/releases), also you can build it by yourself through the following steps.
 
 ## Build
-To build a paperclip jar,you need run the following command.And you can find the jar in build/libs(Note: JDK17 in needed)
+To build a paperclip jar, you need to run the following command. You can find the jar in build/libs(Note: JDK17 is needed)
  ```shell
  ./gradlew applyPatches && ./gradlew createReobfPaperclipJar
 ```
