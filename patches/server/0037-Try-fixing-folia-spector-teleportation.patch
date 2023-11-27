@@ -25,7 +25,7 @@ index d032786938db9725e1be72dae63a1387bcb69d79..08536bd5bbea3a9bb9d4c6212d361570
          if (tpsbarEnabled){
              initTpsbar();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 97bfb92e52c3c5ef1cd22afe2b97c204eb45025a..d0ceec72b56741b35cc090e7c9d2c642b8709449 100644
+index 97bfb92e52c3c5ef1cd22afe2b97c204eb45025a..710e87e388095f28af4983a04cb89ddb6be61986 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -18,6 +18,9 @@ import java.util.Optional;
@@ -38,22 +38,41 @@ index 97bfb92e52c3c5ef1cd22afe2b97c204eb45025a..d0ceec72b56741b35cc090e7c9d2c642
  import net.minecraft.BlockUtil;
  import net.minecraft.ChatFormatting;
  import net.minecraft.CrashReport;
-@@ -835,26 +838,54 @@ public class ServerPlayer extends Player {
+@@ -835,18 +838,7 @@ public class ServerPlayer extends Player {
  
          Entity entity = this.getCamera();
  
-+        boolean shouldTickRemainingThisThread = true;//Luminol - Fix spector camera
-         if (entity != this) {
-             if (entity.isAlive()) {
+-        if (entity != this) {
+-            if (entity.isAlive()) {
 -                this.absMoveTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
 -                this.serverLevel().getChunkSource().move(this);
 -                if (this.wantsToStopRiding()) {
 -                    this.setCamera(this);
+-                }
+-            } else {
+-                this.setCamera(this);
+-            }
+-        }
+-
++        //Luminol - move up
+         CriteriaTriggers.TICK.trigger(this);
+         if (this.levitationStartPos != null) {
+             CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
+@@ -855,6 +847,38 @@ public class ServerPlayer extends Player {
+         this.trackStartFallingPosition();
+         this.trackEnteredOrExitedLavaOnVehicle();
+         this.advancements.flushDirty(this);
++
++        if (entity != this) {
++            if (entity.isAlive()) {
 +                //Luminol start - Fix spector camera
 +                if (TickThread.isTickThreadFor(entity) || !LuminolConfig.fixSpectorTeleportFolia){
 +                    this.absMoveTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
++                    this.serverLevel().getChunkSource().move(this);
++                    if (this.wantsToStopRiding()) {
++                        this.setCamera(this);
++                    }
 +                }else{
-+                    shouldTickRemainingThisThread = false;
 +                    this.teleportAsync(
 +                            ((ServerLevel) entity.level()),
 +                            entity.position,
@@ -67,39 +86,13 @@ index 97bfb92e52c3c5ef1cd22afe2b97c204eb45025a..d0ceec72b56741b35cc090e7c9d2c642
 +                                if (this.wantsToStopRiding()) {
 +                                    this.setCamera(this);
 +                                }
-+                                CriteriaTriggers.TICK.trigger(this);
-+                                if (this.levitationStartPos != null) {
-+                                    CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
-+                                }
-+
-+                                this.trackStartFallingPosition();
-+                                this.trackEnteredOrExitedLavaOnVehicle();
-+                                this.advancements.flushDirty(this);
 +                            }
 +                    );
-                 }
++                }
 +                //Luminol end
-             } else {
-                 this.setCamera(this);
-             }
-         }
- 
--        CriteriaTriggers.TICK.trigger(this);
--        if (this.levitationStartPos != null) {
--            CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
--        }
-+        if (shouldTickRemainingThisThread){ //Luminol - Fix spector camera
-+            CriteriaTriggers.TICK.trigger(this);
-+            if (this.levitationStartPos != null) {
-+                CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
++            } else {
++                this.setCamera(this);
 +            }
- 
--        this.trackStartFallingPosition();
--        this.trackEnteredOrExitedLavaOnVehicle();
--        this.advancements.flushDirty(this);
-+            this.trackStartFallingPosition();
-+            this.trackEnteredOrExitedLavaOnVehicle();
-+            this.advancements.flushDirty(this);
 +        }
      }
  
