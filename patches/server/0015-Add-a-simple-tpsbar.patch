@@ -109,7 +109,7 @@ index 0000000000000000000000000000000000000000..3f74f748501d2f915869e9077dd2f220
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1b97730810895a1a049e8942dc47c20cd750d14c
+index 0000000000000000000000000000000000000000..98505b8ba09b93534eaa1b400d0c244ecb66e0ea
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 @@ -0,0 +1,206 @@
@@ -188,7 +188,7 @@ index 0000000000000000000000000000000000000000..1b97730810895a1a049e8942dc47c20c
 +
 +            for (Player player : Bukkit.getOnlinePlayers()){
 +                if (player.getUniqueId() == uuid){
-+                    shouldRemove = false;
++                    shouldRemove = !isPlayerVisible(player);
 +                    break;
 +                }
 +            }
@@ -216,7 +216,7 @@ index 0000000000000000000000000000000000000000..1b97730810895a1a049e8942dc47c20c
 +
 +            BossBar targetBossbar = uuid2Bossbars.get(nmsPlayer.getUUID());
 +
-+            if (targetBossbar == null && !visibleExclude.contains(nmsPlayer.getUUID())){
++            if (targetBossbar == null && !visibleExclude.contains(nmsPlayer.getUUID()) && isPlayerVisible(apiPlayer)){
 +                targetBossbar = BossBar.bossBar(Component.text(""),0.0F, BossBar.Color.valueOf(LuminolConfig.tpsColors[3]), BossBar.Overlay.NOTCHED_20);
 +                uuid2Bossbars.put(nmsPlayer.getUUID(),targetBossbar);
 +                apiPlayer.showBossBar(targetBossbar);
