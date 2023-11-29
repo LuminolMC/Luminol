@@ -5,17 +5,17 @@ Subject: [PATCH] Try fixing folia spector teleportation
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index d032786938db9725e1be72dae63a1387bcb69d79..08536bd5bbea3a9bb9d4c6212d361570c1d365bd 100644
+index d032786938db9725e1be72dae63a1387bcb69d79..dcc52141b34b87a67c3d6070b68b58af4a7c4f26 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -37,6 +37,7 @@ public class LuminolConfig {
-     public static boolean enableVoidTrading = false;
-     public static boolean allowIncorrectTripwireUpdating = false;
-     public static boolean useVanillaRandomSource = false;
+@@ -31,6 +31,7 @@ public class LuminolConfig {
+     public static String[] tpsColors = new String[]{"GREEN","YELLOW","RED","PURPLE"};
+     public static String[] pingColors = new String[]{"GREEN","YELLOW","RED","PURPLE"};
+     public static boolean disableUsernameCheck = false;
 +    public static boolean fixSpectorTeleportFolia = false;
  
-     public static RegionFileFormat regionFormatName = RegionFileFormat.ANVIL;
-     public static int regionFormatLinearCompressionLevel = 1;
+     public static boolean safeTeleportation = true;
+     public static boolean enableSandDuping = false;
 @@ -130,6 +131,7 @@ public class LuminolConfig {
          tpsColors = get("misc.tpsbar_range_colors", List.of(tpsColors),"The bar and text color of each tps ranges.The last is the color of initial bar's color").toArray(String[]::new);
          pingColors = get("misc.tpsbar_ping_range_colors",List.of(pingColors),"As same as the tpsColors").toArray(String[]::new);
