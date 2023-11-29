@@ -109,10 +109,10 @@ index 0000000000000000000000000000000000000000..3f74f748501d2f915869e9077dd2f220
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..98505b8ba09b93534eaa1b400d0c244ecb66e0ea
+index 0000000000000000000000000000000000000000..6a9919d8aec5e49df0dd13380cc7d8792ef7b228
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
-@@ -0,0 +1,206 @@
+@@ -0,0 +1,210 @@
 +package me.earthme.luminol.functions;
 +
 +import com.google.common.collect.Lists;
@@ -186,11 +186,9 @@ index 0000000000000000000000000000000000000000..98505b8ba09b93534eaa1b400d0c244e
 +            final UUID uuid = bossBarEntry.getKey();
 +            boolean shouldRemove = true;
 +
-+            for (Player player : Bukkit.getOnlinePlayers()){
-+                if (player.getUniqueId() == uuid){
-+                    shouldRemove = !isPlayerVisible(player);
-+                    break;
-+                }
++            final Player target = Bukkit.getPlayer(uuid);
++            if (target != null){
++                shouldRemove = !isPlayerVisible(target);
 +            }
 +
 +            if (shouldRemove){
@@ -199,7 +197,13 @@ index 0000000000000000000000000000000000000000..98505b8ba09b93534eaa1b400d0c244e
 +        }
 +
 +        for (UUID uuid : toRemove){
-+            uuid2Bossbars.remove(uuid);
++           final BossBar removed =  uuid2Bossbars.remove(uuid);
++           if (removed != null){
++               final Player targetPlayer = Bukkit.getPlayer(uuid);
++               if (targetPlayer != null){
++                   targetPlayer.showBossBar(removed);
++               }
++           }
 +        }
 +    }
 +
