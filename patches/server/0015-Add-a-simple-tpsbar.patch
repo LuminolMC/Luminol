@@ -109,10 +109,10 @@ index 0000000000000000000000000000000000000000..3f74f748501d2f915869e9077dd2f220
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..6a9919d8aec5e49df0dd13380cc7d8792ef7b228
+index 0000000000000000000000000000000000000000..3023bc0e7420870e80dda75f7b044069b61a2b7e
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
-@@ -0,0 +1,210 @@
+@@ -0,0 +1,204 @@
 +package me.earthme.luminol.functions;
 +
 +import com.google.common.collect.Lists;
@@ -139,7 +139,6 @@ index 0000000000000000000000000000000000000000..6a9919d8aec5e49df0dd13380cc7d879
 +public class GlobalServerTpsBar {
 +    protected static final MinecraftInternalPlugin NULL_PLUGIN = new MinecraftInternalPlugin();
 +    protected static final Map<UUID,BossBar> uuid2Bossbars = new HashMap<>();
-+    protected static final List<UUID> visibleExclude = Lists.newCopyOnWriteArrayList();
 +    protected static volatile ScheduledTask tpsbarTask = null;
 +
 +    public static void init(){
@@ -162,16 +161,11 @@ index 0000000000000000000000000000000000000000..6a9919d8aec5e49df0dd13380cc7d879
 +    }
 +
 +    public static boolean isPlayerVisible(Player player){
-+        return !visibleExclude.contains(player.getUniqueId());
++        return ((CraftPlayer) player).getHandle().isTpsBarVisible;
 +    }
 +
 +    public static void setVisibilityForPlayer(Player target,boolean canSee){
-+        if (!canSee){
-+            visibleExclude.add(target.getUniqueId());
-+            return;
-+        }
-+
-+        visibleExclude.remove(target.getUniqueId());
++        ((CraftPlayer) target).getHandle().isTpsBarVisible = canSee;
 +    }
 +
 +    private static void update(){
@@ -201,7 +195,7 @@ index 0000000000000000000000000000000000000000..6a9919d8aec5e49df0dd13380cc7d879
 +           if (removed != null){
 +               final Player targetPlayer = Bukkit.getPlayer(uuid);
 +               if (targetPlayer != null){
-+                   targetPlayer.showBossBar(removed);
++                   targetPlayer.hideBossBar(removed);
 +               }
 +           }
 +        }
@@ -220,7 +214,7 @@ index 0000000000000000000000000000000000000000..6a9919d8aec5e49df0dd13380cc7d879
 +
 +            BossBar targetBossbar = uuid2Bossbars.get(nmsPlayer.getUUID());
 +
-+            if (targetBossbar == null && !visibleExclude.contains(nmsPlayer.getUUID()) && isPlayerVisible(apiPlayer)){
++            if (targetBossbar == null && isPlayerVisible(apiPlayer)){
 +                targetBossbar = BossBar.bossBar(Component.text(""),0.0F, BossBar.Color.valueOf(LuminolConfig.tpsColors[3]), BossBar.Overlay.NOTCHED_20);
 +                uuid2Bossbars.put(nmsPlayer.getUUID(),targetBossbar);
 +                apiPlayer.showBossBar(targetBossbar);
@@ -358,3 +352,41 @@ index f0bf57a7acd77eeffbeeb6743ba58166823022fd..4a1e068c27853a38db0641806626e7ac
          super.stopServer();
          //Util.shutdownExecutors(); // Paper - moved into super
          SkullBlockEntity.clear();
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 97bfb92e52c3c5ef1cd22afe2b97c204eb45025a..d7a280427442bac8cc8ccb542d24d4e0901df70a 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -278,6 +278,7 @@ public class ServerPlayer extends Player {
+     // Paper start - replace player chunk loader
+     private final java.util.concurrent.atomic.AtomicReference<io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances> viewDistances = new java.util.concurrent.atomic.AtomicReference<>(new io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances(-1, -1, -1));
+     public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
++    public volatile boolean isTpsBarVisible = false;
+ 
+     public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances getViewDistances() {
+         return this.viewDistances.get();
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 6c8f6e26687b557fcdcd65c657d8b35d3fde805e..06c92a2d3ecb3b747c2303819f72c1c41967af8c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -2216,6 +2216,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+                 handle.expToDrop = data.getInt("expToDrop");
+                 handle.keepLevel = data.getBoolean("keepLevel");
+             }
++
++            //Luminol start - Tpsbar
++            getHandle().isTpsBarVisible = data.getBoolean("tpsbarVisible");
++            //Luminol end
+         }
+     }
+ 
+@@ -2237,6 +2241,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         data.putLong("lastPlayed", System.currentTimeMillis());
+         data.putString("lastKnownName", handle.getScoreboardName());
+ 
++        //Luminol start - Tpsbar
++        data.putBoolean("tpsbarVisible",handle.isTpsBarVisible);
++        //Luminol end
++
+         // Paper start - persist for use in offline save data
+         if (!nbttagcompound.contains("Paper")) {
+             nbttagcompound.put("Paper", new CompoundTag());
