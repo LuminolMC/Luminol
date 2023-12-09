@@ -63,7 +63,7 @@ index 90a6cfd011aaefe66fda79f887380ab2d62a07b1..0657fce8aabb956a400b3cead53c28ef
          enableSandDuping = get("fixes.enable_sand_duping",enableSandDuping,"If this enabled,The value of safe teleportation will always be false and sand duping will be enabled");
 diff --git a/src/main/java/me/earthme/luminol/commands/TpsBarCommand.java b/src/main/java/me/earthme/luminol/commands/TpsBarCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3f74f748501d2f915869e9077dd2f2206075346b
+index 0000000000000000000000000000000000000000..ac8f0e3bf130ba6dfd7202e2f480352218154cdc
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/commands/TpsBarCommand.java
 @@ -0,0 +1,40 @@
@@ -79,7 +79,7 @@ index 0000000000000000000000000000000000000000..3f74f748501d2f915869e9077dd2f220
 +public class TpsBarCommand extends Command {
 +    public TpsBarCommand(@NotNull String name) {
 +        super(name);
-+        this.setPermission("molia.commands.tpsbar");
++        this.setPermission("luminol.commands.tpsbar");
 +        this.setDescription("Show the tps and mspt through a bossbar");
 +        this.setUsage("/tpsbar");
 +    }
