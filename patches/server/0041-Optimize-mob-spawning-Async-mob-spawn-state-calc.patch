@@ -124,7 +124,7 @@ index 0000000000000000000000000000000000000000..facd55463d44cb7e3d2ca6892982f549
 +	}
 +}
 diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionizedWorldData.java b/src/main/java/io/papermc/paper/threadedregions/RegionizedWorldData.java
-index 7ca275826609bcf96f103a8c50beaa47c3b4068b..045a83f944ebe3e5e969e4b414760413f8d634fc 100644
+index 7ca275826609bcf96f103a8c50beaa47c3b4068b..dc5399bd5dba9dd33a7cfd644327c2568a6ad051 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/RegionizedWorldData.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/RegionizedWorldData.java
 @@ -4,6 +4,7 @@ import com.destroystokyo.paper.util.maplist.ReferenceList;
@@ -135,64 +135,71 @@ index 7ca275826609bcf96f103a8c50beaa47c3b4068b..045a83f944ebe3e5e969e4b414760413
  import io.papermc.paper.chunk.system.scheduling.ChunkHolderManager;
  import io.papermc.paper.util.CoordinateUtils;
  import io.papermc.paper.util.TickThread;
-@@ -14,6 +15,8 @@ import it.unimi.dsi.fastutil.longs.Long2ReferenceMap;
+@@ -14,6 +15,7 @@ import it.unimi.dsi.fastutil.longs.Long2ReferenceMap;
  import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
  import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 +import me.earthme.luminol.LuminolConfig;
-+import me.earthme.luminol.utils.AsyncMobSpawnExecutor;
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.core.BlockPos;
-@@ -58,6 +61,7 @@ import java.util.HashMap;
+@@ -58,6 +60,10 @@ import java.util.HashMap;
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
 +import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.LinkedBlockingQueue;
++import java.util.concurrent.ThreadPoolExecutor;
++import java.util.concurrent.TimeUnit;
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  
-@@ -145,6 +149,11 @@ public final class RegionizedWorldData {
+@@ -145,6 +151,10 @@ public final class RegionizedWorldData {
                  into.wanderingTraderSpawnDelay = Math.max(from.wanderingTraderSpawnDelay, into.wanderingTraderSpawnDelay);
                  into.wanderingTraderSpawnChance = Math.max(from.wanderingTraderSpawnChance, into.wanderingTraderSpawnChance);
              }
 +
 +            //Luminol start - Async mob spawning
-+            from.asyncMobSpawnExecutor.forceTerminate(); //Just terminate and do nothing
 +            from.lastAsyncSpawnStateTask = null; //Discard the task currently processing
 +            //Luminol end
          }
  
          @Override
-@@ -302,6 +311,15 @@ public final class RegionizedWorldData {
+@@ -302,6 +312,10 @@ public final class RegionizedWorldData {
                  regionizedWorldData.wanderingTraderSpawnDelay = from.wanderingTraderSpawnDelay;
                  regionizedWorldData.villageSiegeState = new VillageSiegeState(); // just re set it, as the spawn pos will be invalid
              }
 +
 +            //Luminol start - Async mob spawning
 +            from.lastAsyncSpawnStateTask = null; //Reset the task
-+            from.asyncMobSpawnExecutor.dropAllTasks(); //Reset tasks
-+
-+            if (!from.asyncMobSpawnExecutor.isRunning() && LuminolConfig.enableAsyncMobSpawning){
-+                from.asyncMobSpawnExecutor.startExecutor();
-+            }
 +            //Luminol end
          }
      };
  
-@@ -398,6 +416,11 @@ public final class RegionizedWorldData {
+@@ -398,6 +412,22 @@ public final class RegionizedWorldData {
      public java.util.ArrayDeque<net.minecraft.world.level.block.RedstoneTorchBlock.Toggle> redstoneUpdateInfos;
      public final Long2IntOpenHashMap chunksBeingWorkedOn = new Long2IntOpenHashMap();
  
 +    //Luminol start - Asnc mob spawning
-+    public final AsyncMobSpawnExecutor asyncMobSpawnExecutor = new AsyncMobSpawnExecutor();
 +    public volatile CompletableFuture<NaturalSpawner.SpawnState> lastAsyncSpawnStateTask = null;
++    public static ThreadPoolExecutor ASYNC_MOB_SPAWNING_EXECUTOR;
++    public static void initMobSpawningExecutor(){
++        if (LuminolConfig.enableAsyncMobSpawning){
++            ASYNC_MOB_SPAWNING_EXECUTOR = new ThreadPoolExecutor(
++                    1,
++                    Integer.MAX_VALUE,
++                    1,
++                    TimeUnit.MINUTES,
++                    new LinkedBlockingQueue<>()
++            );
++        }
++    }
 +    //Luminol end
 +
      public static final class TempCollisionList<T> {
          final UnsafeList<T> list = new UnsafeList<>(64);
          boolean inUse;
-@@ -430,7 +453,7 @@ public final class RegionizedWorldData {
+@@ -430,7 +460,7 @@ public final class RegionizedWorldData {
  
      // Mob spawning
      private final PooledLinkedHashSets<ServerPlayer> pooledHashSets = new PooledLinkedHashSets<>();
@@ -202,10 +209,18 @@ index 7ca275826609bcf96f103a8c50beaa47c3b4068b..045a83f944ebe3e5e969e4b414760413
      public int patrolSpawnerNextTick = 0;
      public int phantomSpawnerNextTick = 0;
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index e8cd180bab5c196db09ded74aea676b4412fc6e9..22ee6f520958fbc4301d82872faa4a8af4339a8e 100644
+index e8cd180bab5c196db09ded74aea676b4412fc6e9..534f54be1495b1a8f754bec0eb1aba8306c1d902 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -62,6 +62,7 @@ public class LuminolConfig {
+@@ -2,6 +2,7 @@ package me.earthme.luminol;
+ 
+ import dev.kaiijumc.kaiiju.region.RegionFileFormat;
+ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
++import io.papermc.paper.threadedregions.RegionizedWorldData;
+ import me.earthme.luminol.commands.TpsBarCommand;
+ import me.earthme.luminol.functions.GlobalServerTpsBar;
+ import net.minecraft.core.registries.BuiltInRegistries;
+@@ -62,6 +63,7 @@ public class LuminolConfig {
      public static boolean asyncPathProcessing = false;
      public static int asyncPathProcessingMaxThreads = 0;
      public static int asyncPathProcessingKeepalive = 60;
@@ -213,11 +228,12 @@ index e8cd180bab5c196db09ded74aea676b4412fc6e9..22ee6f520958fbc4301d82872faa4a8a
  
      public static void init() throws IOException {
          PARENT_FOLDER.mkdir();
-@@ -188,6 +189,7 @@ public class LuminolConfig {
+@@ -188,6 +190,8 @@ public class LuminolConfig {
              asyncPathProcessingMaxThreads = Math.max(Runtime.getRuntime().availableProcessors() / 4, 1);
          if (!asyncPathProcessing)
              asyncPathProcessingMaxThreads = 0;
 +        enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning);
++        RegionizedWorldData.initMobSpawningExecutor();
      }
  
      public static <T> T get(String key,T def){
@@ -299,10 +315,10 @@ index 0000000000000000000000000000000000000000..88d5b188ccfb17fe1ae4b08f32565f27
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..a50e6249eec7a8211b4674f34acd5d7104d825dd 100644
+index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..c470eafef884075b6e4d170adc2ced96a4beb517 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-@@ -11,13 +11,14 @@ import java.util.Collections;
+@@ -11,13 +11,15 @@ import java.util.Collections;
  import java.util.Iterator;
  import java.util.List;
  import java.util.Objects;
@@ -314,11 +330,12 @@ index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..a50e6249eec7a8211b4674f34acd5d71
  import java.util.function.Supplier;
  import javax.annotation.Nullable;
 +
++import io.papermc.paper.threadedregions.RegionizedWorldData;
 +import me.earthme.luminol.LuminolConfig;
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.SectionPos;
-@@ -487,32 +488,38 @@ public class ServerChunkCache extends ChunkSource {
+@@ -487,32 +489,38 @@ public class ServerChunkCache extends ChunkSource {
              this.level.timings.countNaturalMobs.startTiming(); // Paper - timings
              int l = this.distanceManager.getNaturalSpawnChunkCount();
              // Paper start - per player mob spawning
@@ -374,7 +391,7 @@ index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..a50e6249eec7a8211b4674f34acd5d71
              gameprofilerfiller.popPush("filteringLoadedChunks");
              // Paper - optimise chunk tick iteration
              // Paper - optimise chunk tick iteration
-@@ -610,7 +617,12 @@ public class ServerChunkCache extends ChunkSource {
+@@ -610,7 +618,12 @@ public class ServerChunkCache extends ChunkSource {
                      chunk1.incrementInhabitedTime(j);
                      if (spawn && flag2 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkcoordintpair)) { // Spigot // Paper - optimise chunk tick iteration
                          ++spawnChunkCount; // Folia - profiler
@@ -388,7 +405,7 @@ index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..a50e6249eec7a8211b4674f34acd5d71
                      }
  
                      if (true || this.level.shouldTickBlocksAt(chunkcoordintpair.toLong())) { // Paper - optimise chunk tick iteration
-@@ -667,6 +679,36 @@ public class ServerChunkCache extends ChunkSource {
+@@ -667,6 +680,36 @@ public class ServerChunkCache extends ChunkSource {
              gameprofilerfiller.pop();
              gameprofilerfiller.pop();
              this.chunkMap.tick();
@@ -413,11 +430,11 @@ index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..a50e6249eec7a8211b4674f34acd5d71
 +                    }
 +
 +                    if (regionizedWorldData.lastAsyncSpawnStateTask == null || regionizedWorldData.lastAsyncSpawnStateTask.isDone()){
-+                        regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.supplyAsync(() -> NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, null, true),regionizedWorldData.asyncMobSpawnExecutor);
++                        regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.supplyAsync(() -> NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, null, true),RegionizedWorldData.ASYNC_MOB_SPAWNING_EXECUTOR);
 +                    }
 +                } else {
 +                    if (regionizedWorldData.lastAsyncSpawnStateTask == null || regionizedWorldData.lastAsyncSpawnStateTask.isDone()){
-+                        regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.supplyAsync(() -> NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, !this.level.paperConfig().entities.spawning.perPlayerMobSpawns ? new LocalMobCapCalculator(this.chunkMap) : null, false),regionizedWorldData.asyncMobSpawnExecutor);
++                        regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.supplyAsync(() -> NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, !this.level.paperConfig().entities.spawning.perPlayerMobSpawns ? new LocalMobCapCalculator(this.chunkMap) : null, false), RegionizedWorldData.ASYNC_MOB_SPAWNING_EXECUTOR);
 +                    }
 +                }
 +            }
@@ -425,7 +442,7 @@ index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..a50e6249eec7a8211b4674f34acd5d71
          }
      }
  
-@@ -809,7 +851,7 @@ public class ServerChunkCache extends ChunkSource {
+@@ -809,7 +852,7 @@ public class ServerChunkCache extends ChunkSource {
      @VisibleForDebug
      public NaturalSpawner.SpawnState getLastSpawnState() {
          io.papermc.paper.threadedregions.RegionizedWorldData worldData = this.level.getCurrentWorldData(); // Folia - region threading
