@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
 Date: Wed, 29 Nov 2023 21:15:32 +0800
-Subject: [PATCH] Add config for offline mod warning
+Subject: [PATCH] Add config for offline mode warning
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
