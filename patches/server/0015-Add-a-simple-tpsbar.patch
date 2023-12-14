@@ -109,7 +109,7 @@ index 0000000000000000000000000000000000000000..ac8f0e3bf130ba6dfd7202e2f4803522
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3023bc0e7420870e80dda75f7b044069b61a2b7e
+index 0000000000000000000000000000000000000000..d575eeccd4a90d9281c2d5349252e5fe7de3d776
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 @@ -0,0 +1,204 @@
@@ -236,7 +236,7 @@ index 0000000000000000000000000000000000000000..3023bc0e7420870e80dda75f7b044069
 +                Placeholder.component("ping",getPingComponent(player.getPing()))
 +        ));
 +        bar.color(barColorFromTps(tps));
-+        bar.progress((float) Math.min(mspt / 50,1.0));
++        bar.progress((float) Math.min(mspt / 50,0));
 +    }
 +
 +    private static @NotNull Component getPingComponent(int ping){
