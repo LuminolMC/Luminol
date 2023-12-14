@@ -451,3 +451,33 @@ index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..c470eafef884075b6e4d170adc2ced96
      }
  
      public void removeTicketsOnClosing() {
+diff --git a/src/main/java/net/minecraft/world/level/NaturalSpawner.java b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
+index 5caca2a34849189ea42d2699f6d8672e0d7251cb..b21243d494fd1989e7d6c2b98b08e090dc2f38b7 100644
+--- a/src/main/java/net/minecraft/world/level/NaturalSpawner.java
++++ b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.world.level;
+ 
++import ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor;
+ import com.mojang.logging.LogUtils;
++import io.papermc.paper.threadedregions.RegionizedServer;
++import io.papermc.paper.util.TickThread;
+ import it.unimi.dsi.fastutil.objects.Object2IntMap;
+ import it.unimi.dsi.fastutil.objects.Object2IntMaps;
+ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+@@ -117,6 +120,15 @@ public final class NaturalSpawner {
+                     object2intopenhashmap.addTo(enumcreaturetype, 1);
+                     // Paper start
+                     if (countMobs) {
++                        //Luminol start - Async mob spawning
++                        if (!TickThread.isTickThread()){
++                            RegionizedServer.getInstance().taskQueue.queueTickTaskQueue(chunk.level,chunk.locX,chunk.locZ,()->{
++                                chunk.level.getChunkSource().chunkMap.updatePlayerMobTypeMap(entity);
++                            });
++                            return;
++                        }
++                        //Luminol end
++
+                         chunk.level.getChunkSource().chunkMap.updatePlayerMobTypeMap(entity);
+                     }
+                     // Paper end

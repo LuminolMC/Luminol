@@ -51,13 +51,13 @@ jobs:
         export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
         ./gradlew publish
     - name: Rename jar file
-      run: mv build/libs/Luminol-paperclip-1.20.2-R0.1-SNAPSHOT-reobf.jar build/libs/lunminol-1.20.2-paperclip.jar
+      run: mv build/libs/Luminol-paperclip-1.20.2-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.2-paperclip.jar
     - name: Release Artifacts
       uses: svenstaro/upload-release-action@v2
       with:
        release_name: "Luminol MC1.20.2 - ${{ github.event.repository.updated_at}}"
        tag: "1.20.2-${{ github.run_id }}"
        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-       file: "build/libs/lunminol-1.20.2-paperclip.jar"
+       file: "build/libs/luminol-1.20.2-paperclip.jar"
        file_glob: true
        prerelease: false    
