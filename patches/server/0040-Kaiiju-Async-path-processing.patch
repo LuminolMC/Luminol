@@ -475,7 +475,7 @@ index 0000000000000000000000000000000000000000..130d61324679c8600faa52255f3ad99f
 +    }
 +}
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 7ada58f2fa83a47908723bdf1e5c5fbbc2f5ffa9..e8cd180bab5c196db09ded74aea676b4412fc6e9 100644
+index 7ada58f2fa83a47908723bdf1e5c5fbbc2f5ffa9..dee892ef5f999b693507e7de909d639ce7875780 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
@@ -503,8 +503,8 @@ index 7ada58f2fa83a47908723bdf1e5c5fbbc2f5ffa9..e8cd180bab5c196db09ded74aea676b4
          acquirePoiForStuckEntityInterval = get("optimizations.acquire_poi_for_stuck_entity_interval", acquirePoiForStuckEntityInterval);
 +
 +        asyncPathProcessing = get("optimizations.async_pathfinding.enabled",asyncPathProcessing,"Config to enable the async pathfinder.");
-+        asyncPathProcessingMaxThreads = get("optimization.async_pathfinding.max-threads", asyncPathProcessingMaxThreads,"If it was set to 0(default),the thread count will be auto set(a quarter of the CPU thread count)");
-+        asyncPathProcessingKeepalive = get("optimization.async_pathfinding.keepalive", asyncPathProcessingKeepalive);
++        asyncPathProcessingMaxThreads = get("optimizations.async_pathfinding.max-threads", asyncPathProcessingMaxThreads,"If it was set to 0(default),the thread count will be auto set(a quarter of the CPU thread count)");
++        asyncPathProcessingKeepalive = get("optimizations.async_pathfinding.keepalive", asyncPathProcessingKeepalive);
 +        if (asyncPathProcessingMaxThreads < 0)
 +            asyncPathProcessingMaxThreads = Math.max(Runtime.getRuntime().availableProcessors() + asyncPathProcessingMaxThreads, 1);
 +        else if (asyncPathProcessingMaxThreads == 0)
