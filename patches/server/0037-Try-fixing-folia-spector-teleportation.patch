@@ -25,7 +25,7 @@ index d032786938db9725e1be72dae63a1387bcb69d79..dcc52141b34b87a67c3d6070b68b58af
          if (tpsbarEnabled){
              initTpsbar();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 97bfb92e52c3c5ef1cd22afe2b97c204eb45025a..710e87e388095f28af4983a04cb89ddb6be61986 100644
+index d7a280427442bac8cc8ccb542d24d4e0901df70a..755294e3f5b3fbcfbdc0cc85627b2487663ce591 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -18,6 +18,9 @@ import java.util.Optional;
@@ -38,7 +38,7 @@ index 97bfb92e52c3c5ef1cd22afe2b97c204eb45025a..710e87e388095f28af4983a04cb89ddb
  import net.minecraft.BlockUtil;
  import net.minecraft.ChatFormatting;
  import net.minecraft.CrashReport;
-@@ -835,18 +838,7 @@ public class ServerPlayer extends Player {
+@@ -836,18 +839,7 @@ public class ServerPlayer extends Player {
  
          Entity entity = this.getCamera();
  
@@ -58,7 +58,7 @@ index 97bfb92e52c3c5ef1cd22afe2b97c204eb45025a..710e87e388095f28af4983a04cb89ddb
          CriteriaTriggers.TICK.trigger(this);
          if (this.levitationStartPos != null) {
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
-@@ -855,6 +847,38 @@ public class ServerPlayer extends Player {
+@@ -856,6 +848,38 @@ public class ServerPlayer extends Player {
          this.trackStartFallingPosition();
          this.trackEnteredOrExitedLavaOnVehicle();
          this.advancements.flushDirty(this);
