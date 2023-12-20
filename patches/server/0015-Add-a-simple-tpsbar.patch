@@ -236,7 +236,7 @@ index 0000000000000000000000000000000000000000..baec715e0c20e920ccb99f2f07d84fcb
 +                Placeholder.component("ping",getPingComponent(player.getPing()))
 +        ));
 +        bar.color(barColorFromTps(tps));
-+        bar.progress((float) Math.max(mspt / 50,0));
++        bar.progress((float) Math.min((float)1,Math.max(mspt / 50,0)));
 +    }
 +
 +    private static @NotNull Component getPingComponent(int ping){
