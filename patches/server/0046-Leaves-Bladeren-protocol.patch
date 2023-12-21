@@ -1,0 +1,183 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Thu, 21 Dec 2023 19:50:41 +0800
+Subject: [PATCH] Leaves Bladeren protocol
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index cfe9a8eb705039ee7e2dc9262e1355c4b0f664bb..a0fd4fec133617893487586fd52e3a3a864871b4 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -68,6 +68,7 @@ public class LuminolConfig {
+ 
+     public static boolean pcaSyncProtocol = false;
+     public static String pcaSyncPlayerEntity = "NOBODY";
++    public static boolean bladerenLeavesProtocol = false;
+ 
+ 
+     public static void init() throws IOException {
+@@ -201,6 +202,7 @@ public class LuminolConfig {
+ 
+         pcaSyncProtocol = get("gameplay.enable_pca_sync_protocol",pcaSyncProtocol);
+         pcaSyncPlayerEntity = get("gameplay.pca_sync_player_entity",pcaSyncPlayerEntity,"Available values: NOBODY,EVERYBODY,OPS,OPS_AND_SELF");
++        bladerenLeavesProtocol = get("gameplay.bladeren_leaves_protocol",bladerenLeavesProtocol);
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/bladeren/BladerenProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/bladeren/BladerenProtocol.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..cf344ad5e928f1bf23953d7b25c4636734da69e6
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/protocol/bladeren/BladerenProtocol.java
+@@ -0,0 +1,151 @@
++package top.leavesmc.leaves.protocol.bladeren;
++
++import com.google.common.collect.Maps;
++import net.minecraft.nbt.CompoundTag;
++import net.minecraft.network.FriendlyByteBuf;
++import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.level.ServerPlayer;
++import org.jetbrains.annotations.Contract;
++import org.jetbrains.annotations.NotNull;
++import me.earthme.luminol.LuminolConfig;
++import top.leavesmc.leaves.protocol.core.LeavesProtocol;
++import top.leavesmc.leaves.protocol.core.ProtocolHandler;
++import top.leavesmc.leaves.protocol.core.ProtocolUtils;
++
++import java.util.HashMap;
++import java.util.Map;
++import java.util.function.BiConsumer;
++
++@LeavesProtocol(namespace = "bladeren")
++public class BladerenProtocol {
++
++    public static final String PROTOCOL_ID = "bladeren";
++    public static final String PROTOCOL_VERSION = "1.0.0";
++
++    private static final ResourceLocation HELLO_ID = id("hello");
++    private static final ResourceLocation FEATURE_MODIFY_ID = id("feature_modify");
++
++    private static final Map<String, BiConsumer<ServerPlayer, CompoundTag>> registeredFeatures = Maps.newConcurrentMap();
++
++    @Contract("_ -> new")
++    public static @NotNull ResourceLocation id(String path) {
++        return new ResourceLocation(PROTOCOL_ID, path);
++    }
++
++    @ProtocolHandler.PayloadReceiver(payload = BladerenHelloPayload.class, payloadId = "hello")
++    private static void handleHello(@NotNull ServerPlayer player, @NotNull BladerenHelloPayload payload) {
++        if (LuminolConfig.bladerenLeavesProtocol) {
++            String clientVersion = payload.version;
++            CompoundTag tag = payload.nbt;
++
++            if (tag != null) {
++                CompoundTag featureNbt = tag.getCompound("Features");
++                for (String name : featureNbt.getAllKeys()) {
++
++                    final BiConsumer<ServerPlayer,CompoundTag> target = registeredFeatures.get(name);
++
++                    if (target != null){
++                        target.accept(player, featureNbt.getCompound(name));
++                    }
++                }
++            }
++        }
++    }
++
++    @ProtocolHandler.PayloadReceiver(payload = BladerenFeatureModifyPayload.class, payloadId = "feature_modify")
++    private static void handleModify(@NotNull ServerPlayer player, @NotNull BladerenFeatureModifyPayload payload) {
++        if (LuminolConfig.bladerenLeavesProtocol) {
++            String name = payload.name;
++            CompoundTag tag = payload.nbt;
++
++            final BiConsumer<ServerPlayer,CompoundTag> target = registeredFeatures.get(name);
++
++            if (target != null){
++                target.accept(player, tag);
++            }
++        }
++    }
++
++    @ProtocolHandler.PlayerJoin
++    public static void onPlayerJoin(@NotNull ServerPlayer player) {
++        if (LuminolConfig.bladerenLeavesProtocol) {
++            CompoundTag tag = new CompoundTag();
++            LeavesFeatureSet.writeNBT(tag);
++            ProtocolUtils.sendPayloadPacket(player, new BladerenHelloPayload(PROTOCOL_VERSION, tag));
++        }
++    }
++
++    public static void registerFeature(String name, BiConsumer<ServerPlayer, CompoundTag> consumer) {
++        registeredFeatures.put(name, consumer);
++    }
++
++    public static class LeavesFeatureSet {
++
++        private static final Map<String, LeavesFeature> features = new HashMap<>();
++
++        public static void writeNBT(@NotNull CompoundTag tag) {
++            CompoundTag featureNbt = new CompoundTag();
++            features.values().forEach(feature -> feature.writeNBT(featureNbt));
++            tag.put("Features", featureNbt);
++        }
++
++        public static void register(LeavesFeature feature) {
++            features.put(feature.name, feature);
++        }
++    }
++
++    public record LeavesFeature(String name, String value) {
++
++        @NotNull
++        @Contract("_, _ -> new")
++        public static LeavesFeature of(String name, boolean value) {
++            return new LeavesFeature(name, Boolean.toString(value));
++        }
++
++        public void writeNBT(@NotNull CompoundTag rules) {
++            CompoundTag rule = new CompoundTag();
++            rule.putString("Feature", name);
++            rule.putString("Value", value);
++            rules.put(name, rule);
++        }
++    }
++
++    public record BladerenFeatureModifyPayload(String name, CompoundTag nbt) implements CustomPacketPayload {
++
++        public BladerenFeatureModifyPayload(ResourceLocation location, FriendlyByteBuf buf) {
++            this(buf.readUtf(), buf.readNbt());
++        }
++
++        @Override
++        public void write(@NotNull FriendlyByteBuf buf) {
++            buf.writeUtf(name);
++            buf.writeNbt(nbt);
++        }
++
++        @Override
++        @NotNull
++        public ResourceLocation id() {
++            return FEATURE_MODIFY_ID;
++        }
++    }
++
++    public record BladerenHelloPayload(String version, CompoundTag nbt) implements CustomPacketPayload {
++
++        public BladerenHelloPayload(ResourceLocation location, @NotNull FriendlyByteBuf buf) {
++            this(buf.readUtf(64), buf.readNbt());
++        }
++
++        @Override
++        public void write(@NotNull FriendlyByteBuf buf) {
++            buf.writeUtf(version);
++            buf.writeNbt(nbt);
++        }
++
++        @Override
++        @NotNull
++        public ResourceLocation id() {
++            return HELLO_ID;
++        }
++    }
++}

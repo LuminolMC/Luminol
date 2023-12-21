@@ -1,0 +1,126 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
+Date: Thu, 21 Dec 2023 20:06:50 +0800
+Subject: [PATCH] Leaves Bladeren mspt sync protocol
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index a0fd4fec133617893487586fd52e3a3a864871b4..d19f423debbeaedf955977c02aaf5f8e0016bea3 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -69,6 +69,9 @@ public class LuminolConfig {
+     public static boolean pcaSyncProtocol = false;
+     public static String pcaSyncPlayerEntity = "NOBODY";
+     public static boolean bladerenLeavesProtocol = false;
++    public static boolean msptSyncProtocol = false;
++    public static int msptSyncTickInterval = 20;
++
+ 
+ 
+     public static void init() throws IOException {
+@@ -203,6 +206,8 @@ public class LuminolConfig {
+         pcaSyncProtocol = get("gameplay.enable_pca_sync_protocol",pcaSyncProtocol);
+         pcaSyncPlayerEntity = get("gameplay.pca_sync_player_entity",pcaSyncPlayerEntity,"Available values: NOBODY,EVERYBODY,OPS,OPS_AND_SELF");
+         bladerenLeavesProtocol = get("gameplay.bladeren_leaves_protocol",bladerenLeavesProtocol);
++        msptSyncProtocol = get("gameplay.bladeren_mspt_sync_protocol",bladerenLeavesProtocol);
++        msptSyncTickInterval = get("gameplay.bladeren_mspt_sync_interval",msptSyncTickInterval);
+     }
+ 
+     public static <T> T get(String key,T def){
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..de92ebdf9d51a4f9a58a7650b09f070e51710ef0
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java
+@@ -0,0 +1,91 @@
++package top.leavesmc.leaves.protocol.bladeren;
++
++import io.papermc.paper.threadedregions.ThreadedRegionizer;
++import io.papermc.paper.threadedregions.TickData;
++import io.papermc.paper.threadedregions.TickRegions;
++import it.unimi.dsi.fastutil.objects.ObjectArrayList;
++import it.unimi.dsi.fastutil.objects.ObjectLists;
++import me.earthme.luminol.LuminolConfig;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
++import org.jetbrains.annotations.Contract;
++import org.jetbrains.annotations.NotNull;
++import top.leavesmc.leaves.protocol.core.LeavesProtocol;
++import top.leavesmc.leaves.protocol.core.ProtocolHandler;
++import top.leavesmc.leaves.protocol.core.ProtocolUtils;
++
++import java.util.List;
++
++@LeavesProtocol(namespace = "bladeren")
++public class MsptSyncProtocol {
++
++    public static final String PROTOCOL_ID = "bladeren";
++
++    private static final ResourceLocation MSPT_SYNC = id("mspt_sync");
++
++    private static final List<ServerPlayer> players = ObjectLists.synchronize(new ObjectArrayList<>());
++
++    private static int tickCounter = 0;
++
++    @Contract("_ -> new")
++    public static @NotNull ResourceLocation id(String path) {
++        return new ResourceLocation(PROTOCOL_ID, path);
++    }
++
++    @ProtocolHandler.Init
++    public static void init() {
++        BladerenProtocol.registerFeature("mspt_sync", (player, compoundTag) -> {
++            if (compoundTag.getString("Value").equals("true"))  {
++                onPlayerSubmit(player);
++            } else {
++                onPlayerLoggedOut(player);
++            }
++        });
++    }
++
++    @ProtocolHandler.PlayerLeave
++    public static void onPlayerLoggedOut(@NotNull ServerPlayer player) {
++        if (LuminolConfig.msptSyncProtocol) {
++            players.remove(player);
++        }
++    }
++
++    @ProtocolHandler.Ticker
++    public static void tick() {
++        if (LuminolConfig.msptSyncProtocol) {
++            if (players.isEmpty()) {
++                return;
++            }
++
++            if (tickCounter++ % LuminolConfig.msptSyncTickInterval == 0) {
++                for (ServerPlayer player : players){
++                    final ThreadedRegionizer.ThreadedRegion<TickRegions.TickRegionData, TickRegions.TickRegionSectionData> region = ((ServerLevel) player.level()).regioniser.getRegionAtUnsynchronised(player.sectionX,player.sectionZ);
++
++                    if (region == null){
++                        continue;
++                    }
++
++                    final TickData.TickReportData reportData = region.getData().getRegionSchedulingHandle().getTickReport5s(System.nanoTime());
++
++                    if (reportData != null){
++                        final TickData.SegmentData tpsData = reportData.tpsData().segmentAll();
++                        final double mspt = reportData.timePerTickData().segmentAll().average() / 1.0E6;
++                        final double tps = tpsData.average();
++
++                        ProtocolUtils.sendPayloadPacket(player, MSPT_SYNC, buf -> {
++                            buf.writeDouble(mspt);
++                            buf.writeDouble(tps);
++                        });
++                    }
++                }
++            }
++        }
++    }
++
++    public static void onPlayerSubmit(@NotNull ServerPlayer player) {
++        if (LuminolConfig.msptSyncProtocol) {
++            players.add(player);
++        }
++    }
++}
