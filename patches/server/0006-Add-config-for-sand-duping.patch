@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sat, 25 Nov 2023 18:17:52 +0800
+Date: Sun, 24 Dec 2023 08:18:35 +0800
 Subject: [PATCH] Add config for sand duping
 
 
@@ -25,7 +25,7 @@ index 36ca0b94d29d81e5f1f2aff4a38ead0b363dd1c7..9db3bdd7a7d0b2a110e927ee4781eee4
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-index 8e348099d6b3eb4510405d76453d70e7cadeebf6..cf72aa13fce00bf21c036c14a605ea7c6090d5f0 100644
+index acf2bfe7421774c1a8d8ac1a23b34880df6cab6a..2af822f94306ae3d839e3acbb5a5fedd1bfcecbb 100644
 --- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 @@ -4,6 +4,8 @@ import com.mojang.logging.LogUtils;

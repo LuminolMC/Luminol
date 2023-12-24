@@ -5,13 +5,13 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: LuminolCI - Ver/1.20.2
+name: LuminolCI - Ver/1.20.4
 
 on:
   push:
-    branches: [ "ver/1.20.2" ]
+    branches: [ "ver/1.20.4" ]
   pull_request:
-    branches: [ "ver/1.20.2" ]
+    branches: [ "ver/1.20.4" ]
 
 permissions: write-all
 
@@ -51,13 +51,13 @@ jobs:
         export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
         ./gradlew publish
     - name: Rename jar file
-      run: mv build/libs/Luminol-paperclip-1.20.2-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.2-paperclip.jar
+      run: mv build/libs/Luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
     - name: Release Artifacts
       uses: svenstaro/upload-release-action@v2
       with:
-       release_name: "Luminol MC1.20.2 - ${{ github.event.repository.updated_at}}"
-       tag: "1.20.2-${{ github.run_id }}"
+       release_name: "Luminol MC1.20.4 - ${{ github.event.repository.updated_at}}"
+       tag: "1.20.4-${{ github.run_id }}"
        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-       file: "build/libs/luminol-1.20.2-paperclip.jar"
+       file: "build/libs/luminol-1.20.4-paperclip.jar"
        file_glob: true
        prerelease: false    

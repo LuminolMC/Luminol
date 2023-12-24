@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Thu, 30 Nov 2023 22:41:04 +0800
+Date: Sun, 24 Dec 2023 11:24:54 +0800
 Subject: [PATCH] Add config for root user warning
 
 
@@ -25,7 +25,7 @@ index 8bf7a0235ed292d6cb3beca9b786a69148e0b4d9..7ada58f2fa83a47908723bdf1e5c5fbb
          if (tpsbarEnabled){
              initTpsbar();
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 4cc62104942e58ededd5c838f4bd5c4db0d574d4..964777e992974dc02ee106ec47efd2e04f3b76c3 100644
+index 28bc6a8c59f7835f6fb5e4d9ad7c05386010520c..d871534ebe7134caacca18d913458628bf2f0403 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -178,7 +178,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface

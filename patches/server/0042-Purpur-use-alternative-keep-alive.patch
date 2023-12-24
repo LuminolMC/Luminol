@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 17 Dec 2023 20:32:49 +0800
+Date: Sun, 24 Dec 2023 11:51:17 +0800
 Subject: [PATCH] Purpur use alternative keep alive
 
 
@@ -25,7 +25,7 @@ index 6edafcdbc188cd6c78e4c4237363e41d927a665e..a62680768068b611fe723fedeb617d42
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index 2bb944cef9bc8c5e56023ef20921ef13509d4823..9d23285f97ac5d90eb177ddc325281fa197d7f76 100644
+index ce200192b4dddfc9b2d3c355838596b7deef1c69..070caa71212642b8811586fc2ec720b629d365f5 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -51,6 +51,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack

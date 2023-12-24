@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 11:18:04 +0800
+Date: Sun, 24 Dec 2023 08:12:09 +0800
 Subject: [PATCH] Add config for unsafe teleportation
 
 
@@ -27,7 +27,7 @@ index 1f9ff0fc33fa36c90fc4cbbd21b7b790de581632..36ca0b94d29d81e5f1f2aff4a38ead0b
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 385d5bc08928dd990b690b926e174af86f178c64..e357ed9607889536ecd0e6ea8b59c97d3dab631f 100644
+index 65ae803da6fa395c9ad031460fc76077da62aeec..c31aa01dc355b5ca475f4f79049044034d730bb9 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -24,6 +24,8 @@ import java.util.function.BiConsumer;
@@ -39,7 +39,7 @@ index 385d5bc08928dd990b690b926e174af86f178c64..e357ed9607889536ecd0e6ea8b59c97d
  import net.minecraft.BlockUtil;
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
-@@ -4001,6 +4003,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4056,6 +4058,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
  
      protected boolean tryEndPortal() {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
@@ -48,17 +48,10 @@ index 385d5bc08928dd990b690b926e174af86f178c64..e357ed9607889536ecd0e6ea8b59c97d
          ServerLevel world = this.portalWorld;
          this.portalBlock = null;
 diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
-index 41d7cff39fc37955877668337689b4b26cd8c7cf..ca5799c618bec3d0abc4566d82a29bcc767c6f1f 100644
+index c82ebcac07033d887af499f81520982fbe5ed4f1..f2063a38f7d0aaef58a02d5ea29f1c3975347ede 100644
 --- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
-@@ -1,5 +1,6 @@
- package net.minecraft.world.level.block;
- 
-+import me.earthme.luminol.LuminolConfig;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.particles.ParticleTypes;
- import net.minecraft.resources.ResourceKey;
-@@ -7,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
+@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.entity.Entity;
@@ -66,7 +59,15 @@ index 41d7cff39fc37955877668337689b4b26cd8c7cf..ca5799c618bec3d0abc4566d82a29bcc
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.BlockGetter;
  import net.minecraft.world.level.Level;
-@@ -53,6 +55,13 @@ public class EndPortalBlock extends BaseEntityBlock {
+@@ -25,6 +26,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.bukkit.event.entity.EntityPortalEnterEvent;
+ import org.bukkit.event.player.PlayerTeleportEvent;
+ // CraftBukkit end
++import me.earthme.luminol.LuminolConfig;
+ 
+ public class EndPortalBlock extends BaseEntityBlock {
+ 
+@@ -61,6 +63,13 @@ public class EndPortalBlock extends BaseEntityBlock {
                  // return; // CraftBukkit - always fire event in case plugins wish to change it
              }
  

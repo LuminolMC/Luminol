@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sat, 25 Nov 2023 18:22:09 +0800
+Date: Sun, 24 Dec 2023 08:20:29 +0800
 Subject: [PATCH] Add config for void trading
 
 
@@ -25,10 +25,10 @@ index 9db3bdd7a7d0b2a110e927ee4781eee489d0da9b..dffa9db569fcef2feec75072fe86c9a6
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index e274c501e2455845f6f9a4614802336205362b69..722a5ec7f8e4995ac7025ca0785145d46bd66fcd 100644
+index 619429466bec3c1c88c5f2b50254877528ac5a37..b0869424cf9d980965d3cb584e4458fee5eac7be 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -3026,7 +3026,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -3072,7 +3072,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
              // Spigot Start
              if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(entity instanceof ServerPlayer) || entity.getRemovalReason() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
                  // Paper start

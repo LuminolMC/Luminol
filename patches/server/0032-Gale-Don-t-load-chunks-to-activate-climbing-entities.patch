@@ -25,10 +25,10 @@ index 793dc5b35e9a0665d486a74ce5b776b43b941ee2..fcd532898e099a809969603941b90fdd
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 56efbcc29adca0239ef09a269f0899a3a6e2801b..54daa1744c89e98136d0f594a35119d5fd3d6bc8 100644
+index 06f859e9e98c1cfd7161a43f93aa2b60eee9d666..650a836324b15e90044a1ae1241679bd37354f85 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5330,6 +5330,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -5398,6 +5398,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
          return this.feetBlockState;
      }
  
@@ -46,10 +46,10 @@ index 56efbcc29adca0239ef09a269f0899a3a6e2801b..54daa1744c89e98136d0f594a35119d5
          return this.chunkPosition;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index f13d26b280f095d006ffccb36af66bb7487cb8da..ecbacbed29af51d949122b21c3ae9fc95885c6d8 100644
+index 374a15b18a1355b8415e392228bf9d7eeab7d3ad..fa53f80acf9706fd61cb8133c6b8d46d64a9327d 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -2027,19 +2027,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2033,19 +2033,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
      public boolean onClimableCached() {
          if (!this.blockPosition().equals(this.lastClimbingPosition)) {

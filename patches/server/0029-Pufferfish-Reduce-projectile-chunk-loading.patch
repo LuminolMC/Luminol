@@ -27,7 +27,7 @@ index d0c0b4daec59f23a989a8b8f66ea3c704b0e309c..11c1a367fbc25cb63738a00ad93fb0b0
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 0c8f90a904c01105ba5fa6a8037150697bc2621e..527168199605c8c606c6dde563e4fe096b6f17ac 100644
+index dd204b547ea0981cf82c567cc497364ee221f09b..986ed887a771bc64474412e6c1944e59ae125248 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 @@ -4,6 +4,8 @@ import com.google.common.base.MoreObjects;
@@ -39,7 +39,7 @@ index 0c8f90a904c01105ba5fa6a8037150697bc2621e..527168199605c8c606c6dde563e4fe09
  import net.minecraft.core.BlockPos;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.protocol.Packet;
-@@ -44,6 +46,36 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -45,6 +47,36 @@ public abstract class Projectile extends Entity implements TraceableEntity {
          super(type, world);
      }
  

@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Thu, 21 Dec 2023 20:20:20 +0800
+Date: Sun, 24 Dec 2023 12:10:17 +0800
 Subject: [PATCH] Leaves Syncmatica Protocol
 
 
@@ -29,18 +29,18 @@ index d19f423debbeaedf955977c02aaf5f8e0016bea3..875afb57c7f0c4e3d0bc752d86a83081
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 159d3a27c1686fd2b0025cab5b7e7775679c4ce9..59cd97446b9dace1a887e35761bc94c88348256a 100644
+index 645ab5d149a207bed00357fe0aaf070d4b27d15a..43d671adfe996b18e75e1672d1b0196ec9861238 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -304,6 +304,7 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
-         player.getTextFilter().join();
-         this.signedMessageDecoder = server.enforceSecureProfile() ? SignedMessageChain.Decoder.REJECT_ALL : SignedMessageChain.Decoder.unsigned(player.getUUID());
+@@ -307,6 +307,7 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+         Objects.requireNonNull(server);
+         this.signedMessageDecoder = SignedMessageChain.Decoder.unsigned(uuid, server::enforceSecureProfile);
          this.chatMessageChain = new FutureChain(server.chatExecutor); // CraftBukkit - async chat
 +        this.exchangeTarget = new top.leavesmc.leaves.protocol.syncmatica.exchange.ExchangeTarget(this); // Leaves - Syncmatica Protocol
      }
  
      // CraftBukkit start - add fields
-@@ -330,6 +331,8 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -333,6 +334,8 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
      public final Long disconnectTicketId = Long.valueOf(DISCONNECT_TICKET_ID_GENERATOR.getAndIncrement());
      // Folia end - region threading
  

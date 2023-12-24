@@ -5,10 +5,10 @@ Subject: [PATCH] Pufferfish Optimize entity coordinate key
 
 
 diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
-index 8f91b7f44baaf62b829a81afc0633311e6c13f19..a149d98be7b4744f18d4ed4940881e13a76e4a7c 100644
+index 1f0ec6add54b7503415d5f4141fe2b6046f1ec69..8ec8084195e0400de76460b445012d605fe05724 100644
 --- a/src/main/java/io/papermc/paper/util/MCUtil.java
 +++ b/src/main/java/io/papermc/paper/util/MCUtil.java
-@@ -213,7 +213,7 @@ public final class MCUtil {
+@@ -212,7 +212,7 @@ public final class MCUtil {
      }
  
      public static long getCoordinateKey(final Entity entity) {

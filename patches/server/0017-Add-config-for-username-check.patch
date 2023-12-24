@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 15:56:26 +0800
+Date: Sun, 24 Dec 2023 09:18:06 +0800
 Subject: [PATCH] Add config for username check
 
 
@@ -25,28 +25,23 @@ index c3a481cb7bea0619b1af0e3203e9d88514e84c62..0929a5a167691bde7dedaa1e2812b34a
          if (tpsbarEnabled){
              initTpsbar();
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index f7c2d6d82ee1b5975cd114934b7beaec3d5d490d..f26c44bb8c4e3d8556c8c5ac7389e02381239594 100644
+index c18fc39db6480f0942128a5512970fdce074b7c6..fb5882d627d122a569277f96a223f15c32bc0686 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
- import javax.annotation.Nullable;
- import javax.crypto.Cipher;
- import javax.crypto.SecretKey;
-+
+@@ -44,6 +44,7 @@ import org.bukkit.craftbukkit.util.Waitable;
+ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+ import org.bukkit.event.player.PlayerPreLoginEvent;
+ // CraftBukkit end
 +import me.earthme.luminol.LuminolConfig;
- import net.minecraft.DefaultUncaughtExceptionHandler;
- import net.minecraft.core.UUIDUtil;
- import net.minecraft.network.Connection;
-@@ -162,10 +164,10 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+ 
+ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener {
+ 
+@@ -143,7 +144,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
      @Override
      public void handleHello(ServerboundHelloPacket packet) {
          Validate.validState(this.state == ServerLoginPacketListenerImpl.State.HELLO, "Unexpected hello packet", new Object[0]);
--        Validate.validState(ServerLoginPacketListenerImpl.isValidUsername(packet.name()), "Invalid characters in username", new Object[0]);
-+        if (!LuminolConfig.disableUsernameCheck) Validate.validState(ServerLoginPacketListenerImpl.isValidUsername(packet.name()), "Invalid characters in username", new Object[0]); //Luminol - Add config for usename check
-         // Paper start - validate usernames
-         if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() && io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.performUsernameValidation) {
--            if (!this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation && !validateUsername(packet.name())) {
-+            if (!this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation && !validateUsername(packet.name()) && !LuminolConfig.disableUsernameCheck) { //Luminol - Add config for username check
-                 ServerLoginPacketListenerImpl.this.disconnect("Failed to verify username!");
-                 return;
-             }
+-        if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() && io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.performUsernameValidation && !this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation) Validate.validState(Player.isValidUsername(packet.name()), "Invalid characters in username", new Object[0]); // Paper - config username validation
++        if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() && io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.performUsernameValidation && !this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation && !LuminolConfig.disableUsernameCheck) Validate.validState(Player.isValidUsername(packet.name()), "Invalid characters in username", new Object[0]); // Paper - config username validation  //Luminol - Add config for username check
+         this.requestedUsername = packet.name();
+         GameProfile gameprofile = this.server.getSingleplayerProfile();
+ 

@@ -1,5 +1,3 @@
-import io.papermc.paperweight.util.constants.*
-
 plugins {
     java
     `maven-publish`

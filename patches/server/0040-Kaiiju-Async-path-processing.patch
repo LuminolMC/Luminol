@@ -515,10 +515,10 @@ index 7ada58f2fa83a47908723bdf1e5c5fbbc2f5ffa9..dee892ef5f999b693507e7de909d639c
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 394913950ac8fbcfcdbce817bac95f3b6604beb7..fcf22d62b2bb61807ab54a3e4dca8500d9a1f8a7 100644
+index 88c93fb45769d85a77f3ae1bfe6ffa0bbf9cdfdf..3cf40268ed84e70e5c10558df0b3602fbc603484 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -297,6 +297,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -298,6 +298,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
      @Nullable
      @Override
      public LivingEntity getTarget() {
@@ -1008,10 +1008,10 @@ index 8db20db72cd51046213625fac46c35854c59ec5d..d40e00a0a8726c920ea43aaa1ed68005
          }
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Bee.java b/src/main/java/net/minecraft/world/entity/animal/Bee.java
-index 25fd3aea2d66503018637781ccb8b5690c02e57b..3eb38f2ad12ee459dfaf0e9f917633c8db6d58e3 100644
+index cbb0ebf003f5d832be1937aa886802df3f06b12a..32138d22024c027a00502658aed0c0d6df58ce1a 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Bee.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Bee.java
-@@ -1077,7 +1077,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
+@@ -1084,7 +1084,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
                          } else {
                              Bee.this.pathfindRandomlyTowards(Bee.this.hivePos);
                          }
@@ -1020,7 +1020,7 @@ index 25fd3aea2d66503018637781ccb8b5690c02e57b..3eb38f2ad12ee459dfaf0e9f917633c8
                          boolean flag = this.pathfindDirectlyTowards(Bee.this.hivePos);
  
                          if (!flag) {
-@@ -1139,7 +1139,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
+@@ -1146,7 +1146,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
              } else {
                  Path pathentity = Bee.this.navigation.getPath();
  
@@ -1030,10 +1030,10 @@ index 25fd3aea2d66503018637781ccb8b5690c02e57b..3eb38f2ad12ee459dfaf0e9f917633c8
          }
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-index c8e3d47b3f2dc919cca8ad397095437f1da6c762..dc7c35492c9481a45891ad32b45d7d46bc492461 100644
+index e88b058c0734e436ef24bab6364b206c13e5a9c2..613c04314d2693af4889a665e17f272b2af01db3 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-@@ -390,6 +390,17 @@ public class Frog extends Animal implements VariantHolder<FrogVariant> {
+@@ -385,6 +385,17 @@ public class Frog extends Animal implements VariantHolder<FrogVariant> {
              super(frog, world);
          }
  
@@ -1051,7 +1051,7 @@ index c8e3d47b3f2dc919cca8ad397095437f1da6c762..dc7c35492c9481a45891ad32b45d7d46
          @Override
          public boolean canCutCorner(BlockPathTypes nodeType) {
              return nodeType != BlockPathTypes.WATER_BORDER && super.canCutCorner(nodeType);
-@@ -399,6 +410,11 @@ public class Frog extends Animal implements VariantHolder<FrogVariant> {
+@@ -394,6 +405,11 @@ public class Frog extends Animal implements VariantHolder<FrogVariant> {
          protected PathFinder createPathFinder(int range) {
              this.nodeEvaluator = new Frog.FrogNodeEvaluator(true);
              this.nodeEvaluator.setCanPassDoors(true);
@@ -1064,7 +1064,7 @@ index c8e3d47b3f2dc919cca8ad397095437f1da6c762..dc7c35492c9481a45891ad32b45d7d46
          }
      }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Drowned.java b/src/main/java/net/minecraft/world/entity/monster/Drowned.java
-index 991d728db2a3b64316fc2102cf3aee470327a62e..c99de04d082f7f9b08d25730460385c400b1b975 100644
+index 485d14d71fb26e6e0d00a43da040bf63d696b66a..b60559381786cf841c581781ef3406ad50195592 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Drowned.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Drowned.java
 @@ -216,7 +216,6 @@ public class Drowned extends Zombie implements RangedAttackMob {
@@ -1116,10 +1116,10 @@ index 61162ecd43dc5e6f7898daecdec49f444e6d869b..26cdfe0dcf16c252648561f83e4d6a67
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
-index 5e43912708f9074dee1bb351efa737a7e6796fc3..6b3279c74148e3e93364fe0859b543fba4e6933c 100644
+index 58a7e61e02b7d72326ed4d57ee514adb63b3873c..600e7860534d66fb4b7d305e3695ec6d25c97e67 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
-@@ -603,6 +603,16 @@ public class Warden extends Monster implements VibrationSystem {
+@@ -604,6 +604,16 @@ public class Warden extends Monster implements VibrationSystem {
              protected PathFinder createPathFinder(int range) {
                  this.nodeEvaluator = new WalkNodeEvaluator();
                  this.nodeEvaluator.setCanPassDoors(true);
@@ -1137,10 +1137,10 @@ index 5e43912708f9074dee1bb351efa737a7e6796fc3..6b3279c74148e3e93364fe0859b543fb
                      @Override
                      protected float distance(Node a, Node b) {
 diff --git a/src/main/java/net/minecraft/world/level/block/ShulkerBoxBlock.java b/src/main/java/net/minecraft/world/level/block/ShulkerBoxBlock.java
-index d5fe3b8e2f5a8899f6afeb0600764284a617f261..4f15b9e4b1aba5375a2572ff28cea4e3d96eb82d 100644
+index 42407c5c0c09cd9d19bc7af92af8868bb038c686..39ed19562210f1329b22c630e667578473cda7cb 100644
 --- a/src/main/java/net/minecraft/world/level/block/ShulkerBoxBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/ShulkerBoxBlock.java
-@@ -238,6 +238,7 @@ public class ShulkerBoxBlock extends BaseEntityBlock {
+@@ -254,6 +254,7 @@ public class ShulkerBoxBlock extends BaseEntityBlock {
  
      @Override
      public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
@@ -1149,10 +1149,10 @@ index d5fe3b8e2f5a8899f6afeb0600764284a617f261..4f15b9e4b1aba5375a2572ff28cea4e3
          return blockEntity instanceof ShulkerBoxBlockEntity ? Shapes.create(((ShulkerBoxBlockEntity)blockEntity).getBoundingBox(state)) : Shapes.block();
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/piston/MovingPistonBlock.java b/src/main/java/net/minecraft/world/level/block/piston/MovingPistonBlock.java
-index e941a4ce35c1bcc84836d04fb97cb1e7f292ae42..26f3c25f2dfda5f7c6213746efa8b883b655d2e1 100644
+index d3d1ad7901411574b85b0febd1c7ddaa8ad7c9f4..850065df2b95b0967660f246cd007bf9f53e26df 100644
 --- a/src/main/java/net/minecraft/world/level/block/piston/MovingPistonBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/piston/MovingPistonBlock.java
-@@ -102,6 +102,7 @@ public class MovingPistonBlock extends BaseEntityBlock {
+@@ -110,6 +110,7 @@ public class MovingPistonBlock extends BaseEntityBlock {
  
      @Override
      public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {

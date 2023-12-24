@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 10:40:56 +0800
+Date: Sat, 23 Dec 2023 22:02:49 +0800
 Subject: [PATCH] Added empty luminol config
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index d295ee01481b088a376691de7c0927e95d7a68a8..54d761d7e4733c12fbb4957acd509d278ae11316 100644
+index 44b3fc01d8fdce55cffe77b7b02b07b95e182870..76b3ea0c8976a2b12d3e1324c0a39d7a56ec89b1 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -19,6 +19,7 @@ dependencies {
+@@ -33,6 +33,7 @@ dependencies {
          exclude("io.papermc.paper", "paper-api")
      }
      // Folia end
@@ -122,7 +122,7 @@ index 0000000000000000000000000000000000000000..1f9ff0fc33fa36c90fc4cbbd21b7b790
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 05d8cabd2294456e3c8df60265f8b035990dd896..f0bf57a7acd77eeffbeeb6743ba58166823022fd 100644
+index 12af517a7dd8c0bb2bc55ab3eb0e68a074011bb5..f3c28b5dff487813a61ebf531c2ee77e4d2071cc 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -19,6 +19,8 @@ import java.util.Locale;
@@ -139,11 +139,11 @@ index 05d8cabd2294456e3c8df60265f8b035990dd896..f0bf57a7acd77eeffbeeb6743ba58166
          // Paper start
          io.papermc.paper.util.ObfHelper.INSTANCE.getClass(); // Paper - load mappings for stacktrace deobf and etc.
 +        LuminolConfig.init(); //Luminol
-         paperConfigurations.initializeGlobalConfiguration();
-         paperConfigurations.initializeWorldDefaultsConfiguration();
+         paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
+         paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
          // Paper start - moved up to right after PlayerList creation but before file load/save
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 724aa1d8147ea2fb5e46d291adacfb7e1f5b5f62..e274c501e2455845f6f9a4614802336205362b69 100644
+index 8cf413e42d560d90dfcbcb1d61ed410e992a8f4c..619429466bec3c1c88c5f2b50254877528ac5a37 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -38,6 +38,8 @@ import java.util.stream.Collectors;
@@ -153,9 +153,9 @@ index 724aa1d8147ea2fb5e46d291adacfb7e1f5b5f62..e274c501e2455845f6f9a46148023362
 +
 +import me.earthme.luminol.LuminolConfig;
  import net.minecraft.CrashReport;
+ import net.minecraft.CrashReportCategory;
  import net.minecraft.Util;
- import net.minecraft.core.BlockPos;
-@@ -766,6 +768,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -768,6 +770,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
      }
      // Folia end - region threading
  
@@ -164,7 +164,7 @@ index 724aa1d8147ea2fb5e46d291adacfb7e1f5b5f62..e274c501e2455845f6f9a46148023362
      // Add env and gen to constructor, IWorldDataServer -> WorldDataServer
      public ServerLevel(MinecraftServer minecraftserver, Executor executor, LevelStorageSource.LevelStorageAccess convertable_conversionsession, PrimaryLevelData iworlddataserver, ResourceKey<Level> resourcekey, LevelStem worlddimension, ChunkProgressListener worldloadlistener, boolean flag, long i, List<CustomSpawner> list, boolean flag1, @Nullable RandomSequences randomsequences, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
          // IRegistryCustom.Dimension iregistrycustom_dimension = minecraftserver.registryAccess(); // CraftBukkit - decompile error
-@@ -850,6 +854,12 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -852,6 +856,12 @@ public class ServerLevel extends Level implements WorldGenLevel {
          this.chunkTaskScheduler = new io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler(this, io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.workerThreads); // Paper - rewrite chunk system
          this.entityLookup = new io.papermc.paper.chunk.system.entity.EntityLookup(this, new EntityCallbacks()); // Paper - rewrite chunk system
          this.updateTickData(); // Folia - region threading - make sure it is initialised before ticked

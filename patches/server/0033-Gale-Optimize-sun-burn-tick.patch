@@ -5,10 +5,10 @@ Subject: [PATCH] Gale Optimize sun burn tick
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 54daa1744c89e98136d0f594a35119d5fd3d6bc8..6f3e87661c3181b6537e4d6d96e50d8d5680c040 100644
+index 650a836324b15e90044a1ae1241679bd37354f85..8b77a86a5757ee00eeb842fb9a3bdc296744f48b 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -307,7 +307,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -308,7 +308,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      public double xo;
      public double yo;
      public double zo;
@@ -17,7 +17,7 @@ index 54daa1744c89e98136d0f594a35119d5fd3d6bc8..6f3e87661c3181b6537e4d6d96e50d8d
      public BlockPos blockPosition; // Pufferfish - private->public
      private ChunkPos chunkPosition;
      private Vec3 deltaMovement;
-@@ -2026,9 +2026,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -2031,9 +2031,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      /** @deprecated */
      @Deprecated
      public float getLightLevelDependentMagicValue() {
@@ -37,10 +37,10 @@ index 54daa1744c89e98136d0f594a35119d5fd3d6bc8..6f3e87661c3181b6537e4d6d96e50d8d
          this.absMoveTo(x, y, z);
          this.setYRot(yaw % 360.0F);
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 54e821351e46d25e8b0ead52d2c8dfecd1957544..394913950ac8fbcfcdbce817bac95f3b6604beb7 100644
+index e891477f946265b40cbfbbb7b66049837ad03105..88c93fb45769d85a77f3ae1bfe6ffa0bbf9cdfdf 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1736,13 +1736,29 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -1737,13 +1737,29 @@ public abstract class Mob extends LivingEntity implements Targeting {
  
      }
  

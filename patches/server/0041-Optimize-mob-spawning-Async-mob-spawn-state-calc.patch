@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sat, 9 Dec 2023 22:19:49 +0800
+Date: Sun, 24 Dec 2023 11:50:17 +0800
 Subject: [PATCH] Optimize mob spawning(Async mob spawn state calc)
 
 
@@ -209,7 +209,7 @@ index 7ca275826609bcf96f103a8c50beaa47c3b4068b..dc5399bd5dba9dd33a7cfd644327c256
      public int patrolSpawnerNextTick = 0;
      public int phantomSpawnerNextTick = 0;
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index e8cd180bab5c196db09ded74aea676b4412fc6e9..534f54be1495b1a8f754bec0eb1aba8306c1d902 100644
+index dee892ef5f999b693507e7de909d639ce7875780..6edafcdbc188cd6c78e4c4237363e41d927a665e 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -2,6 +2,7 @@ package me.earthme.luminol;
@@ -315,17 +315,10 @@ index 0000000000000000000000000000000000000000..88d5b188ccfb17fe1ae4b08f32565f27
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..c470eafef884075b6e4d170adc2ced96a4beb517 100644
+index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..193840b685df67bc72e4467bda74718f5b45732b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-@@ -11,13 +11,15 @@ import java.util.Collections;
- import java.util.Iterator;
- import java.util.List;
- import java.util.Objects;
--import java.util.Optional;
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Executor;
- import java.util.function.BooleanSupplier;
+@@ -17,6 +17,9 @@ import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
  import java.util.function.Supplier;
  import javax.annotation.Nullable;
@@ -335,80 +328,76 @@ index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..c470eafef884075b6e4d170adc2ced96
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.SectionPos;
-@@ -487,32 +489,38 @@ public class ServerChunkCache extends ChunkSource {
-             this.level.timings.countNaturalMobs.startTiming(); // Paper - timings
-             int l = this.distanceManager.getNaturalSpawnChunkCount();
-             // Paper start - per player mob spawning
--            NaturalSpawner.SpawnState spawnercreature_d; // moved down
-+            NaturalSpawner.SpawnState spawnercreature_d = null; // moved down
-             profiler.startTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.MOB_SPAWN_ENTITY_COUNT); try { // Folia - profiler
--            if ((this.spawnFriendlies || this.spawnEnemies) && this.level.paperConfig().entities.spawning.perPlayerMobSpawns) { // don't count mobs when animals and monsters are disabled
--                // re-set mob counts
--                for (ServerPlayer player : regionizedWorldData.getLocalPlayers()) { // Folia - region threading
--                    // Paper start - per player mob spawning backoff
--                    for (int ii = 0; ii < ServerPlayer.MOBCATEGORY_TOTAL_ENUMS; ii++) {
--                        player.mobCounts[ii] = 0;
+@@ -521,30 +524,36 @@ public class ServerChunkCache extends ChunkSource {
+                 int naturalSpawnChunkCount = k;
+                 NaturalSpawner.SpawnState spawnercreature_d; // moved down
+                 profiler.startTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.MOB_SPAWN_ENTITY_COUNT); try { // Folia - profiler
+-                if ((this.spawnFriendlies || this.spawnEnemies) && this.level.paperConfig().entities.spawning.perPlayerMobSpawns) { // don't count mobs when animals and monsters are disabled
+-                    // re-set mob counts
+-                    for (ServerPlayer player : this.level.getLocalPlayers()) { // Folia - region threading
+-                        // Paper start - per player mob spawning backoff
+-                        for (int ii = 0; ii < ServerPlayer.MOBCATEGORY_TOTAL_ENUMS; ii++) {
+-                            player.mobCounts[ii] = 0;
 -
--                        int newBackoff = player.mobBackoffCounts[ii] - 1; // TODO make configurable bleed // TODO use nonlinear algorithm?
--                        if (newBackoff < 0) {
--                            newBackoff = 0;
-+            if (!LuminolConfig.enableAsyncMobSpawning){ //Luminol
-+                if ((this.spawnFriendlies || this.spawnEnemies) && this.level.paperConfig().entities.spawning.perPlayerMobSpawns) { // don't count mobs when animals and monsters are disabled
-+                    // re-set mob counts
-+                    for (ServerPlayer player : regionizedWorldData.getLocalPlayers()) { // Folia - region threading
-+                        // Paper start - per player mob spawning backoff
-+                        for (int ii = 0; ii < ServerPlayer.MOBCATEGORY_TOTAL_ENUMS; ii++) {
-+                            player.mobCounts[ii] = 0;
+-                            int newBackoff = player.mobBackoffCounts[ii] - 1; // TODO make configurable bleed // TODO use nonlinear algorithm?
+-                            if (newBackoff < 0) {
+-                                newBackoff = 0;
++                if (!LuminolConfig.enableAsyncMobSpawning) { //Luminol
++                    if ((this.spawnFriendlies || this.spawnEnemies) && this.level.paperConfig().entities.spawning.perPlayerMobSpawns) { // don't count mobs when animals and monsters are disabled
++                        // re-set mob counts
++                        for (ServerPlayer player : this.level.getLocalPlayers()) { // Folia - region threading
++                            // Paper start - per player mob spawning backoff
++                            for (int ii = 0; ii < ServerPlayer.MOBCATEGORY_TOTAL_ENUMS; ii++) {
++                                player.mobCounts[ii] = 0;
 +
-+                            int newBackoff = player.mobBackoffCounts[ii] - 1; // TODO make configurable bleed // TODO use nonlinear algorithm?
-+                            if (newBackoff < 0) {
-+                                newBackoff = 0;
-+                            }
-+                            player.mobBackoffCounts[ii] = newBackoff;
++                                int newBackoff = player.mobBackoffCounts[ii] - 1; // TODO make configurable bleed // TODO use nonlinear algorithm?
++                                if (newBackoff < 0) {
++                                    newBackoff = 0;
++                                }
++                                player.mobBackoffCounts[ii] = newBackoff;
+                             }
+-                            player.mobBackoffCounts[ii] = newBackoff;
++                            // Paper end - per player mob spawning backoff
                          }
--                        player.mobBackoffCounts[ii] = newBackoff;
-+                        // Paper end - per player mob spawning backoff
+-                        // Paper end - per player mob spawning backoff
++                        spawnercreature_d = NaturalSpawner.createState(naturalSpawnChunkCount, regionizedWorldData.getLoadedEntities(), this::getFullChunk, null, true); // Folia - region threading - note: function only cares about loaded entities, doesn't need all
++                    } else {
++                        spawnercreature_d = NaturalSpawner.createState(naturalSpawnChunkCount, regionizedWorldData.getLoadedEntities(), this::getFullChunk, !this.level.paperConfig().entities.spawning.perPlayerMobSpawns ? new LocalMobCapCalculator(this.chunkMap) : null, false); // Folia - region threading - note: function only cares about loaded entities, doesn't need all
                      }
--                    // Paper end - per player mob spawning backoff
-+                    spawnercreature_d = NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, null, true); // Folia - region threading
-+                } else {
-+                    spawnercreature_d = NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, !this.level.paperConfig().entities.spawning.perPlayerMobSpawns ? new LocalMobCapCalculator(this.chunkMap) : null, false); // Folia - region threading
+-                    spawnercreature_d = NaturalSpawner.createState(naturalSpawnChunkCount, regionizedWorldData.getLoadedEntities(), this::getFullChunk, null, true); // Folia - region threading - note: function only cares about loaded entities, doesn't need all
+-                } else {
+-                    spawnercreature_d = NaturalSpawner.createState(naturalSpawnChunkCount, regionizedWorldData.getLoadedEntities(), this::getFullChunk, !this.level.paperConfig().entities.spawning.perPlayerMobSpawns ? new LocalMobCapCalculator(this.chunkMap) : null, false); // Folia - region threading - note: function only cares about loaded entities, doesn't need all
++                }//Luminol
++                // Luminol start - Async mob spawning
++                if (!LuminolConfig.enableAsyncMobSpawning){
++                    regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.completedFuture(spawnercreature_d);
                  }
--                spawnercreature_d = NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, null, true); // Folia - region threading
--            } else {
--                spawnercreature_d = NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, !this.level.paperConfig().entities.spawning.perPlayerMobSpawns ? new LocalMobCapCalculator(this.chunkMap) : null, false); // Folia - region threading
-+            }//Luminol
-+            //Luminol start - Async mob spawning
-+            if (!LuminolConfig.enableAsyncMobSpawning){
-+                regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.completedFuture(spawnercreature_d);
-             }
-             } finally { profiler.stopTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.MOB_SPAWN_ENTITY_COUNT); } // Folia - profiler
-             // Paper end
-             this.level.timings.countNaturalMobs.stopTiming(); // Paper - timings
+                 } finally { profiler.stopTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.MOB_SPAWN_ENTITY_COUNT); } // Folia - profiler
+                 // Paper end
+                 this.level.timings.countNaturalMobs.stopTiming(); // Paper - timings
  
--            regionizedWorldData.lastSpawnState = spawnercreature_d; // Folia - region threading
-+            //regionizedWorldData.lastSpawnState = spawnercreature_d; // Folia - region threading //Luminol - Async mob spawning
-             gameprofilerfiller.popPush("filteringLoadedChunks");
-             // Paper - optimise chunk tick iteration
-             // Paper - optimise chunk tick iteration
-@@ -610,7 +618,12 @@ public class ServerChunkCache extends ChunkSource {
-                     chunk1.incrementInhabitedTime(j);
-                     if (spawn && flag2 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkcoordintpair)) { // Spigot // Paper - optimise chunk tick iteration
-                         ++spawnChunkCount; // Folia - profiler
--                        NaturalSpawner.spawnForChunk(this.level, chunk1, spawnercreature_d, this.spawnFriendlies, this.spawnEnemies, flag1);
-+
-+                        //Luminol start - Async mob spawning
-+                        if (regionizedWorldData.lastAsyncSpawnStateTask != null && regionizedWorldData.lastAsyncSpawnStateTask.isDone()){
-+                            NaturalSpawner.spawnForChunk(this.level, chunk1, regionizedWorldData.lastAsyncSpawnStateTask.join(), this.spawnFriendlies, this.spawnEnemies, flag1);
-+                        }
-+                        //Luminol end
-                     }
+-                regionizedWorldData.lastSpawnState = spawnercreature_d; // Folia - region threading
++                //regionizedWorldData.lastSpawnState = spawnercreature_d; // Folia - region threading //Luminol - Async mob spawning
+                 gameprofilerfiller.popPush("spawnAndTick");
+                 boolean flag = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && !this.level.getLocalPlayers().isEmpty(); // CraftBukkit // Folia - region threadin
  
-                     if (true || this.level.shouldTickBlocksAt(chunkcoordintpair.toLong())) { // Paper - optimise chunk tick iteration
-@@ -667,6 +680,36 @@ public class ServerChunkCache extends ChunkSource {
+@@ -637,7 +646,11 @@ public class ServerChunkCache extends ChunkSource {
+                         chunk1.incrementInhabitedTime(j);
+                         if (spawn && flag && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkcoordintpair)) { // Spigot // Paper - optimise chunk tick iteration
+                             ++spawnChunkCount; // Folia - profiler
+-                            NaturalSpawner.spawnForChunk(this.level, chunk1, spawnercreature_d, this.spawnFriendlies, this.spawnEnemies, flag1);
++                            //Luminol start - Async mob spawning
++                            if (regionizedWorldData.lastAsyncSpawnStateTask != null && regionizedWorldData.lastAsyncSpawnStateTask.isDone()){
++                                NaturalSpawner.spawnForChunk(this.level, chunk1, regionizedWorldData.lastAsyncSpawnStateTask.join(), this.spawnFriendlies, this.spawnEnemies, flag1);
++                            }
++                            //Luminol end
+                         }
+ 
+                         if (true || this.level.shouldTickBlocksAt(chunkcoordintpair.toLong())) { // Paper - optimise chunk tick iteration
+@@ -695,6 +708,36 @@ public class ServerChunkCache extends ChunkSource {
+             // Paper - optimise chunk tick iteration
              gameprofilerfiller.pop();
              gameprofilerfiller.pop();
-             this.chunkMap.tick();
 +
 +            //Luminol start - Async mob spawning
 +            if (LuminolConfig.enableAsyncMobSpawning){
@@ -442,7 +431,7 @@ index b9b1dfe04eda8498f0ceff0aee66489d2a02b814..c470eafef884075b6e4d170adc2ced96
          }
      }
  
-@@ -809,7 +852,7 @@ public class ServerChunkCache extends ChunkSource {
+@@ -837,7 +880,7 @@ public class ServerChunkCache extends ChunkSource {
      @VisibleForDebug
      public NaturalSpawner.SpawnState getLastSpawnState() {
          io.papermc.paper.threadedregions.RegionizedWorldData worldData = this.level.getCurrentWorldData(); // Folia - region threading

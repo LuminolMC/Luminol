@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 11:30:57 +0800
+Date: Sun, 24 Dec 2023 09:12:51 +0800
 Subject: [PATCH] Kaiiju Add linear region format
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 54d761d7e4733c12fbb4957acd509d278ae11316..8a926993088d33983f75071b3320dd67c3e857c3 100644
+index 76b3ea0c8976a2b12d3e1324c0a39d7a56ec89b1..5c0f87b6e2244ee6446bfac9438f3f2320d5a964 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -19,6 +19,10 @@ dependencies {
+@@ -33,6 +33,10 @@ dependencies {
          exclude("io.papermc.paper", "paper-api")
      }
      // Folia end
@@ -639,10 +639,10 @@ index 50597a8b45bbd7dcc40b361da78358d9d01f5484..4709782f3e858edfa6ce25696462eb45
          regionFile.setStatus(chunkPos.x, chunkPos.z, ChunkSerializer.getStatus(compound));
      }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 722a5ec7f8e4995ac7025ca0785145d46bd66fcd..561681deaf647277ecde64eed4cfbd9f38b5fed1 100644
+index b0869424cf9d980965d3cb584e4458fee5eac7be..1c39d01d46522d7120653c0437e6b0d3fc76ce3e 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -453,8 +453,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -455,8 +455,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
      private static final class EntityRegionFileStorage extends net.minecraft.world.level.chunk.storage.RegionFileStorage {
  
@@ -653,7 +653,7 @@ index 722a5ec7f8e4995ac7025ca0785145d46bd66fcd..561681deaf647277ecde64eed4cfbd9f
          }
  
          protected void write(ChunkPos pos, net.minecraft.nbt.CompoundTag nbt) throws IOException {
-@@ -812,7 +812,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -814,7 +814,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
          // CraftBukkit end
          boolean flag2 = minecraftserver.forceSynchronousWrites();
          DataFixer datafixer = minecraftserver.getFixerUpper();
@@ -663,12 +663,12 @@ index 722a5ec7f8e4995ac7025ca0785145d46bd66fcd..561681deaf647277ecde64eed4cfbd9f
          // this.entityManager = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage, this.entitySliceManager); // Paper // Paper - rewrite chunk system
          StructureTemplateManager structuretemplatemanager = minecraftserver.getStructureManager();
 diff --git a/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java b/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java
-index e16ef1b7c0bfe6d6194c09f6787a50fd9b28f55e..cc70b729663bececec45a03ec21a94792e5f2052 100644
+index f2a7cb6ebed7a4b4019a09af2a025f624f6fe9c9..8b8540ff42f3fb224920969ea00d25161986169c 100644
 --- a/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java
 +++ b/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java
 @@ -61,7 +61,7 @@ public class WorldUpgrader {
      private volatile int skipped;
-     private final Object2FloatMap<ResourceKey<Level>> progressMap = Object2FloatMaps.synchronize(new Object2FloatOpenCustomHashMap(Util.identityStrategy()));
+     private final Reference2FloatMap<ResourceKey<Level>> progressMap = Reference2FloatMaps.synchronize(new Reference2FloatOpenHashMap());
      private volatile Component status = Component.translatable("optimizeWorld.stage.counting");
 -    public static final Pattern REGEX = Pattern.compile("^r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca$");
 +    public static Pattern REGEX = Pattern.compile("^r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.(linear | mca)$"); // Kaiiju
@@ -1060,10 +1060,10 @@ index 4aac1979cf57300825a999c876fcf24d3170e68e..3b96582f15d0985b670b5b5a1548800d
          this.factory = factory;
          this.fixerUpper = dataFixer;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index bcbf7ba7c687ecaa530d4de3af45ebeb80dd15c5..f19db38e64854d051d4d8dbbb3ff4236b5d4537b 100644
+index a0eeba6f3b55e5fc0f5f92a1b7bee4f721910f63..b71e0e0845143362e4a78440217c63e3847ea002 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -561,7 +561,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+@@ -570,7 +570,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
                  return true;
              }
  

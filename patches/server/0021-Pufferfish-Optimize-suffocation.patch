@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 16:05:32 +0800
+Date: Sun, 24 Dec 2023 09:52:30 +0800
 Subject: [PATCH] Pufferfish Optimize suffocation
 
 
@@ -25,7 +25,7 @@ index 0929a5a167691bde7dedaa1e2812b34ad69913d6..de0855656ad3882b182aa5674fd01172
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 51dee7adc0dc534fac66bf3e8709865157dd763b..f13d26b280f095d006ffccb36af66bb7487cb8da 100644
+index d578a2235e9ee66c030906dd5accc18384805d09..374a15b18a1355b8415e392228bf9d7eeab7d3ad 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -19,6 +19,8 @@ import java.util.Optional;
@@ -37,7 +37,7 @@ index 51dee7adc0dc534fac66bf3e8709865157dd763b..f13d26b280f095d006ffccb36af66bb7
  import net.minecraft.BlockUtil;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.commands.arguments.EntityAnchorArgument;
-@@ -420,7 +422,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -419,7 +421,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
              boolean flag = this instanceof net.minecraft.world.entity.player.Player;
  
              if (!this.level().isClientSide) {
@@ -46,7 +46,7 @@ index 51dee7adc0dc534fac66bf3e8709865157dd763b..f13d26b280f095d006ffccb36af66bb7
                      this.hurt(this.damageSources().inWall(), 1.0F);
                  } else if (flag && !this.level().getWorldBorder().isWithinBounds(this.getBoundingBox())) {
                      double d0 = this.level().getWorldBorder().getDistanceToBorder(this) + this.level().getWorldBorder().getDamageSafeZone();
-@@ -1410,6 +1412,19 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -1418,6 +1420,19 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return this.getHealth() <= 0.0F;
      }
  
@@ -67,7 +67,7 @@ index 51dee7adc0dc534fac66bf3e8709865157dd763b..f13d26b280f095d006ffccb36af66bb7
      public boolean hurt(DamageSource source, float amount) {
          if (this.isInvulnerableTo(source)) {
 diff --git a/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java b/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
-index 1e07febcf7a3dfb281728cc5e3e4f15dd776d7e0..c65ab566c6241dd6a44bd11a449ef0c4b2f6dc65 100644
+index c9a4feb4a52c0eb621b120e5b8c18d0a74dae0cd..256598e058db1fd34d36390e45ab9903768343cb 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
 @@ -150,6 +150,13 @@ public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob

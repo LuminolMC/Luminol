@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sat, 25 Nov 2023 18:25:37 +0800
+Date: Sun, 24 Dec 2023 08:22:56 +0800
 Subject: [PATCH] Add config for incorrect tripwire updating fixing
 
 
@@ -25,24 +25,24 @@ index dffa9db569fcef2feec75072fe86c9a6ded80aa4..a49da370c91211d4e2274f72d62c911a
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
-index 004dce26ff073f1de52a84cd425c4f60fdab5e50..ef150d50ff076c80ee62c3c413745fa312c9d289 100644
+index a3cef4ac925d09ad8789a59b46df134cf25c282a..f40221025e1140919d45191d0210986245687bae 100644
 --- a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
-@@ -2,6 +2,8 @@ package net.minecraft.world.level.block;
- 
- import com.google.common.base.MoreObjects;
+@@ -4,6 +4,8 @@ import com.google.common.base.MoreObjects;
+ import com.mojang.serialization.MapCodec;
+ import java.util.Optional;
  import javax.annotation.Nullable;
 +
 +import me.earthme.luminol.LuminolConfig;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.server.level.ServerLevel;
-@@ -147,7 +149,7 @@ public class TripWireHookBlock extends Block {
-                 boolean flag7 = (Boolean) iblockdata2.getValue(TripWireBlock.POWERED);
+@@ -162,7 +164,7 @@ public class TripWireHookBlock extends Block {
+                     boolean flag7 = (Boolean) iblockdata2.getValue(TripWireBlock.POWERED);
  
-                 flag5 |= flag6 && flag7;
--                if (k != i || !tripWireBeingRemoved || !flag6) // Paper - don't update the tripwire again if being removed and not disarmed
-+                if (k != i || !tripWireBeingRemoved || !flag6 || LuminolConfig.allowIncorrectTripwireUpdating) // Paper - don't update the tripwire again if being removed and not disarmed //Luminol - Add config for incorrect tripwire updating fixing
-                 aiblockdata[k] = iblockdata2;
-                 if (k == i) {
-                     world.scheduleTick(pos, (Block) this, 10);
+                     flag5 |= flag6 && flag7;
+-                    if (k != i || !tripWireBeingRemoved || !flag6) // Paper - don't update the tripwire again if being removed and not disarmed
++                    if (k != i || !tripWireBeingRemoved || !flag6 || LuminolConfig.allowIncorrectTripwireUpdating) // Paper - don't update the tripwire again if being removed and not disarmed //Luminol - Add config for incorrect tripwire updating fixing
+                     aiblockdata[k] = iblockdata2;
+                     if (k == i) {
+                         world.scheduleTick(pos, block, 10);

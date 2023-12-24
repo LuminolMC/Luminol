@@ -237,7 +237,7 @@ index d6cbe98e67fdbf8db46338a88ab1356dd63b50a3..20dd3a63b2f955b05a75eb240e33ae4c
      int LARGE_MAX_STACK_SIZE = 64;
      int DEFAULT_DISTANCE_LIMIT = 8;
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-index 00187fbbeddfc17e1b6887f8bf0f50da23938470..f64edfdb03f99624daf1e05b5dc86d845c3018b6 100644
+index 6d23c39e4eadf23616080d6d08672e13b5d3c37d..e7115f1635821e0aab32e8aeea6914388dc24639 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 @@ -27,7 +27,10 @@ import org.bukkit.inventory.InventoryHolder;
@@ -459,10 +459,10 @@ index 72779080969fe9f058c19533ffc9dad5f9c47086..c90d578643490709936545ee9cbd41c8
  
      public static void entityInside(Level world, BlockPos pos, BlockState state, Entity entity, HopperBlockEntity blockEntity) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
-index 3e638f12956e57548f76c7e2403ba370f7baa249..02364a148b347e3669275553004391e31d77c0b5 100644
+index 64875525df244db838560f5fefb7b1b07b0f1f51..1436fdbe31c8cdf05ac56f20224fe91de4b1c0c3 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
-@@ -96,12 +96,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc
+@@ -94,12 +94,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc
      public boolean isEmpty() {
          this.unpackLootTable((Player)null);
          // Paper start
