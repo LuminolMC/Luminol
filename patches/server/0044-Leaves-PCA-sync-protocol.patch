@@ -304,12 +304,25 @@ index 1fa22445a4ecc8c08dbcf0cc6bd39dc5003604c4..c1492fce06cdc00a8e82977f0c474a54
      @Override
      public int[] getSlotsForFace(Direction side) {
          return ShulkerBoxBlockEntity.SLOTS;
+diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
+index 2c3e1b420303a3c3a9315983fbc7e47423f7d9e4..29a8331e498eba333283b41c3e6a87a7ad97747c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
++++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
+@@ -45,7 +45,7 @@ import org.bukkit.scheduler.BukkitWorker;
+  */
+ public class CraftScheduler implements BukkitScheduler {
+ 
+-    static Plugin MINECRAFT = new MinecraftInternalPlugin();
++    public static Plugin MINECRAFT = new MinecraftInternalPlugin();
+     /**
+      * The start ID for the counter.
+      */
 diff --git a/src/main/java/top/leavesmc/leaves/protocol/PcaSyncProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/PcaSyncProtocol.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..946b4183c7ae438bff5938115961057759c77dac
+index 0000000000000000000000000000000000000000..ebd28033ddf0fe6a354585dc2818a9b481d90ed4
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/protocol/PcaSyncProtocol.java
-@@ -0,0 +1,382 @@
+@@ -0,0 +1,384 @@
 +package top.leavesmc.leaves.protocol;
 +
 +import net.minecraft.core.BlockPos;
@@ -331,6 +344,7 @@ index 0000000000000000000000000000000000000000..946b4183c7ae438bff59381159610577
 +import org.apache.commons.lang3.tuple.MutablePair;
 +import org.apache.commons.lang3.tuple.Pair;
 +import org.apache.logging.log4j.LogManager;
++import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 +import org.jetbrains.annotations.Contract;
 +import org.jetbrains.annotations.NotNull;
 +import org.jetbrains.annotations.Nullable;
@@ -344,6 +358,7 @@ index 0000000000000000000000000000000000000000..946b4183c7ae438bff59381159610577
 +import java.util.Set;
 +import java.util.concurrent.locks.ReentrantLock;
 +
++import static org.bukkit.craftbukkit.scheduler.CraftScheduler.MINECRAFT;
 +import static top.leavesmc.leaves.protocol.core.LeavesProtocolManager.EmptyPayload;
 +
 +@LeavesProtocol(namespace = "pca")
@@ -413,7 +428,7 @@ index 0000000000000000000000000000000000000000..946b4183c7ae438bff59381159610577
 +        BlockPos pos = payload.pos;
 +        ServerLevel world = player.serverLevel();
 +
-+        server.execute(() -> {
++        player.getBukkitEntity().getScheduler().execute(MINECRAFT,() -> {
 +            BlockState blockState = world.getBlockState(pos);
 +            clearPlayerWatchData(player);
 +
@@ -444,7 +459,7 @@ index 0000000000000000000000000000000000000000..946b4183c7ae438bff59381159610577
 +            }
 +            blockPosWatchPlayerSet.get(pair).add(player);
 +            lock.unlock();
-+        });
++        },null,1);
 +    }
 +
 +    @ProtocolHandler.PayloadReceiver(payload = SyncEntityPayload.class, payloadId = "sync_entity")
@@ -455,7 +470,7 @@ index 0000000000000000000000000000000000000000..946b4183c7ae438bff59381159610577
 +        MinecraftServer server = MinecraftServer.getServer();
 +        int entityId = payload.entityId;
 +        ServerLevel world = player.serverLevel();
-+        server.execute(() -> {
++        player.getBukkitEntity().getScheduler().execute(MINECRAFT,() -> {
 +            Entity entity = world.getEntity(entityId);
 +            if (entity != null) {
 +                clearPlayerWatchData(player);
@@ -488,7 +503,7 @@ index 0000000000000000000000000000000000000000..946b4183c7ae438bff59381159610577
 +                entityWatchPlayerSet.get(pair).add(player);
 +                lock.unlock();
 +            }
-+        });
++        },null,1);
 +    }
 +
 +    public static void enablePcaSyncProtocol(@NotNull ServerPlayer player) {
