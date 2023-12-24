@@ -315,7 +315,7 @@ index 0000000000000000000000000000000000000000..88d5b188ccfb17fe1ae4b08f32565f27
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..193840b685df67bc72e4467bda74718f5b45732b 100644
+index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..712c28bb4842ca0f885a66fe35558db538245de9 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 @@ -17,6 +17,9 @@ import java.util.function.BooleanSupplier;
@@ -328,9 +328,12 @@ index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..193840b685df67bc72e4467bda74718f
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.SectionPos;
-@@ -521,30 +524,36 @@ public class ServerChunkCache extends ChunkSource {
+@@ -519,32 +522,38 @@ public class ServerChunkCache extends ChunkSource {
+                 int k = this.distanceManager.getNaturalSpawnChunkCount();
+                 // Paper start - per player mob spawning
                  int naturalSpawnChunkCount = k;
-                 NaturalSpawner.SpawnState spawnercreature_d; // moved down
+-                NaturalSpawner.SpawnState spawnercreature_d; // moved down
++                NaturalSpawner.SpawnState spawnercreature_d = null; // moved down
                  profiler.startTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.MOB_SPAWN_ENTITY_COUNT); try { // Folia - profiler
 -                if ((this.spawnFriendlies || this.spawnEnemies) && this.level.paperConfig().entities.spawning.perPlayerMobSpawns) { // don't count mobs when animals and monsters are disabled
 -                    // re-set mob counts
@@ -394,43 +397,43 @@ index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..193840b685df67bc72e4467bda74718f
                          }
  
                          if (true || this.level.shouldTickBlocksAt(chunkcoordintpair.toLong())) { // Paper - optimise chunk tick iteration
-@@ -695,6 +708,36 @@ public class ServerChunkCache extends ChunkSource {
-             // Paper - optimise chunk tick iteration
-             gameprofilerfiller.pop();
-             gameprofilerfiller.pop();
+@@ -667,6 +680,36 @@ public class ServerChunkCache extends ChunkSource {
+                     } // Paper - timings
+                     } finally { profiler.stopTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.MISC_MOB_SPAWN_TICK); } // Folia - profiler
+                 }
 +
-+            //Luminol start - Async mob spawning
-+            if (LuminolConfig.enableAsyncMobSpawning){
-+                //Luminol - Copied down
-+                if ((this.spawnFriendlies || this.spawnEnemies) && this.level.paperConfig().entities.spawning.perPlayerMobSpawns) { // don't count mobs when animals and monsters are disabled
-+                    // re-set mob counts
-+                    for (ServerPlayer player : regionizedWorldData.getLocalPlayers()) { // Folia - region threading
-+                        // Paper start - per player mob spawning backoff
-+                        for (int ii = 0; ii < ServerPlayer.MOBCATEGORY_TOTAL_ENUMS; ii++) {
-+                            player.mobCounts[ii] = 0;
++                //Luminol start - Async mob spawning
++                if (LuminolConfig.enableAsyncMobSpawning){
++                    //Luminol - Copied down
++                    if ((this.spawnFriendlies || this.spawnEnemies) && this.level.paperConfig().entities.spawning.perPlayerMobSpawns) { // don't count mobs when animals and monsters are disabled
++                        // re-set mob counts
++                        for (ServerPlayer player : regionizedWorldData.getLocalPlayers()) { // Folia - region threading
++                            // Paper start - per player mob spawning backoff
++                            for (int ii = 0; ii < ServerPlayer.MOBCATEGORY_TOTAL_ENUMS; ii++) {
++                                player.mobCounts[ii] = 0;
 +
-+                            int newBackoff = player.mobBackoffCounts[ii] - 1; // TODO make configurable bleed // TODO use nonlinear algorithm?
-+                            if (newBackoff < 0) {
-+                                newBackoff = 0;
++                                int newBackoff = player.mobBackoffCounts[ii] - 1; // TODO make configurable bleed // TODO use nonlinear algorithm?
++                                if (newBackoff < 0) {
++                                    newBackoff = 0;
++                                }
++                                player.mobBackoffCounts[ii] = newBackoff;
 +                            }
-+                            player.mobBackoffCounts[ii] = newBackoff;
++                            // Paper end - per player mob spawning backoff
 +                        }
-+                        // Paper end - per player mob spawning backoff
-+                    }
 +
-+                    if (regionizedWorldData.lastAsyncSpawnStateTask == null || regionizedWorldData.lastAsyncSpawnStateTask.isDone()){
-+                        regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.supplyAsync(() -> NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, null, true),RegionizedWorldData.ASYNC_MOB_SPAWNING_EXECUTOR);
-+                    }
-+                } else {
-+                    if (regionizedWorldData.lastAsyncSpawnStateTask == null || regionizedWorldData.lastAsyncSpawnStateTask.isDone()){
-+                        regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.supplyAsync(() -> NaturalSpawner.createState(l, regionizedWorldData.getLoadedEntities(), this::getFullChunk, !this.level.paperConfig().entities.spawning.perPlayerMobSpawns ? new LocalMobCapCalculator(this.chunkMap) : null, false), RegionizedWorldData.ASYNC_MOB_SPAWNING_EXECUTOR);
++                        if (regionizedWorldData.lastAsyncSpawnStateTask == null || regionizedWorldData.lastAsyncSpawnStateTask.isDone()){
++                            regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.supplyAsync(() -> NaturalSpawner.createState(naturalSpawnChunkCount, regionizedWorldData.getLoadedEntities(), this::getFullChunk, null, true),RegionizedWorldData.ASYNC_MOB_SPAWNING_EXECUTOR);
++                        }
++                    } else {
++                        if (regionizedWorldData.lastAsyncSpawnStateTask == null || regionizedWorldData.lastAsyncSpawnStateTask.isDone()){
++                            regionizedWorldData.lastAsyncSpawnStateTask = CompletableFuture.supplyAsync(() -> NaturalSpawner.createState(naturalSpawnChunkCount, regionizedWorldData.getLoadedEntities(), this::getFullChunk, !this.level.paperConfig().entities.spawning.perPlayerMobSpawns ? new LocalMobCapCalculator(this.chunkMap) : null, false), RegionizedWorldData.ASYNC_MOB_SPAWNING_EXECUTOR);
++                        }
 +                    }
 +                }
-+            }
-+            //Luminol end
-         }
-     }
++                //Luminol end
+             }
  
+             gameprofilerfiller.popPush("broadcast");
 @@ -837,7 +880,7 @@ public class ServerChunkCache extends ChunkSource {
      @VisibleForDebug
      public NaturalSpawner.SpawnState getLastSpawnState() {
