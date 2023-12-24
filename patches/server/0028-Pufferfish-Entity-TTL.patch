@@ -57,10 +57,10 @@ index de0855656ad3882b182aa5674fd0117288268e71..d0c0b4daec59f23a989a8b8f66ea3c70
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 030c9d2e2c203375a3cc88da1c2e08fb23dcf60a..ec7b7923ebdfb07c5a07e5e58aa3d66ac269c225 100644
+index e58c5c89c094e106511394ac184d4372942dc0a6..ee3f366bc8df9e57a90f9dc7f85b7939a9c410c0 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -803,6 +803,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -802,6 +802,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
  
      public void tick() {

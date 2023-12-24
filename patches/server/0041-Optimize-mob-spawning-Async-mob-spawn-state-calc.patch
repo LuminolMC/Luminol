@@ -315,7 +315,7 @@ index 0000000000000000000000000000000000000000..88d5b188ccfb17fe1ae4b08f32565f27
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..712c28bb4842ca0f885a66fe35558db538245de9 100644
+index 88db5ada13329a5fe0d0fb652d2c8a8d561649e8..d249827d121144e8b00ce174ffcdd2bdb34c6a97 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 @@ -17,6 +17,9 @@ import java.util.function.BooleanSupplier;
@@ -328,7 +328,7 @@ index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..712c28bb4842ca0f885a66fe35558db5
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.SectionPos;
-@@ -519,32 +522,38 @@ public class ServerChunkCache extends ChunkSource {
+@@ -486,32 +489,38 @@ public class ServerChunkCache extends ChunkSource {
                  int k = this.distanceManager.getNaturalSpawnChunkCount();
                  // Paper start - per player mob spawning
                  int naturalSpawnChunkCount = k;
@@ -384,7 +384,7 @@ index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..712c28bb4842ca0f885a66fe35558db5
                  gameprofilerfiller.popPush("spawnAndTick");
                  boolean flag = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && !this.level.getLocalPlayers().isEmpty(); // CraftBukkit // Folia - region threadin
  
-@@ -637,7 +646,11 @@ public class ServerChunkCache extends ChunkSource {
+@@ -606,7 +615,11 @@ public class ServerChunkCache extends ChunkSource {
                          chunk1.incrementInhabitedTime(j);
                          if (spawn && flag && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkcoordintpair)) { // Spigot // Paper - optimise chunk tick iteration
                              ++spawnChunkCount; // Folia - profiler
@@ -397,7 +397,7 @@ index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..712c28bb4842ca0f885a66fe35558db5
                          }
  
                          if (true || this.level.shouldTickBlocksAt(chunkcoordintpair.toLong())) { // Paper - optimise chunk tick iteration
-@@ -667,6 +680,36 @@ public class ServerChunkCache extends ChunkSource {
+@@ -636,6 +649,36 @@ public class ServerChunkCache extends ChunkSource {
                      } // Paper - timings
                      } finally { profiler.stopTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.MISC_MOB_SPAWN_TICK); } // Folia - profiler
                  }
@@ -434,7 +434,7 @@ index d248c0492a34c11fb96c9dd6f0a3d180ee846c51..712c28bb4842ca0f885a66fe35558db5
              }
  
              gameprofilerfiller.popPush("broadcast");
-@@ -837,7 +880,7 @@ public class ServerChunkCache extends ChunkSource {
+@@ -806,7 +849,7 @@ public class ServerChunkCache extends ChunkSource {
      @VisibleForDebug
      public NaturalSpawner.SpawnState getLastSpawnState() {
          io.papermc.paper.threadedregions.RegionizedWorldData worldData = this.level.getCurrentWorldData(); // Folia - region threading
