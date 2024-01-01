@@ -1,31 +1,9 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 24 Dec 2023 08:55:39 +0800
+From: MrHua269 <novau233@163.com>
+Date: Mon, 1 Jan 2024 08:11:33 +0000
 Subject: [PATCH] Add config for chat sign
 
 
-diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-index 772e3a864e0e70288a1c010d8bbb809d34d16a41..68bd66aad880c81d1f8eaf88525597c878350961 100644
---- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-+++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-@@ -15,6 +15,8 @@ import java.util.Objects;
- import java.util.Set;
- import java.util.concurrent.ExecutionException;
- import java.util.function.Function;
-+
-+import me.earthme.luminol.LuminolConfig;
- import net.kyori.adventure.audience.Audience;
- import net.kyori.adventure.audience.ForwardingAudience;
- import net.kyori.adventure.key.Key;
-@@ -355,7 +357,7 @@ public final class ChatProcessor {
- 
-         private void sendToServer(final ChatType.Bound chatType, final @Nullable Function<Audience, net.minecraft.network.chat.Component> msgFunction) {
-             final PlayerChatMessage toConsoleMessage = msgFunction == null ? ChatProcessor.this.message : ChatProcessor.this.message.withUnsignedContent(msgFunction.apply(ChatProcessor.this.server.console));
--            ChatProcessor.this.server.logChatMessage(toConsoleMessage.decoratedContent(), chatType, ChatProcessor.this.server.getPlayerList().verifyChatTrusted(toConsoleMessage) ? null : "Not Secure");
-+            ChatProcessor.this.server.logChatMessage(toConsoleMessage.decoratedContent(), chatType, ChatProcessor.this.server.getPlayerList().verifyChatTrusted(toConsoleMessage) || LuminolConfig.disableChatSign ? null : "Not Secure"); //Luminol - Add config for chat sign
-         }
-     }
- 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
 index a49da370c91211d4e2274f72d62c911a1912296a..8d1ce8eae252fcf05b6a62d2dc467d6d503d3df4 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
@@ -78,7 +56,7 @@ index 72a8aa676836fcb3b4578689d16af65e18f55bbe..04653d58f2493d796e61bc97f0481cb6
      @Nullable
      public MessageSignature get(String argumentName) {
 diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
-index b13bc90b28b02f5e80d935bfcba727f92c5e4c4f..a14bb05e75ce9e10141854ebe3d7f1ed5045a3b1 100644
+index a5bcad412fb1ac3b6a3eee3f4618dc6c1ca66936..dcf5dae7d31a3e2271ba576d7e95817210bc7fd6 100644
 --- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 +++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 @@ -48,6 +48,8 @@ import java.util.function.Function;
@@ -99,8 +77,8 @@ index b13bc90b28b02f5e80d935bfcba727f92c5e4c4f..a14bb05e75ce9e10141854ebe3d7f1ed
  public class FriendlyByteBuf extends ByteBuf {
  
      public static final int DEFAULT_NBT_QUOTA = 2097152;
-@@ -138,6 +142,17 @@ public class FriendlyByteBuf extends ByteBuf {
-     public <T> void writeJsonWithCodec(Codec<T> codec, T value) {
+@@ -143,6 +147,17 @@ public class FriendlyByteBuf extends ByteBuf {
+         // Paper end - Adventure
          DataResult<JsonElement> dataresult = codec.encodeStart(JsonOps.INSTANCE, value);
  
 +
@@ -116,4 +94,4 @@ index b13bc90b28b02f5e80d935bfcba727f92c5e4c4f..a14bb05e75ce9e10141854ebe3d7f1ed
 +
          this.writeUtf(FriendlyByteBuf.GSON.toJson((JsonElement) Util.getOrThrow(dataresult, (s) -> {
              return new EncoderException("Failed to encode: " + s + " " + value);
-         })));
+         })), maxLength); // Paper - Adventure

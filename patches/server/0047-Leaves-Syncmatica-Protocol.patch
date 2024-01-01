@@ -29,7 +29,7 @@ index d19f423debbeaedf955977c02aaf5f8e0016bea3..875afb57c7f0c4e3d0bc752d86a83081
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 645ab5d149a207bed00357fe0aaf070d4b27d15a..43d671adfe996b18e75e1672d1b0196ec9861238 100644
+index de25bf4893ac741fe687ab9bb0aa975db8686400..e82f4fa9a56840f4698865f41ada62fb3d5444dc 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -307,6 +307,7 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -40,7 +40,7 @@ index 645ab5d149a207bed00357fe0aaf070d4b27d15a..43d671adfe996b18e75e1672d1b0196e
      }
  
      // CraftBukkit start - add fields
-@@ -333,6 +334,8 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -332,6 +333,8 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
      public final Long disconnectTicketId = Long.valueOf(DISCONNECT_TICKET_ID_GENERATOR.getAndIncrement());
      // Folia end - region threading
  

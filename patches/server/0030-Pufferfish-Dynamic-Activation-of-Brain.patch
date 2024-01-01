@@ -84,10 +84,10 @@ index 11c1a367fbc25cb63738a00ad93fb0b0b3500e7d..4f6af1fa55047e7be9e57c1dd1c60e9d
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 1c39d01d46522d7120653c0437e6b0d3fc76ce3e..d4fbc4537f614c803fa9c4c13077a7870c3c692f 100644
+index 211ad42151b9c3949b1c2f2d306ac1d9f88d2c9c..c98c9d6b73973304d3a75b4bc1f6fc2518319619 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -999,6 +999,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1004,6 +1004,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
              this.timings.entityTick.startTiming(); // Spigot
              profiler.startTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.ENTITY_TICK); try { // Folia - profiler
              regionizedWorldData.forEachTickingEntity((entity) -> { // Folia - regionised ticking
@@ -124,7 +124,7 @@ index 09923fb6424754e98a91e9ee75bc0d49daa3092c..133fbfd57b8c2bbf4b4abeff96b42d6a
      private String descriptionId;
      @Nullable
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index b53435bc8303924cbfef0453dc2cc71a7168b2d8..e891477f946265b40cbfbbb7b66049837ad03105 100644
+index 08445ce85630d9716baec9f806b1bc031ea5c5c1..db5977b819ec1bc0eb5c24f4dfc3a6cc135e4b68 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -235,10 +235,10 @@ public abstract class Mob extends LivingEntity implements Targeting {

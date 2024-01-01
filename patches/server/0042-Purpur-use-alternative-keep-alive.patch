@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 24 Dec 2023 11:51:17 +0800
+From: MrHua269 <novau233@163.com>
+Date: Mon, 1 Jan 2024 08:13:11 +0000
 Subject: [PATCH] Purpur use alternative keep alive
 
 
@@ -25,7 +25,7 @@ index 6edafcdbc188cd6c78e4c4237363e41d927a665e..a62680768068b611fe723fedeb617d42
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index ce200192b4dddfc9b2d3c355838596b7deef1c69..070caa71212642b8811586fc2ec720b629d365f5 100644
+index caa60d7ec56fa5da67f756297295296c2ff7c6d9..f2ea3bf616b0f4ea8712fc492698dd3ac2020f61 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -51,6 +51,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
@@ -35,8 +35,8 @@ index ce200192b4dddfc9b2d3c355838596b7deef1c69..070caa71212642b8811586fc2ec720b6
 +    private it.unimi.dsi.fastutil.longs.LongList keepAlives = new it.unimi.dsi.fastutil.longs.LongArrayList(); // Purpur
      private int latency;
      private volatile boolean suspendFlushingOnServerThread = false;
-     private static final long KEEPALIVE_LIMIT = Long.getLong("paper.playerconnection.keepalive", 30) * 1000; // Paper - provide property to set keepalive limit
-@@ -91,6 +92,16 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+     public final java.util.Map<java.util.UUID, net.kyori.adventure.resource.ResourcePackCallback> packCallbacks = new java.util.concurrent.ConcurrentHashMap<>(); // Paper - adventure resource pack callbacks
+@@ -92,6 +93,16 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
  
      @Override
      public void handleKeepAlive(ServerboundKeepAlivePacket packet) {
@@ -53,7 +53,7 @@ index ce200192b4dddfc9b2d3c355838596b7deef1c69..070caa71212642b8811586fc2ec720b6
          //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - This shouldn't be on the main thread
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
-@@ -197,6 +208,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -210,6 +221,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
          long currentTime = Util.getMillis();
          long elapsedTime = currentTime - this.keepAliveTime;
  
