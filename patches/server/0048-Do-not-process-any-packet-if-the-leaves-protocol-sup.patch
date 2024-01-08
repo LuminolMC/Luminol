@@ -1,0 +1,74 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Mon, 8 Jan 2024 12:19:29 +0000
+Subject: [PATCH] Do not process any packet if the leaves protocol supports are
+ disabled
+
+
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/PcaSyncProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/PcaSyncProtocol.java
+index ebd28033ddf0fe6a354585dc2818a9b481d90ed4..33c7221a1f33cdb81dfac92fc3332f92cf3cd2d9 100644
+--- a/src/main/java/top/leavesmc/leaves/protocol/PcaSyncProtocol.java
++++ b/src/main/java/top/leavesmc/leaves/protocol/PcaSyncProtocol.java
+@@ -1,5 +1,6 @@
+ package top.leavesmc.leaves.protocol;
+ 
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.FriendlyByteBuf;
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java
+index de92ebdf9d51a4f9a58a7650b09f070e51710ef0..b309963dcf41f16a7b53e4cc2816975523ccba55 100644
+--- a/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java
++++ b/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java
+@@ -35,6 +35,9 @@ public class MsptSyncProtocol {
+ 
+     @ProtocolHandler.Init
+     public static void init() {
++        if (!LuminolConfig.msptSyncProtocol){
++            return;
++        }
+         BladerenProtocol.registerFeature("mspt_sync", (player, compoundTag) -> {
+             if (compoundTag.getString("Value").equals("true"))  {
+                 onPlayerSubmit(player);
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java b/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java
+index fc229f23076147304754a267bcc345cc836b648b..6325f6441e28d915514e6b0ee9b450610e99b2c2 100644
+--- a/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java
++++ b/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java
+@@ -2,6 +2,7 @@ package top.leavesmc.leaves.protocol.syncmatica;
+ 
+ import com.mojang.authlib.GameProfile;
+ import io.netty.buffer.Unpooled;
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.network.chat.Component;
+@@ -68,6 +69,9 @@ public class CommunicationManager {
+ 
+     @ProtocolHandler.PlayerJoin
+     public static void onPlayerJoin(ServerPlayer player) {
++        if (!LuminolConfig.syncmaticaProtocol){
++            return;
++        }
+         final ExchangeTarget newPlayer = player.connection.exchangeTarget;
+         final VersionHandshakeServer hi = new VersionHandshakeServer(newPlayer);
+         playerMap.put(newPlayer, player);
+@@ -78,6 +82,9 @@ public class CommunicationManager {
+ 
+     @ProtocolHandler.PlayerLeave
+     public static void onPlayerLeave(ServerPlayer player) {
++        if (!LuminolConfig.syncmaticaProtocol){
++            return;
++        }
+         final ExchangeTarget oldPlayer = player.connection.exchangeTarget;
+         final Collection<Exchange> potentialMessageTarget = oldPlayer.getExchanges();
+         if (potentialMessageTarget != null) {
+@@ -92,6 +99,9 @@ public class CommunicationManager {
+ 
+     @ProtocolHandler.PayloadReceiver(payload = LeavesProtocolManager.LeavesPayload.class, ignoreId = true)
+     public static void onPacketGet(ServerPlayer player, LeavesProtocolManager.LeavesPayload payload) {
++        if (!LuminolConfig.syncmaticaProtocol){
++            return;
++        }
+         onPacket(player.connection.exchangeTarget, payload.id(), payload.data());
+     }
+ 
