@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 16:00:17 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sun, 14 Jan 2024 00:40:35 +0000
 Subject: [PATCH] Pufferfish Cache climbing check for activation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index eaee2eaa21651365b708b09a8377a7a0dfb4a6b7..3bb40f6bd581113fda36df2ad73f95899c012a44 100644
+index 1c8f5e9741181482976912c808817a4bc896936e..c5d038a00d2fcc17ba813c14e355729c4529dd74 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -309,7 +309,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
@@ -18,7 +18,7 @@ index eaee2eaa21651365b708b09a8377a7a0dfb4a6b7..3bb40f6bd581113fda36df2ad73f9589
      private Vec3 deltaMovement;
      private float yRot;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 15e441ba4d5286e7bf677f7c0ad5fb8f62437d72..d578a2235e9ee66c030906dd5accc18384805d09 100644
+index abf455d165004240e0b5fd96543f7da7c520e729..23ee7bdb337ee5e13ebe28f890c230a09b15fcf6 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -142,7 +142,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
@@ -51,15 +51,15 @@ index 15e441ba4d5286e7bf677f7c0ad5fb8f62437d72..d578a2235e9ee66c030906dd5accc183
          if (this.isSpectator()) {
              return false;
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index d88988200016c1a3cc76c017dfb7deabf6fc17af..22daed525b023998a05884db603e2c7385ce0873 100644
+index ea605188aad5476e8e473bc9c6c2a7c29eeed136..2445509e34717a0dfb28d7d75ec1b8a1b1c1366b 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
 @@ -305,7 +305,7 @@ public class ActivationRange
          if ( entity instanceof LivingEntity )
          {
              LivingEntity living = (LivingEntity) entity;
--            if ( living.onClimbable() || living.jumping || living.hurtTime > 0 || living.activeEffects.size() > 0 ) // Paper
-+            if ( living.onClimableCached() || living.jumping || living.hurtTime > 0 || living.activeEffects.size() > 0 ) // Paper // Pufferfish - use cached
+-            if ( living.onClimbable() || living.jumping || living.hurtTime > 0 || living.activeEffects.size() > 0 || living.isFreezing()) // Paper
++            if ( living.onClimableCached() || living.jumping || living.hurtTime > 0 || living.activeEffects.size() > 0 || living.isFreezing()) // Paper // Pufferfish - use cached
              {
                  return 1; // Paper
              }

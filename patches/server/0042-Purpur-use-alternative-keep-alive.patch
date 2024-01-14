@@ -25,7 +25,7 @@ index 6edafcdbc188cd6c78e4c4237363e41d927a665e..a62680768068b611fe723fedeb617d42
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index caa60d7ec56fa5da67f756297295296c2ff7c6d9..f2ea3bf616b0f4ea8712fc492698dd3ac2020f61 100644
+index 062cc713ef5239f934139bb9e4071cf958e57e32..771f9735805c21ad5b3fe40c641ecc102c92637a 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -51,6 +51,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
@@ -36,7 +36,7 @@ index caa60d7ec56fa5da67f756297295296c2ff7c6d9..f2ea3bf616b0f4ea8712fc492698dd3a
      private int latency;
      private volatile boolean suspendFlushingOnServerThread = false;
      public final java.util.Map<java.util.UUID, net.kyori.adventure.resource.ResourcePackCallback> packCallbacks = new java.util.concurrent.ConcurrentHashMap<>(); // Paper - adventure resource pack callbacks
-@@ -92,6 +93,16 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -103,6 +104,16 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
  
      @Override
      public void handleKeepAlive(ServerboundKeepAlivePacket packet) {
@@ -53,7 +53,7 @@ index caa60d7ec56fa5da67f756297295296c2ff7c6d9..f2ea3bf616b0f4ea8712fc492698dd3a
          //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - This shouldn't be on the main thread
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
-@@ -210,6 +221,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -221,6 +232,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
          long currentTime = Util.getMillis();
          long elapsedTime = currentTime - this.keepAliveTime;
  

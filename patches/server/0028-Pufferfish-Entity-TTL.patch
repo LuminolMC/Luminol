@@ -57,10 +57,10 @@ index de0855656ad3882b182aa5674fd0117288268e71..d0c0b4daec59f23a989a8b8f66ea3c70
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index e58c5c89c094e106511394ac184d4372942dc0a6..ee3f366bc8df9e57a90f9dc7f85b7939a9c410c0 100644
+index abf7fc1e7a05a741e9258af014411d4ac5e6626c..453b0bee24d4c3e5d673463a55a192d28f18c0a8 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -802,6 +802,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -806,6 +806,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
  
      public void tick() {
@@ -74,7 +74,7 @@ index e58c5c89c094e106511394ac184d4372942dc0a6..ee3f366bc8df9e57a90f9dc7f85b7939
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/EntityType.java b/src/main/java/net/minecraft/world/entity/EntityType.java
-index a3a6c10f5b4157062a8a8d5ee4638c4e9d6fcf62..09923fb6424754e98a91e9ee75bc0d49daa3092c 100644
+index d37a7f2ab6a8041d3bfeed600d15f77d253140f6..cb850c18ca101d5b7c80746fca333d31cc770407 100644
 --- a/src/main/java/net/minecraft/world/entity/EntityType.java
 +++ b/src/main/java/net/minecraft/world/entity/EntityType.java
 @@ -313,6 +313,7 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
