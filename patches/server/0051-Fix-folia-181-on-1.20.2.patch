@@ -1,0 +1,85 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sun, 21 Jan 2024 00:27:17 +0000
+Subject: [PATCH] Fix folia #181 on 1.20.2
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 875afb57c7f0c4e3d0bc752d86a8308147eee31a..e91061b96701bc46f5a6ed8315eb6c8da8a74f3a 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -36,6 +36,7 @@ public class LuminolConfig {
+     public static boolean disableOfflineModeWarning = false;
+     public static boolean fixSpectorTeleportFolia = false;
+     public static boolean disableRootUserWarning = false;
++    public static boolean fixDoubleEntitySchedulerRetring = false;
+ 
+     public static boolean safeTeleportation = true;
+     public static boolean enableSandDuping = false;
+@@ -153,6 +154,7 @@ public class LuminolConfig {
+         fixSpectorTeleportFolia = get("misc.fix_folia_spector_teleport",fixSpectorTeleportFolia);
+         disableOfflineModeWarning = get("misc.disable_offline_mode_warning",disableOfflineModeWarning);
+         disableRootUserWarning = get("misc.disable_root_user_warning",disableRootUserWarning);
++        fixDoubleEntitySchedulerRetring = get("misc.fix_folia_double_entity_scheduler_retring",fixDoubleEntitySchedulerRetring,"Fix https://github.com/PaperMC/Folia/pull/181 on Folia");
+ 
+         if (tpsbarEnabled){
+             initTpsbar();
+diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+index e1ace2ad411b8d54c56660b41e774a1c998b3ac3..5303d92484b4afdc697c79eecb71d5f24d670aa4 100644
+--- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+@@ -4,6 +4,8 @@ import com.mojang.authlib.GameProfile;
+ import com.mojang.logging.LogUtils;
+ import java.util.Objects;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.CrashReport;
+ import net.minecraft.CrashReportCategory;
+@@ -69,6 +71,9 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+     protected final ServerPlayer player;
+     protected final org.bukkit.craftbukkit.CraftServer cserver;
+     public boolean processedDisconnect;
++    //Luminol start - Fix folia #181
++    private boolean handledDisconnect = false;
++    //Luminol end
+ 
+     public CraftPlayer getCraftPlayer() {
+         return (this.player == null) ? null : (CraftPlayer) this.player.getBukkitEntity();
+@@ -86,6 +91,13 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+             ServerCommonPacketListenerImpl.LOGGER.info("Stopping singleplayer server as player logged out");
+             this.server.halt(false);
+         }
++        //Luminol start - Fix folia #181
++        if (this.handledDisconnect && LuminolConfig.fixDoubleEntitySchedulerRetring){
++            return;
++        }
++        this.handledDisconnect = true;
++        //Luminol end
++
+         this.player.getBukkitEntity().taskScheduler.retire(); // Folia - region threading
+ 
+     }
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 59cd97446b9dace1a887e35761bc94c88348256a..c4652f250e22f33e8505183b4050e08aedf9245c 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -29,6 +29,8 @@ import java.util.function.UnaryOperator;
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.Util;
+@@ -337,7 +339,7 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+     public void tick() {
+         // Folia start - region threading
+         this.keepConnectionAlive();
+-        if (this.player.wonGame) {
++        if ((LuminolConfig.fixDoubleEntitySchedulerRetring && this.processedDisconnect) || this.player.wonGame) { //Luminol - Fix folia #181
+             return;
+         }
+         // Folia end - region threading

@@ -3,19 +3,7 @@ From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
 Date: Sun, 17 Dec 2023 21:01:59 +0800
 Subject: [PATCH] Leaves PCA sync protocol
 
-diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
-index 2c3e1b420303a3c3a9315983fbc7e47423f7d9e4..29a8331e498eba333283b41c3e6a87a7ad97747c 100644
---- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
-+++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
-@@ -45,7 +45,7 @@ import org.bukkit.scheduler.BukkitWorker;
-  */
- public class CraftScheduler implements BukkitScheduler {
 
--    static Plugin MINECRAFT = new MinecraftInternalPlugin();
-+    public static Plugin MINECRAFT = new MinecraftInternalPlugin();
-     /**
-      * The start ID for the counter.
-      */
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
 index a62680768068b611fe723fedeb617d42c643e59e..cfe9a8eb705039ee7e2dc9262e1355c4b0f664bb 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
@@ -316,6 +304,19 @@ index 1fa22445a4ecc8c08dbcf0cc6bd39dc5003604c4..c1492fce06cdc00a8e82977f0c474a54
      @Override
      public int[] getSlotsForFace(Direction side) {
          return ShulkerBoxBlockEntity.SLOTS;
+diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
+index b23e43f7ac22bc106a0bcde4a8bca9ecba1a9ae4..08bf4f13e0ee6698b18a6946cb78adb4ae65c852 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
++++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
+@@ -45,7 +45,7 @@ import org.bukkit.scheduler.BukkitWorker;
+  */
+ public class CraftScheduler implements BukkitScheduler {
+ 
+-    static Plugin MINECRAFT = new MinecraftInternalPlugin();
++    public static Plugin MINECRAFT = new MinecraftInternalPlugin();
+     /**
+      * The start ID for the counter.
+      */
 diff --git a/src/main/java/top/leavesmc/leaves/protocol/PcaSyncProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/PcaSyncProtocol.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..ebd28033ddf0fe6a354585dc2818a9b481d90ed4
