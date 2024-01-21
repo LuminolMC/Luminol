@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sun, 21 Jan 2024 11:49:38 +0000
+Subject: [PATCH] Piston fixes from molean server
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 3a5c8f1f9a8173777b00d43c15e8e313526d3e28..9bd6d4881280196a437161a9375ac8ee5e0f9231 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -1428,7 +1428,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+         if (movement.lengthSqr() <= 1.0E-7D) {
+             return movement;
+         } else {
+-            long i = this.level().getGameTime();
++            long i = this.level().getRedstoneGameTime(); //Luminol - Piston fixes from molean server
+ 
+             if (i != this.pistonDeltasGameTime) {
+                 Arrays.fill(this.pistonDeltas, 0.0D);
+diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
+index cdcf11fb9e4690d74b30fe0ade842d6574464624..141b806493f25854fc49f90816cd22e7d5d74e6f 100644
+--- a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
+@@ -139,7 +139,7 @@ public class PistonBaseBlock extends DirectionalBlock {
+                 if (tileentity instanceof PistonMovingBlockEntity) {
+                     PistonMovingBlockEntity tileentitypiston = (PistonMovingBlockEntity) tileentity;
+ 
+-                    if (tileentitypiston.isExtending() && (tileentitypiston.getProgress(0.0F) < 0.5F || world.getGameTime() == tileentitypiston.getLastTicked() || ((ServerLevel) world).isHandlingTick())) {
++                    if (tileentitypiston.isExtending() && (tileentitypiston.getProgress(0.0F) < 0.5F || world.getRedstoneGameTime() == tileentitypiston.getLastTicked() || ((ServerLevel) world).isHandlingTick())) {  //Luminol - Piston fixes from molean server
+                         b0 = 2;
+                     }
+                 }
+diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java b/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
+index a595abb43853cd4c3f5886a83527c6cbe4a3e8f7..2284dfcb09d9a7c6f670e5266a3f2856c2d40e8d 100644
+--- a/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
+@@ -277,7 +277,7 @@ public class PistonMovingBlockEntity extends BlockEntity {
+     }
+ 
+     public static void tick(Level world, BlockPos pos, BlockState state, PistonMovingBlockEntity blockEntity) {
+-        blockEntity.lastTicked = world.getGameTime();
++        blockEntity.lastTicked = world.getRedstoneGameTime(); //Luminol - Piston fixes from molean server
+         blockEntity.progressO = blockEntity.progress;
+         if (blockEntity.progressO >= 1.0F) {
+             if (world.isClientSide && blockEntity.deathTicks < 5) {
