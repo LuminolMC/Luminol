@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sat, 23 Dec 2023 22:02:49 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 07:36:28 +0000
 Subject: [PATCH] Added empty luminol config
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index e8421c841d20855eaa262b55115584f14d0f25cf..6adb602bc83c1c4f57a10a4391db901463e565d4 100644
+index b9c5ef4d15aa97a380419912e3ee09d094ae752e..83660616a26d989ce441e17acab103ab166304d8 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -19,6 +19,7 @@ dependencies {
@@ -122,7 +122,7 @@ index 0000000000000000000000000000000000000000..1f9ff0fc33fa36c90fc4cbbd21b7b790
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 12af517a7dd8c0bb2bc55ab3eb0e68a074011bb5..f3c28b5dff487813a61ebf531c2ee77e4d2071cc 100644
+index 98ea5cecac2ab647acfb4d8bbea8ada9872cc4cd..e5eeb361fc29c831a76f87c60896b5dd23f58736 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -19,6 +19,8 @@ import java.util.Locale;
@@ -134,16 +134,16 @@ index 12af517a7dd8c0bb2bc55ab3eb0e68a074011bb5..f3c28b5dff487813a61ebf531c2ee77e
  import net.minecraft.DefaultUncaughtExceptionHandler;
  import net.minecraft.DefaultUncaughtExceptionHandlerWithName;
  import net.minecraft.SharedConstants;
-@@ -206,6 +208,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -205,6 +207,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         org.spigotmc.SpigotConfig.registerCommands();
          // Spigot end
-         // Paper start
          io.papermc.paper.util.ObfHelper.INSTANCE.getClass(); // Paper - load mappings for stacktrace deobf and etc.
 +        LuminolConfig.init(); //Luminol
-         paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
-         paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
-         // Paper start - moved up to right after PlayerList creation but before file load/save
+         // Paper start - initialize global and world-defaults configuration
+         this.paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
+         this.paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index fdb5237935a13322d8e7332b199308513b9f8e9b..466f7f7d6ae5b0f4d2ce5f61a45e03e2d50fc4ec 100644
+index 653728709b275fee822e55a511e67ec11fdc48f7..daf8c44ec34fad2330d23e9f32c26ed67597bf0c 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -38,6 +38,8 @@ import java.util.stream.Collectors;
@@ -155,7 +155,7 @@ index fdb5237935a13322d8e7332b199308513b9f8e9b..466f7f7d6ae5b0f4d2ce5f61a45e03e2
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.Util;
-@@ -773,6 +775,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -772,6 +774,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
      }
      // Folia end - region threading
  
@@ -164,7 +164,7 @@ index fdb5237935a13322d8e7332b199308513b9f8e9b..466f7f7d6ae5b0f4d2ce5f61a45e03e2
      // Add env and gen to constructor, IWorldDataServer -> WorldDataServer
      public ServerLevel(MinecraftServer minecraftserver, Executor executor, LevelStorageSource.LevelStorageAccess convertable_conversionsession, PrimaryLevelData iworlddataserver, ResourceKey<Level> resourcekey, LevelStem worlddimension, ChunkProgressListener worldloadlistener, boolean flag, long i, List<CustomSpawner> list, boolean flag1, @Nullable RandomSequences randomsequences, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
          // IRegistryCustom.Dimension iregistrycustom_dimension = minecraftserver.registryAccess(); // CraftBukkit - decompile error
-@@ -857,6 +861,12 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -856,6 +860,12 @@ public class ServerLevel extends Level implements WorldGenLevel {
          this.chunkTaskScheduler = new io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler(this, io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.workerThreads); // Paper - rewrite chunk system
          this.entityLookup = new io.papermc.paper.chunk.system.entity.EntityLookup(this, new EntityCallbacks()); // Paper - rewrite chunk system
          this.updateTickData(); // Folia - region threading - make sure it is initialised before ticked

@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 24 Dec 2023 11:52:22 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 13:26:53 +0000
 Subject: [PATCH] Leaves Protocol Core
 
 
@@ -36,7 +36,7 @@ index af86f752c33a2990405fea058b7c41c437ba9d46..bada9fae1e7178162429e1f5a1608b9c
      }
  
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index 771f9735805c21ad5b3fe40c641ecc102c92637a..45fe935f424f46900fd2b7bbc79f90097a1d16f5 100644
+index 87922e561b4949e7b4ea124f3ecdcd94792825a3..d459013788b077aacd6acd527b1cb39685d5303f 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -139,6 +139,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
@@ -56,7 +56,7 @@ index 771f9735805c21ad5b3fe40c641ecc102c92637a..45fe935f424f46900fd2b7bbc79f9009
              } catch (Exception ex) {
                  ServerGamePacketListenerImpl.LOGGER.error("Couldn\'t register custom payload", ex);
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index ded539dd20a2d037fa5d175be06d59dd76660ffe..a7b75e8dca72be03153fcd59e25e10238bb65560 100644
+index 5d4876fc53eb12ee8e4a0159177e05cee847f077..8d776e633f6b61b06c3ed1dcfcd86141a9feab8c 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -433,6 +433,8 @@ public abstract class PlayerList {
@@ -73,11 +73,11 @@ index ded539dd20a2d037fa5d175be06d59dd76660ffe..a7b75e8dca72be03153fcd59e25e1023
      }
      public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer, net.kyori.adventure.text.Component leaveMessage) {
 +        top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handlePlayerLeave(entityplayer); // Leaves - protocol
-         // Paper end
+         // Paper end - Fix kick event leave message not being sent
          ServerLevel worldserver = entityplayer.serverLevel();
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 75adb89ba0726781fc80bc244a5bf75dbf6b2a24..d090d3e7240091b18afb9f56fb1318bc10ec25cf 100644
+index 1d8681ee2c71c06a596a6eff650753a358de22c1..39099a6fcb431faf329fff2774988cf64189b43f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -469,6 +469,7 @@ public final class CraftServer implements Server {
@@ -88,7 +88,7 @@ index 75adb89ba0726781fc80bc244a5bf75dbf6b2a24..d090d3e7240091b18afb9f56fb1318bc
      }
  
      public boolean getCommandBlockOverride(String command) {
-@@ -1110,6 +1111,7 @@ public final class CraftServer implements Server {
+@@ -1112,6 +1113,7 @@ public final class CraftServer implements Server {
          io.papermc.paper.command.PaperCommands.registerCommands(this.console); // Paper
          this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
          this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");

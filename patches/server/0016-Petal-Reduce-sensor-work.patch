@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 24 Dec 2023 09:15:02 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 11:37:04 +0000
 Subject: [PATCH] Petal Reduce sensor work
 
 
@@ -27,7 +27,7 @@ index 0657fce8aabb956a400b3cead53c28ef52e67fe9..c3a481cb7bea0619b1af0e3203e9d885
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 51628bf76f80c6ad9d7feb127377f004adce9669..b53435bc8303924cbfef0453dc2cc71a7168b2d8 100644
+index 4e770f3b781be4c282d1e81c327fb2fb06b5af1f..f2526900699319f12aa8efa3da19537296f8897a 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -10,6 +10,8 @@ import java.util.Optional;

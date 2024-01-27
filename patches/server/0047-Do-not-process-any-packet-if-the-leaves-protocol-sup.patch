@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Mon, 8 Jan 2024 12:19:29 +0000
+Date: Sat, 27 Jan 2024 13:38:56 +0000
 Subject: [PATCH] Do not process any packet if the leaves protocol supports are
  disabled
 
@@ -31,7 +31,7 @@ index de92ebdf9d51a4f9a58a7650b09f070e51710ef0..b309963dcf41f16a7b53e4cc28169755
              if (compoundTag.getString("Value").equals("true"))  {
                  onPlayerSubmit(player);
 diff --git a/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java b/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java
-index fc229f23076147304754a267bcc345cc836b648b..6325f6441e28d915514e6b0ee9b450610e99b2c2 100644
+index 4c2aa74795b0883f280eaa721a83ea6891ffdab2..19277aa7b9bd16b3e70d581d38a4c28e60165f65 100644
 --- a/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java
 +++ b/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java
 @@ -2,6 +2,7 @@ package top.leavesmc.leaves.protocol.syncmatica;
@@ -64,7 +64,7 @@ index fc229f23076147304754a267bcc345cc836b648b..6325f6441e28d915514e6b0ee9b45061
          if (potentialMessageTarget != null) {
 @@ -92,6 +99,9 @@ public class CommunicationManager {
  
-     @ProtocolHandler.PayloadReceiver(payload = LeavesProtocolManager.LeavesPayload.class, ignoreId = true)
+     @ProtocolHandler.PayloadReceiver(payload = LeavesProtocolManager.LeavesPayload.class, ignoreId = true, payloadId = "")
      public static void onPacketGet(ServerPlayer player, LeavesProtocolManager.LeavesPayload payload) {
 +        if (!LuminolConfig.syncmaticaProtocol){
 +            return;

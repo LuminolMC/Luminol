@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Thu, 21 Dec 2023 19:50:41 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 13:31:02 +0000
 Subject: [PATCH] Leaves Bladeren protocol
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index cfe9a8eb705039ee7e2dc9262e1355c4b0f664bb..a0fd4fec133617893487586fd52e3a3a864871b4 100644
+index 2589f04a33b99f812cfc9b471398d5fd4afb7012..277623f29ca4a00432d70f40612f3ae247f09144 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -68,6 +68,7 @@ public class LuminolConfig {
+@@ -67,6 +67,7 @@ public class LuminolConfig {
  
      public static boolean pcaSyncProtocol = false;
      public static String pcaSyncPlayerEntity = "NOBODY";
@@ -16,7 +16,7 @@ index cfe9a8eb705039ee7e2dc9262e1355c4b0f664bb..a0fd4fec133617893487586fd52e3a3a
  
  
      public static void init() throws IOException {
-@@ -201,6 +202,7 @@ public class LuminolConfig {
+@@ -199,6 +200,7 @@ public class LuminolConfig {
  
          pcaSyncProtocol = get("gameplay.enable_pca_sync_protocol",pcaSyncProtocol);
          pcaSyncPlayerEntity = get("gameplay.pca_sync_player_entity",pcaSyncPlayerEntity,"Available values: NOBODY,EVERYBODY,OPS,OPS_AND_SELF");

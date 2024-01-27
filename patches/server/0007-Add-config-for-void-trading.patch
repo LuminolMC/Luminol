@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 24 Dec 2023 08:20:29 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 07:45:55 +0000
 Subject: [PATCH] Add config for void trading
 
 
@@ -25,15 +25,15 @@ index 9db3bdd7a7d0b2a110e927ee4781eee489d0da9b..dffa9db569fcef2feec75072fe86c9a6
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index c549683a664d1b6af91f50d92f7a7982b7c332cd..85ce1d7b5e5578076789619fc7bdf2bbf28eb899 100644
+index daf8c44ec34fad2330d23e9f32c26ed67597bf0c..fd158c56cb73c2107a073f1cd68a87658c8eb1d9 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -3078,7 +3078,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -3077,7 +3077,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
              // Spigot Start
              if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(entity instanceof ServerPlayer) || entity.getRemovalReason() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
-                 // Paper start
+                 // Paper start - Fix merchant inventory not closing on entity removal
 -                if (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null) {
 +                if (!LuminolConfig.enableVoidTrading && (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null)) { //Luminol - Add config for void trading
                      merchant.getTrader().closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.UNLOADED);
                  }
-                 // Paper end
+                 // Paper end - Fix merchant inventory not closing on entity removal

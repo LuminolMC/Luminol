@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 24 Dec 2023 08:22:56 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 07:49:42 +0000
 Subject: [PATCH] Add config for incorrect tripwire updating fixing
 
 
@@ -25,7 +25,7 @@ index dffa9db569fcef2feec75072fe86c9a6ded80aa4..a49da370c91211d4e2274f72d62c911a
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
-index a3cef4ac925d09ad8789a59b46df134cf25c282a..f40221025e1140919d45191d0210986245687bae 100644
+index 0f6ea0adb4b99d934e1a3fcb92562dffb2a45f63..023731d23c0610e1a42bf308866509aef464e299 100644
 --- a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
 @@ -4,6 +4,8 @@ import com.google.common.base.MoreObjects;
@@ -41,7 +41,7 @@ index a3cef4ac925d09ad8789a59b46df134cf25c282a..f40221025e1140919d45191d02109862
                      boolean flag7 = (Boolean) iblockdata2.getValue(TripWireBlock.POWERED);
  
                      flag5 |= flag6 && flag7;
--                    if (k != i || !tripWireBeingRemoved || !flag6) // Paper - don't update the tripwire again if being removed and not disarmed
+-                    if (k != i || !tripWireBeingRemoved || !flag6) // Paper - fix tripwire state inconsistency; don't update the tripwire again if being removed and not disarmed
 +                    if (k != i || !tripWireBeingRemoved || !flag6 || LuminolConfig.allowIncorrectTripwireUpdating) // Paper - don't update the tripwire again if being removed and not disarmed //Luminol - Add config for incorrect tripwire updating fixing
                      aiblockdata[k] = iblockdata2;
                      if (k == i) {

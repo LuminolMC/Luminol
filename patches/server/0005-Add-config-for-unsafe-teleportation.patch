@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 24 Dec 2023 08:12:09 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 07:40:23 +0000
 Subject: [PATCH] Add config for unsafe teleportation
 
 
@@ -27,7 +27,7 @@ index 1f9ff0fc33fa36c90fc4cbbd21b7b790de581632..36ca0b94d29d81e5f1f2aff4a38ead0b
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 0a060023da8c1ca1e4a0646e94170c8f489f48b1..2461ac52e007fe20fe36b607795000cddcb058e6 100644
+index cc4eb106b3ff1953de11f1faa7c04f3f9982fca2..1cc5acb21363aae7020a0ebf23c00caeab5074b7 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -24,6 +24,8 @@ import java.util.function.BiConsumer;
@@ -48,7 +48,7 @@ index 0a060023da8c1ca1e4a0646e94170c8f489f48b1..2461ac52e007fe20fe36b607795000cd
          ServerLevel world = this.portalWorld;
          this.portalBlock = null;
 diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
-index c82ebcac07033d887af499f81520982fbe5ed4f1..f2063a38f7d0aaef58a02d5ea29f1c3975347ede 100644
+index a0c1db8cfebaa0344012cc0af18d6231cdcdcbb8..96cc3cb8448b58f9ab11558821251996e7560079 100644
 --- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 @@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;

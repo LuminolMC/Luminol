@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Mon, 1 Jan 2024 08:13:11 +0000
+Date: Sat, 27 Jan 2024 13:25:30 +0000
 Subject: [PATCH] Purpur use alternative keep alive
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 6edafcdbc188cd6c78e4c4237363e41d927a665e..a62680768068b611fe723fedeb617d42c643e59e 100644
+index c79070eb6bb71d473fab758ae9d826276ae7eea6..ea9fe545a92ab555479fc518519be5d9f60efe11 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -64,6 +64,7 @@ public class LuminolConfig {
+@@ -63,6 +63,7 @@ public class LuminolConfig {
      public static int asyncPathProcessingMaxThreads = 0;
      public static int asyncPathProcessingKeepalive = 60;
      public static boolean enableAsyncMobSpawning = false;
@@ -16,7 +16,7 @@ index 6edafcdbc188cd6c78e4c4237363e41d927a665e..a62680768068b611fe723fedeb617d42
  
      public static void init() throws IOException {
          PARENT_FOLDER.mkdir();
-@@ -192,6 +193,7 @@ public class LuminolConfig {
+@@ -190,6 +191,7 @@ public class LuminolConfig {
              asyncPathProcessingMaxThreads = 0;
          enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning);
          RegionizedWorldData.initMobSpawningExecutor();
@@ -25,7 +25,7 @@ index 6edafcdbc188cd6c78e4c4237363e41d927a665e..a62680768068b611fe723fedeb617d42
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index 062cc713ef5239f934139bb9e4071cf958e57e32..771f9735805c21ad5b3fe40c641ecc102c92637a 100644
+index bdeb70fdcd2985c9ffd7cfb77f75d1bd1eb49a02..87922e561b4949e7b4ea124f3ecdcd94792825a3 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -51,6 +51,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack

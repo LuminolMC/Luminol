@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 11:17:37 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 07:37:51 +0000
 Subject: [PATCH] Add config for server brand name
 
 
@@ -26,7 +26,7 @@ index 5d7110a33957a597592cacb864c947eb053e8563..25cda48a6ab9a703d64c391007f5c32c
      }
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index f81025798943c123b4e7f621014fe1f8a89ff02b..a4887e49e6bf6010ef46aa99d4ceac69c12525b9 100644
+index b2e33a1a29c67f6f9768f547adeb34632548c7d0..26b85e3caf2671159b36963296777ecdf70a0231 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -54,6 +54,8 @@ import java.util.stream.Collectors;
@@ -38,7 +38,7 @@ index f81025798943c123b4e7f621014fe1f8a89ff02b..a4887e49e6bf6010ef46aa99d4ceac69
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -1965,7 +1967,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1951,7 +1953,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {

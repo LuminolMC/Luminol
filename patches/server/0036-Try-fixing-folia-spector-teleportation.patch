@@ -25,7 +25,7 @@ index d032786938db9725e1be72dae63a1387bcb69d79..dcc52141b34b87a67c3d6070b68b58af
          if (tpsbarEnabled){
              initTpsbar();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 1ab8b0ff1981682c38f6cfe29091f2e335392c44..b904c458cd604187c063117c74b527a4cd06944f 100644
+index 90969df697f3f0d6d77d8584924c28a844c1535d..47fbda55317e27d9f5fac583f529ae1215f43052 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -17,6 +17,9 @@ import java.util.OptionalInt;

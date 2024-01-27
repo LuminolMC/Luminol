@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 17:30:32 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 12:45:40 +0000
 Subject: [PATCH] Gale Reduce acquire POI for stuck entities
 
 
@@ -40,14 +40,12 @@ index fcd532898e099a809969603941b90fdd415b03c3..d032786938db9725e1be72dae63a1387
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-index 8f8b29f80d1573981ccffd207dd6e0941e71a352..ba4cdaf499c7ffef0c7fbdd575bdba841bcb7282 100644
+index abcc3ef59475ac170fd10b4dd4a4f3371faf17e0..961d3df1ca72d36ed7f0008bac346c95e07a0288 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-@@ -7,12 +7,14 @@ import java.util.HashSet;
- import java.util.Optional;
- import java.util.Set;
+@@ -9,10 +9,13 @@ import java.util.Set;
  import java.util.function.Predicate;
--import java.util.stream.Collectors;
+ import java.util.stream.Collectors;
  import javax.annotation.Nullable;
 +
 +import me.earthme.luminol.LuminolConfig;
@@ -59,7 +57,7 @@ index 8f8b29f80d1573981ccffd207dd6e0941e71a352..ba4cdaf499c7ffef0c7fbdd575bdba84
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.entity.Mob;
  import net.minecraft.world.entity.PathfinderMob;
-@@ -26,6 +28,13 @@ import org.apache.commons.lang3.mutable.MutableLong;
+@@ -26,6 +29,13 @@ import org.apache.commons.lang3.mutable.MutableLong;
  public class AcquirePoi {
      public static final int SCAN_RANGE = 48;
  
@@ -73,7 +71,7 @@ index 8f8b29f80d1573981ccffd207dd6e0941e71a352..ba4cdaf499c7ffef0c7fbdd575bdba84
      public static BehaviorControl<PathfinderMob> create(Predicate<Holder<PoiType>> poiPredicate, MemoryModuleType<GlobalPos> poiPosModule, boolean onlyRunIfChild, Optional<Byte> entityStatus) {
          return create(poiPredicate, poiPosModule, poiPosModule, onlyRunIfChild, entityStatus);
      }
-@@ -42,12 +51,13 @@ public class AcquirePoi {
+@@ -42,12 +52,13 @@ public class AcquirePoi {
                          return false;
                      } else if (mutableLong.getValue() == 0L) {
                          mutableLong.setValue(world.getGameTime() + (long)world.random.nextInt(20));
@@ -83,7 +81,7 @@ index 8f8b29f80d1573981ccffd207dd6e0941e71a352..ba4cdaf499c7ffef0c7fbdd575bdba84
                          return false;
                      } else {
                          mutableLong.setValue(time + 20L + (long)world.getRandom().nextInt(20));
--                        if (entity.getNavigation().isStuck()) mutableLong.add(200); // Paper - Wait an additional 10s to check again if they're stuck
+-                        if (entity.getNavigation().isStuck()) mutableLong.add(200); // Paper - Perf: Wait an additional 10s to check again if they're stuck
 +                        addAdditionalTimeToMutableLongIfEntityIsStuck(mutableLong, world, entity); // Gale - Airplane - reduce acquire POI for stuck entities
                          PoiManager poiManager = world.getPoiManager();
                          long2ObjectMap.long2ObjectEntrySet().removeIf((entry) -> {

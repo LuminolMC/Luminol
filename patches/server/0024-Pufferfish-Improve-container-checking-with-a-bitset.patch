@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 16:08:46 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 11:55:08 +0000
 Subject: [PATCH] Pufferfish Improve container checking with a bitset
 
 
@@ -362,7 +362,7 @@ index a71414397bd45ee7bcacfeef0041d80dfa25f114..d66806565770cb03a21794f99e5c4b0f
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index 72779080969fe9f058c19533ffc9dad5f9c47086..c90d578643490709936545ee9cbd41c8671eeb7a 100644
+index 26ff1a3d07c92f7035020d08d35116f7feede600..009263f6aab41608d7e17bebbed6f962fcb55634 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -47,7 +47,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
@@ -421,14 +421,14 @@ index 72779080969fe9f058c19533ffc9dad5f9c47086..c90d578643490709936545ee9cbd41c8
  
      private static boolean isFullContainer(Container inventory, Direction direction) {
 +        if (true) return inventory.isCompletelyFull(direction); // Pufferfish - use bitsets
-         // Paper start - optimize hoppers
+         // Paper start - Perf: Optimize Hoppers
          if (inventory instanceof WorldlyContainer worldlyContainer) {
              for (final int slot : worldlyContainer.getSlotsForFace(direction)) {
 @@ -515,7 +542,11 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
      }
  
      private static boolean isEmptyContainer(Container inv, Direction facing) {
--        return allMatch(inv, facing, IS_EMPTY_TEST);
+-        return allMatch(inv, facing, IS_EMPTY_TEST); // Paper - Perf: Optimize Hoppers
 +        // Paper start
 +        // Pufferfish start - use bitsets
 +        //return allMatch(inv, facing, IS_EMPTY_TEST);
@@ -459,13 +459,13 @@ index 72779080969fe9f058c19533ffc9dad5f9c47086..c90d578643490709936545ee9cbd41c8
  
      public static void entityInside(Level world, BlockPos pos, BlockState state, Entity entity, HopperBlockEntity blockEntity) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
-index 64875525df244db838560f5fefb7b1b07b0f1f51..1436fdbe31c8cdf05ac56f20224fe91de4b1c0c3 100644
+index a94300a457b25f0e33a8eeabba6dd5720ca9ab1e..b41635dd0569ff7df909df492d3e850aef7214be 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
 @@ -94,12 +94,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc
      public boolean isEmpty() {
          this.unpackLootTable((Player)null);
-         // Paper start
+         // Paper start - Perf: Optimize Hoppers
 -        for (final ItemStack itemStack : this.getItems()) {
 -            if (!itemStack.isEmpty()) {
 -                return false;
@@ -473,6 +473,6 @@ index 64875525df244db838560f5fefb7b1b07b0f1f51..1436fdbe31c8cdf05ac56f20224fe91d
 -        }
 -        return true;
 +        return this.isCompletelyEmpty(null); // Pufferfish - use super
-         // Paper end
+         // Paper end - Perf: Optimize Hoppers
      }
  

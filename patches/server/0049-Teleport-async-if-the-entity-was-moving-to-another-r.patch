@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Fri, 26 Jan 2024 11:07:22 +0000
+Date: Sat, 27 Jan 2024 13:43:43 +0000
 Subject: [PATCH] Teleport async if the entity was moving to another region
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 875afb57c7f0c4e3d0bc752d86a8308147eee31a..7b478affcf01e4eca7a1c881e32fb0c3e7a9ee00 100644
+index 6626961d57fff6475ec82da57941d8dad6455bc6..a535ab9432010b15dfb07f206d15c285d1f76597 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -42,6 +42,8 @@ public class LuminolConfig {
+@@ -41,6 +41,8 @@ public class LuminolConfig {
      public static boolean enableVoidTrading = false;
      public static boolean allowIncorrectTripwireUpdating = false;
      public static boolean useVanillaRandomSource = false;
@@ -17,7 +17,7 @@ index 875afb57c7f0c4e3d0bc752d86a8308147eee31a..7b478affcf01e4eca7a1c881e32fb0c3
  
      public static RegionFileFormat regionFormatName = RegionFileFormat.ANVIL;
      public static int regionFormatLinearCompressionLevel = 1;
-@@ -163,6 +165,8 @@ public class LuminolConfig {
+@@ -161,6 +163,8 @@ public class LuminolConfig {
          enableVoidTrading = get("fixes.enable_void_trading",enableVoidTrading);
          allowIncorrectTripwireUpdating = get("fixes.allow_incorrect_trip_wire_updaing",allowIncorrectTripwireUpdating);
          useVanillaRandomSource = get("fixes.use_vanilla_random_source",useVanillaRandomSource,"RNG feature related");
@@ -27,7 +27,7 @@ index 875afb57c7f0c4e3d0bc752d86a8308147eee31a..7b478affcf01e4eca7a1c881e32fb0c3
          regionFormatName = RegionFileFormat.fromString(get("save.region-format.format", regionFormatName.name()));
          if (regionFormatName.equals(RegionFileFormat.INVALID)) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 8f019df26a9ad0dbb8e3ca96c9feddf1453074c5..82747dc7ab3d7d094c6e225be7898216c9e96b52 100644
+index 4cdb0e62a3027ae292e1d818e1a06a47496676af..235f96fd0f2c74356f986017f514d2805f88ef46 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
@@ -38,7 +38,7 @@ index 8f019df26a9ad0dbb8e3ca96c9feddf1453074c5..82747dc7ab3d7d094c6e225be7898216
  import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
  import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
  import java.util.Arrays;
-@@ -1092,9 +1093,39 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -1094,9 +1095,39 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
      // Paper end - detailed watchdog information
  

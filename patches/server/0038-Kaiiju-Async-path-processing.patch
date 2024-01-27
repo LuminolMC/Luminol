@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Wed, 6 Dec 2023 23:43:00 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 13:21:55 +0000
 Subject: [PATCH] Kaiiju Async path processing
 
 
@@ -475,7 +475,7 @@ index 0000000000000000000000000000000000000000..130d61324679c8600faa52255f3ad99f
 +    }
 +}
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 7ada58f2fa83a47908723bdf1e5c5fbbc2f5ffa9..dee892ef5f999b693507e7de909d639ce7875780 100644
+index 8bf7a0235ed292d6cb3beca9b786a69148e0b4d9..ca54cc28282ac6441098215d6e1a3531c3f68b83 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
@@ -486,7 +486,7 @@ index 7ada58f2fa83a47908723bdf1e5c5fbbc2f5ffa9..dee892ef5f999b693507e7de909d639c
  import java.util.*;
  import java.io.File;
  import java.io.IOException;
-@@ -58,7 +59,9 @@ public class LuminolConfig {
+@@ -57,7 +58,9 @@ public class LuminolConfig {
      public static double entityWakeUpDurationRatioStandardDeviation = 0.2;
      public static boolean loadChunksToActiveClimbingEntities = false;
      public static int acquirePoiForStuckEntityInterval = 60;
@@ -497,7 +497,7 @@ index 7ada58f2fa83a47908723bdf1e5c5fbbc2f5ffa9..dee892ef5f999b693507e7de909d639c
  
      public static void init() throws IOException {
          PARENT_FOLDER.mkdir();
-@@ -175,6 +178,16 @@ public class LuminolConfig {
+@@ -173,6 +176,16 @@ public class LuminolConfig {
          entityWakeUpDurationRatioStandardDeviation = get("optimizations.entity_wakeup_duration_ratio_standard_deviation",entityWakeUpDurationRatioStandardDeviation);
          loadChunksToActiveClimbingEntities = get("optimizations.load_chunks_to_active_climbing_entities",loadChunksToActiveClimbingEntities);
          acquirePoiForStuckEntityInterval = get("optimizations.acquire_poi_for_stuck_entity_interval", acquirePoiForStuckEntityInterval);
@@ -515,7 +515,7 @@ index 7ada58f2fa83a47908723bdf1e5c5fbbc2f5ffa9..dee892ef5f999b693507e7de909d639c
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 88c93fb45769d85a77f3ae1bfe6ffa0bbf9cdfdf..3cf40268ed84e70e5c10558df0b3602fbc603484 100644
+index c8dad4bde8d0b40f69c2015b86118306448ca38a..07397dbfcd85f01e2b6df1180adc1db640717f5e 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -298,6 +298,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
@@ -527,10 +527,10 @@ index 88c93fb45769d85a77f3ae1bfe6ffa0bbf9cdfdf..3cf40268ed84e70e5c10558df0b3602f
          if (this.target != null && (!io.papermc.paper.util.TickThread.isTickThreadFor(this.target) || this.target.isRemoved())) {
              this.target = null;
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-index ba4cdaf499c7ffef0c7fbdd575bdba841bcb7282..6e8e0afb5ec86358f4e3eb929b590fdea1564d21 100644
+index 961d3df1ca72d36ed7f0008bac346c95e07a0288..de6ecdbbe2b90f10ea673c3cc4f4a89e30449866 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-@@ -78,6 +78,40 @@ public class AcquirePoi {
+@@ -79,6 +79,40 @@ public class AcquirePoi {
                          io.papermc.paper.util.PoiAccess.findNearestPoiPositions(poiManager, poiPredicate, predicate2, entity.blockPosition(), 48, 48*48, PoiManager.Occupancy.HAS_SPACE, false, 5, poiposes);
                          Set<Pair<Holder<PoiType>, BlockPos>> set = new java.util.HashSet<>(poiposes);
                          // Paper end - optimise POI access
@@ -571,7 +571,7 @@ index ba4cdaf499c7ffef0c7fbdd575bdba841bcb7282..6e8e0afb5ec86358f4e3eb929b590fde
                          Path path = findPathToPois(entity, set);
                          if (path != null && path.canReach()) {
                              BlockPos blockPos = path.getTarget();
-@@ -99,6 +133,7 @@ public class AcquirePoi {
+@@ -100,6 +134,7 @@ public class AcquirePoi {
                                  });
                              }
                          }
@@ -1116,7 +1116,7 @@ index 61162ecd43dc5e6f7898daecdec49f444e6d869b..26cdfe0dcf16c252648561f83e4d6a67
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
-index 58a7e61e02b7d72326ed4d57ee514adb63b3873c..600e7860534d66fb4b7d305e3695ec6d25c97e67 100644
+index 0a151c679b0dc943598180942d6d4b3886211688..af816e10faf7d257f267de6b039f61239a9d453a 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
 @@ -604,6 +604,16 @@ public class Warden extends Monster implements VibrationSystem {
@@ -1191,7 +1191,7 @@ index eea4c932d909145e7af848cf76e3f49dbb2deff2..7160459ec8ba81f66a85082a1fe7b063
              return false;
          } else if (o.nodes.size() != this.nodes.size()) {
 diff --git a/src/main/java/net/minecraft/world/level/pathfinder/PathFinder.java b/src/main/java/net/minecraft/world/level/pathfinder/PathFinder.java
-index d23481453717f715124156b5d83f6448f720d049..d806d941fe0610d84a50cf4c2051fb26b612efa8 100644
+index 1d51e113b17a5c522fa7812b1c1f38bf790d8335..72dd47dfa7e94317d30ab2da7081aebc3b39588e 100644
 --- a/src/main/java/net/minecraft/world/level/pathfinder/PathFinder.java
 +++ b/src/main/java/net/minecraft/world/level/pathfinder/PathFinder.java
 @@ -24,37 +24,80 @@ public class PathFinder {
@@ -1230,13 +1230,13 @@ index d23481453717f715124156b5d83f6448f720d049..d806d941fe0610d84a50cf4c2051fb26
 +            dev.kaiijumc.kaiiju.path.NodeEvaluatorCache.removeNodeEvaluator(nodeEvaluator); // Kaiiju - petal - handle nodeEvaluatorGenerator
              return null;
          } else {
-             // Paper start - remove streams - and optimize collection
+             // Paper start - Perf: remove streams and optimize collection
              List<Map.Entry<Target, BlockPos>> map = Lists.newArrayList();
              for (BlockPos pos : positions) {
 -                map.add(new java.util.AbstractMap.SimpleEntry<>(this.nodeEvaluator.getGoal(pos.getX(), pos.getY(), pos.getZ()), pos));
 +                map.add(new java.util.AbstractMap.SimpleEntry<>(nodeEvaluator.getGoal(pos.getX(), pos.getY(), pos.getZ()), pos)); // Kaiiju - petal - handle nodeEvaluatorGenerator
              }
-             // Paper end
+             // Paper end - Perf: remove streams and optimize collection
 -            Path path = this.findPath(world.getProfiler(), node, map, followRange, distance, rangeMultiplier);
 -            this.nodeEvaluator.done();
 -            return path;
@@ -1264,7 +1264,7 @@ index d23481453717f715124156b5d83f6448f720d049..d806d941fe0610d84a50cf4c2051fb26
  
 -    @Nullable
 +    //@Nullable // Kaiiju - Always not null
-     // Paper start - optimize collection
+     // Paper start - Perf: remove streams and optimize collection - optimize collection
      private Path findPath(ProfilerFiller profiler, Node startNode, List<Map.Entry<Target, BlockPos>> positions, float followRange, int distance, float rangeMultiplier) {
          profiler.push("find_path");
          profiler.markForCharting(MetricCategory.PATH_FINDING);
@@ -1299,7 +1299,7 @@ index d23481453717f715124156b5d83f6448f720d049..d806d941fe0610d84a50cf4c2051fb26
          }
 +        //noinspection ConstantConditions // Kaiiju - petal - ignore this warning, we know that the above loop always runs at least once since positions is not empty
          return best;
-         // Paper end
+         // Paper end - Perf: remove streams and optimize collection
      }
 diff --git a/src/main/java/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java b/src/main/java/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java
 index 0e2b14e7dfedf209d63279c81723fd7955122d78..079b278e2e262af433bb5bd0c12b3d8db4fa12fc 100644

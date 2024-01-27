@@ -5,10 +5,10 @@ Subject: [PATCH] Piston fixes from molean server
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 3a5c8f1f9a8173777b00d43c15e8e313526d3e28..9bd6d4881280196a437161a9375ac8ee5e0f9231 100644
+index 589810272fef6fa47076b05c266a20402d7d8f0d..4cdb0e62a3027ae292e1d818e1a06a47496676af 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -1428,7 +1428,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1438,7 +1438,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
          if (movement.lengthSqr() <= 1.0E-7D) {
              return movement;
          } else {
@@ -18,10 +18,10 @@ index 3a5c8f1f9a8173777b00d43c15e8e313526d3e28..9bd6d4881280196a437161a9375ac8ee
              if (i != this.pistonDeltasGameTime) {
                  Arrays.fill(this.pistonDeltas, 0.0D);
 diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-index cdcf11fb9e4690d74b30fe0ade842d6574464624..141b806493f25854fc49f90816cd22e7d5d74e6f 100644
+index 1818ab63209017b45a46a80802d500f2d042a208..157255e0fdcd2531ba3635d44bf57a84f454bb9b 100644
 --- a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-@@ -139,7 +139,7 @@ public class PistonBaseBlock extends DirectionalBlock {
+@@ -152,7 +152,7 @@ public class PistonBaseBlock extends DirectionalBlock {
                  if (tileentity instanceof PistonMovingBlockEntity) {
                      PistonMovingBlockEntity tileentitypiston = (PistonMovingBlockEntity) tileentity;
  

@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 17 Dec 2023 21:01:59 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 13:29:09 +0000
 Subject: [PATCH] Leaves PCA sync protocol
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index a62680768068b611fe723fedeb617d42c643e59e..cfe9a8eb705039ee7e2dc9262e1355c4b0f664bb 100644
+index ea9fe545a92ab555479fc518519be5d9f60efe11..2589f04a33b99f812cfc9b471398d5fd4afb7012 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -66,6 +66,10 @@ public class LuminolConfig {
+@@ -65,6 +65,10 @@ public class LuminolConfig {
      public static boolean enableAsyncMobSpawning = false;
      public static boolean useAlternateKeepAlive = false;
  
@@ -19,7 +19,7 @@ index a62680768068b611fe723fedeb617d42c643e59e..cfe9a8eb705039ee7e2dc9262e1355c4
      public static void init() throws IOException {
          PARENT_FOLDER.mkdir();
  
-@@ -194,6 +198,9 @@ public class LuminolConfig {
+@@ -192,6 +196,9 @@ public class LuminolConfig {
          enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning);
          RegionizedWorldData.initMobSpawningExecutor();
          useAlternateKeepAlive = get("optimizations.enable_alternative_keep_alive_handling",useAlternateKeepAlive,"Enabling this sends a keepalive packet once per second to a player, and only kicks for timeout if none of them were responded to in 30 seconds. Responding to any of them in any order will keep the player connected. AKA, it won't kick your players because one packet gets dropped somewhere along the lines(From purpur)");
@@ -30,7 +30,7 @@ index a62680768068b611fe723fedeb617d42c643e59e..cfe9a8eb705039ee7e2dc9262e1355c4
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-index 63bbb5723f587788a65cc1cdac4cea94d96f254b..4417a30b7392404de1081469b90cceea032a8437 100644
+index 815eb15086976b8f9e03bf8182d9ed50aec14720..2d8d7eebff351987b4d184afa5b6b32ac524cd78 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 @@ -373,6 +373,11 @@ public abstract class AbstractHorse extends Animal implements ContainerListener,
@@ -46,7 +46,7 @@ index 63bbb5723f587788a65cc1cdac4cea94d96f254b..4417a30b7392404de1081469b90cceea
  
          this.updateContainerEquipment();
 diff --git a/src/main/java/net/minecraft/world/entity/npc/AbstractVillager.java b/src/main/java/net/minecraft/world/entity/npc/AbstractVillager.java
-index ce728f062794e239d1dfdf842d7d0c725f77fba7..a3200593788525c7f18420036044bfdccfaf40fc 100644
+index d2fbeb0e4e3e681b22455b9cf2d125dcb4de0a56..49fcd1d78e97f1e63024ef7d65b47602a0abc0a7 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/AbstractVillager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/AbstractVillager.java
 @@ -64,6 +64,15 @@ public abstract class AbstractVillager extends AgeableMob implements InventoryCa
@@ -85,10 +85,10 @@ index e7115f1635821e0aab32e8aeea6914388dc24639..6593ae2dad5d1f7d8e403d08cd425a64
      @Override
      public boolean stillValid(Player player) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index a18aadbf7ae83713e1f2b21553185d8000bc7699..4b174bed02fb98f798f9444e03fc866baf1e1a07 100644
+index ca17d9953ec207f64ed7386f116d9db540282a75..e89d248247d3c61fbec0c98c09b586e34d9a245f 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -569,6 +569,16 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -570,6 +570,16 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
  
      }
  
@@ -127,7 +127,7 @@ index 416aa989ebb18a8741cc9d605a1180ab830f6643..b73c3dc28a95279285e911bfed3bc3d3
      protected Component getDefaultName() {
          return Component.translatable("container.barrel");
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
-index dfd364ac4b7551a13c4c6c100b5e62c0dfb10595..e965d88fa4021fbf85dc660f22ec52bb33bdd317 100644
+index 560a6e7b7888a87011aa48d7c9a17949bf086f8d..9e5dd6d920ab8805f71519a0ff74f1888ec5bc0e 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
 @@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
@@ -174,7 +174,7 @@ index dfd364ac4b7551a13c4c6c100b5e62c0dfb10595..e965d88fa4021fbf85dc660f22ec52bb
 +                    // Leaves end - pca
                      // CraftBukkit start
                  } else {
-                     tileentitybeehive_hivebee.exitTickCounter = tileentitybeehive_hivebee.minOccupationTicks / 2; // Not strictly Vanilla behaviour in cases where bees cannot spawn but still reasonable // Paper - use exitTickCounter to keep actual bee life
+                     tileentitybeehive_hivebee.exitTickCounter = tileentitybeehive_hivebee.minOccupationTicks / 2; // Not strictly Vanilla behaviour in cases where bees cannot spawn but still reasonable // Paper - Fix bees aging inside hives; use exitTickCounter to keep actual bee life
 @@ -385,6 +402,11 @@ public class BeehiveBlockEntity extends BlockEntity {
              this.maxBees = nbt.getInt("Bukkit.MaxEntities");
          }
@@ -188,7 +188,7 @@ index dfd364ac4b7551a13c4c6c100b5e62c0dfb10595..e965d88fa4021fbf85dc660f22ec52bb
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 526d1bfd5ad0de7bcfd0c2da902515f3dec94c54..66758af67aca2c726b2f5b451f3f7197102af22f 100644
+index 4a62ac73dd89bc3c2aed1e58152e93c5043c6633..2d5230a001b933337d90972357b8c7b4e6f88bdd 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -333,6 +333,16 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
@@ -251,7 +251,7 @@ index 881379681c39230a00b3a1f11cd87498984396c7..51fae4d72eed9e4224a8abe1a0b65208
      protected Component getDefaultName() {
          return Component.translatable("container.dispenser");
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index c90d578643490709936545ee9cbd41c8671eeb7a..3527a3cc76d3b1ad1319f1eebe31fd4d9e8aa039 100644
+index 009263f6aab41608d7e17bebbed6f962fcb55634..a6bc5d7e848470118d4520962fc9652b9637f799 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -155,6 +155,16 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen

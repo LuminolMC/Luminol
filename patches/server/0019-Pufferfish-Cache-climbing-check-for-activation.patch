@@ -5,10 +5,10 @@ Subject: [PATCH] Pufferfish Cache climbing check for activation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 1c8f5e9741181482976912c808817a4bc896936e..c5d038a00d2fcc17ba813c14e355729c4529dd74 100644
+index 5e78570110dd57cac16e073e3051f76460e19540..ec20ae65db0b3d835b58b471f90f3862283423e6 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -309,7 +309,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -311,7 +311,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      public double yo;
      public double zo;
      private Vec3 position;
@@ -18,7 +18,7 @@ index 1c8f5e9741181482976912c808817a4bc896936e..c5d038a00d2fcc17ba813c14e355729c
      private Vec3 deltaMovement;
      private float yRot;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index abf455d165004240e0b5fd96543f7da7c520e729..23ee7bdb337ee5e13ebe28f890c230a09b15fcf6 100644
+index 8d8c80a41e01df4d0fef7d045b9c5d283a8f168d..81cf3721fd93af5ee307226cdea926d3ad443f77 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -142,7 +142,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
@@ -29,7 +29,7 @@ index abf455d165004240e0b5fd96543f7da7c520e729..23ee7bdb337ee5e13ebe28f890c230a0
  
  public abstract class LivingEntity extends Entity implements Attackable {
  
-@@ -2012,6 +2011,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2013,6 +2012,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return this.lastClimbablePos;
      }
  
@@ -51,10 +51,10 @@ index abf455d165004240e0b5fd96543f7da7c520e729..23ee7bdb337ee5e13ebe28f890c230a0
          if (this.isSpectator()) {
              return false;
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index ea605188aad5476e8e473bc9c6c2a7c29eeed136..2445509e34717a0dfb28d7d75ec1b8a1b1c1366b 100644
+index 5f1dee3a1d5a7b0391bad60b53eda1c5586058aa..e960c307434736af5a0fff626d6bccf5cd46f35d 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
-@@ -305,7 +305,7 @@ public class ActivationRange
+@@ -306,7 +306,7 @@ public class ActivationRange
          if ( entity instanceof LivingEntity )
          {
              LivingEntity living = (LivingEntity) entity;

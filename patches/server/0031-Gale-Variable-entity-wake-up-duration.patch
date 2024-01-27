@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 17:08:22 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 12:27:05 +0000
 Subject: [PATCH] Gale Variable entity wake-up duration
 
 
@@ -25,10 +25,10 @@ index 4f6af1fa55047e7be9e57c1dd1c60e9d96d12187..793dc5b35e9a0665d486a74ce5b776b4
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index e77e1c60a611c49489c65d66e54236a86c3093e3..51adf24b9274b6bc78ef94e77a0b2d73b1f2bbbb 100644
+index 1690809e85ad4e65e09097f1db0139137bc335ed..ee691edd1ee2c97df0ea925a546a13492254f426 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
-@@ -76,28 +76,40 @@ public class ActivationRange
+@@ -76,28 +76,41 @@ public class ActivationRange
          if (entity.activationType == ActivationType.VILLAGER) {
              if (inactiveFor > config.wakeUpInactiveVillagersEvery && worldData.wakeupInactiveRemainingVillagers > 0) { // Folia - threaded regions
                  worldData.wakeupInactiveRemainingVillagers--; // Folia - threaded regions
@@ -59,7 +59,7 @@ index e77e1c60a611c49489c65d66e54236a86c3093e3..51adf24b9274b6bc78ef94e77a0b2d73
      // Paper end
  
 +    // Gale start - variable entity wake-up duration
-+    private static final java.util.Random wakeUpDurationRandom = new java.util.Random();
++    private static final java.util.concurrent.ThreadLocalRandom wakeUpDurationRandom = java.util.concurrent.ThreadLocalRandom.current();
 +
 +    private static int getWakeUpDurationWithVariance(Entity entity, int wakeUpDuration) {
 +        double deviation = LuminolConfig.entityWakeUpDurationRatioStandardDeviation;
@@ -70,6 +70,7 @@ index e77e1c60a611c49489c65d66e54236a86c3093e3..51adf24b9274b6bc78ef94e77a0b2d73
 +    }
 +    // Gale end - variable entity wake-up duration
 +
-     static AABB maxBB = new AABB( 0, 0, 0, 0, 0, 0 );
++
+     // Folia - threaded regions - replaced by local variable
  
      /**

@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 24 Dec 2023 08:58:15 +0800
+From: MrHua269 <novau233@163.com>
+Date: Sat, 27 Jan 2024 07:55:57 +0000
 Subject: [PATCH] Add config for vanilla random
 
 
@@ -25,10 +25,10 @@ index 8d1ce8eae252fcf05b6a62d2dc467d6d503d3df4..89d8ffc947d265e0e81943ad851e868b
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index dbcb87e9a549392ddad79548f2cd9ecd54c9ce89..76a33e322c77b95cbd1a524fc98cf73b954fd5be 100644
+index 1cc5acb21363aae7020a0ebf23c00caeab5074b7..5e78570110dd57cac16e073e3051f76460e19540 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -573,7 +573,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -575,7 +575,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
          this.bb = Entity.INITIAL_AABB;
          this.stuckSpeedMultiplier = Vec3.ZERO;
          this.nextStep = 1.0F;

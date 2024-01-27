@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Wed, 17 Jan 2024 14:10:33 +0000
+Date: Sat, 27 Jan 2024 13:37:13 +0000
 Subject: [PATCH] Leaves Fix Bladeren Protocol
 
 
@@ -92,15 +92,15 @@ index d696f001d2576d1b61cc732c81f22eb52205072b..92ad6e9b1c0d9640b80c1ebe739c613d
          boolean ignoreId() default false;
      }
 diff --git a/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java b/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java
-index 6325f6441e28d915514e6b0ee9b450610e99b2c2..19277aa7b9bd16b3e70d581d38a4c28e60165f65 100644
+index fc229f23076147304754a267bcc345cc836b648b..4c2aa74795b0883f280eaa721a83ea6891ffdab2 100644
 --- a/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java
 +++ b/src/main/java/top/leavesmc/leaves/protocol/syncmatica/CommunicationManager.java
-@@ -97,7 +97,7 @@ public class CommunicationManager {
+@@ -90,7 +90,7 @@ public class CommunicationManager {
          playerMap.remove(oldPlayer);
      }
  
 -    @ProtocolHandler.PayloadReceiver(payload = LeavesProtocolManager.LeavesPayload.class, ignoreId = true)
 +    @ProtocolHandler.PayloadReceiver(payload = LeavesProtocolManager.LeavesPayload.class, ignoreId = true, payloadId = "")
      public static void onPacketGet(ServerPlayer player, LeavesProtocolManager.LeavesPayload payload) {
-         if (!LuminolConfig.syncmaticaProtocol){
-             return;
+         onPacket(player.connection.exchangeTarget, payload.id(), payload.data());
+     }
