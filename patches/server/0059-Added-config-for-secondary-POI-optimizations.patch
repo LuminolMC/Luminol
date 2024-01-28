@@ -1,0 +1,56 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sun, 28 Jan 2024 10:48:45 +0000
+Subject: [PATCH] Added config for secondary POI optimizations
+
+
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index 55d0ae641f1de570a293d1d6fe03da3ab2bba1c4..e531453e3d25700e38ff41548c7e32e278a6304d 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -68,6 +68,7 @@ public class LuminolConfig {
+     public static int asyncPathProcessingKeepalive = 60;
+     public static boolean enableAsyncMobSpawning = false;
+     public static boolean useAlternateKeepAlive = false;
++    public static boolean skipSecondaryPOIIfIsEmpty = true;
+ 
+     public static boolean pcaSyncProtocol = false;
+     public static String pcaSyncPlayerEntity = "NOBODY";
+@@ -211,6 +212,7 @@ public class LuminolConfig {
+         enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning);
+         RegionizedWorldData.initMobSpawningExecutor();
+         useAlternateKeepAlive = get("optimizations.enable_alternative_keep_alive_handling",useAlternateKeepAlive,"Enabling this sends a keepalive packet once per second to a player, and only kicks for timeout if none of them were responded to in 30 seconds. Responding to any of them in any order will keep the player connected. AKA, it won't kick your players because one packet gets dropped somewhere along the lines(From purpur)");
++        skipSecondaryPOIIfIsEmpty = get("optimizations.skip_secondary_poi_if_is_empty",skipSecondaryPOIIfIsEmpty);
+ 
+         pcaSyncProtocol = get("gameplay.enable_pca_sync_protocol",pcaSyncProtocol);
+         pcaSyncPlayerEntity = get("gameplay.pca_sync_player_entity",pcaSyncPlayerEntity,"Available values: NOBODY,EVERYBODY,OPS,OPS_AND_SELF");
+diff --git a/src/main/java/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java b/src/main/java/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
+index 75dc06a3041bfdfb08c914eb50cfa282ae9eb2fe..6a95fe3f648a54b3cbb2b38a294028043c8012c9 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
++++ b/src/main/java/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
+@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.Lists;
+ import java.util.List;
+ import java.util.Set;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.GlobalPos;
+ import net.minecraft.resources.ResourceKey;
+@@ -23,10 +25,12 @@ public class SecondaryPoiSensor extends Sensor<Villager> {
+     @Override
+     protected void doTick(ServerLevel world, Villager entity) {
+         // Gale start - Lithium - skip secondary POI sensor if absent
+-        var secondaryPoi = entity.getVillagerData().getProfession().secondaryPoi();
+-        if (secondaryPoi.isEmpty()) {
+-            entity.getBrain().eraseMemory(MemoryModuleType.SECONDARY_JOB_SITE);
+-            return;
++        if (LuminolConfig.skipSecondaryPOIIfIsEmpty){
++            var secondaryPoi = entity.getVillagerData().getProfession().secondaryPoi();
++            if (secondaryPoi.isEmpty()) {
++                entity.getBrain().eraseMemory(MemoryModuleType.SECONDARY_JOB_SITE);
++                return;
++            }
+         }
+         // Gale end - Lithium - skip secondary POI sensor if absent
+         ResourceKey<Level> resourceKey = world.dimension();
