@@ -225,7 +225,7 @@ index 7ca275826609bcf96f103a8c50beaa47c3b4068b..aae4b59a14fc514a30b133921669c855
          final Entity[] ret = Arrays.copyOf(this.toProcessTrackingUnloading.getRawData(), this.toProcessTrackingUnloading.size(), Entity[].class);
  
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index ca54cc28282ac6441098215d6e1a3531c3f68b83..c79070eb6bb71d473fab758ae9d826276ae7eea6 100644
+index ca54cc28282ac6441098215d6e1a3531c3f68b83..af0087be0615d40d036390afc4944ed516180c7d 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -2,6 +2,7 @@ package me.earthme.luminol;
@@ -248,7 +248,7 @@ index ca54cc28282ac6441098215d6e1a3531c3f68b83..c79070eb6bb71d473fab758ae9d82627
              asyncPathProcessingMaxThreads = Math.max(Runtime.getRuntime().availableProcessors() / 4, 1);
          if (!asyncPathProcessing)
              asyncPathProcessingMaxThreads = 0;
-+        enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning);
++        enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning,"Not recommended to use this because it may cause some thread safe issue");
 +        RegionizedWorldData.initMobSpawningExecutor();
      }
  

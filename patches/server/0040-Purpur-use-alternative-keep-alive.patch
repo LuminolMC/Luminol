@@ -5,7 +5,7 @@ Subject: [PATCH] Purpur use alternative keep alive
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index c79070eb6bb71d473fab758ae9d826276ae7eea6..ea9fe545a92ab555479fc518519be5d9f60efe11 100644
+index af0087be0615d40d036390afc4944ed516180c7d..6c60dd4bc09be71f950391adc1d735fe1dc6404a 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -63,6 +63,7 @@ public class LuminolConfig {
@@ -18,7 +18,7 @@ index c79070eb6bb71d473fab758ae9d826276ae7eea6..ea9fe545a92ab555479fc518519be5d9
          PARENT_FOLDER.mkdir();
 @@ -190,6 +191,7 @@ public class LuminolConfig {
              asyncPathProcessingMaxThreads = 0;
-         enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning);
+         enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning,"Not recommended to use this because it may cause some thread safe issue");
          RegionizedWorldData.initMobSpawningExecutor();
 +        useAlternateKeepAlive = get("optimizations.enable_alternative_keep_alive_handling",useAlternateKeepAlive,"Enabling this sends a keepalive packet once per second to a player, and only kicks for timeout if none of them were responded to in 30 seconds. Responding to any of them in any order will keep the player connected. AKA, it won't kick your players because one packet gets dropped somewhere along the lines(From purpur)");
      }

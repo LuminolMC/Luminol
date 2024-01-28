@@ -5,7 +5,7 @@ Subject: [PATCH] Leaves PCA sync protocol
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index ea9fe545a92ab555479fc518519be5d9f60efe11..2589f04a33b99f812cfc9b471398d5fd4afb7012 100644
+index 6c60dd4bc09be71f950391adc1d735fe1dc6404a..dc8c9f18289a5e01a4a5ccc99d6693ea98c4162a 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -65,6 +65,10 @@ public class LuminolConfig {
@@ -20,7 +20,7 @@ index ea9fe545a92ab555479fc518519be5d9f60efe11..2589f04a33b99f812cfc9b471398d5fd
          PARENT_FOLDER.mkdir();
  
 @@ -192,6 +196,9 @@ public class LuminolConfig {
-         enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning);
+         enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning,"Not recommended to use this because it may cause some thread safe issue");
          RegionizedWorldData.initMobSpawningExecutor();
          useAlternateKeepAlive = get("optimizations.enable_alternative_keep_alive_handling",useAlternateKeepAlive,"Enabling this sends a keepalive packet once per second to a player, and only kicks for timeout if none of them were responded to in 30 seconds. Responding to any of them in any order will keep the player connected. AKA, it won't kick your players because one packet gets dropped somewhere along the lines(From purpur)");
 +

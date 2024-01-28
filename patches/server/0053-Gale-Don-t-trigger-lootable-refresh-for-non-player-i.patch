@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sun, 28 Jan 2024 09:31:27 +0000
+Subject: [PATCH] Gale Don't trigger lootable refresh for non-player
+ interaction
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
+index b41635dd0569ff7df909df492d3e850aef7214be..7ff40b74827a52eb5daaff72e1563b044d41c6c1 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
+@@ -68,6 +68,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc
+ 
+     @Override
+     public void unpackLootTable(@org.jetbrains.annotations.Nullable final Player player) {
++        if (player == null) return; // Gale - EMC - don't trigger lootable refresh for non-player interaction
+         // Copied from super with changes, always check the original method
+         net.minecraft.world.level.Level level = this.getLevel();
+         BlockPos blockPos = this.getBlockPos();

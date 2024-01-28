@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sun, 28 Jan 2024 09:30:22 +0000
+Subject: [PATCH] Gale Check frozen ticks before landing block
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index 00990c41986ec717a318f756e1a73a0a94a82b39..be4b3fe916b72a5aec61f70e8776e8ae91d19a6e 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -590,11 +590,10 @@ public abstract class LivingEntity extends Entity implements Attackable {
+     }
+ 
+     protected void tryAddFrost() {
+-        if (!this.getBlockStateOnLegacy().isAir()) {
+             int i = this.getTicksFrozen();
+ 
+             if (i > 0) {
+-                AttributeInstance attributemodifiable = this.getAttribute(Attributes.MOVEMENT_SPEED);
++                AttributeInstance attributemodifiable = this.getBlockStateOnLegacy().isAir() ? null : this.getAttribute(Attributes.MOVEMENT_SPEED); // Gale - Lithium - check frozen ticks before landing block
+ 
+                 if (attributemodifiable == null) {
+                     return;
+@@ -604,7 +603,6 @@ public abstract class LivingEntity extends Entity implements Attackable {
+ 
+                 attributemodifiable.addTransientModifier(new AttributeModifier(LivingEntity.SPEED_MODIFIER_POWDER_SNOW_UUID, "Powder snow slow", (double) f, AttributeModifier.Operation.ADDITION));
+             }
+-        }
+ 
+     }
+ 
