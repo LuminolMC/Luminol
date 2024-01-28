@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sun, 28 Jan 2024 09:52:09 +0000
+Subject: [PATCH] Gale Skip entity move if movement is zero
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 18fdb265714584d4ee759d86cc8a10b13742e153..ec255db477e6308cc0fbe336b7bebeac75b97b2a 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -317,6 +317,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+     public float yRotO;
+     public float xRotO;
+     private AABB bb;
++    private boolean boundingBoxChanged = false; // Gale - VMP - skip entity move if movement is zero
+     public boolean onGround;
+     public boolean horizontalCollision;
+     public boolean verticalCollision;
+@@ -1090,6 +1091,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+     //Luminol end
+ 
+     public void move(MoverType movementType, Vec3 movement) {
++        // Gale start - VMP - skip entity move if movement is zero
++        if (!this.boundingBoxChanged && movement.equals(Vec3.ZERO)) {
++            return;
++        }
++        // Gale end - VMP - skip entity move if movement is zero
+         // Paper start - detailed watchdog information
+         io.papermc.paper.util.TickThread.ensureTickThread("Cannot move an entity off-main");
+         //Luminol start - Fix high position moving
+@@ -4875,6 +4881,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+     }
+ 
+     public final void setBoundingBox(AABB boundingBox) {
++        // Gale start - VMP - skip entity move if movement is zero
++        if (!this.bb.equals(boundingBox)) {
++            this.boundingBoxChanged = true;
++        }
++        // Gale end - VMP - skip entity move if movement is zero
+         // CraftBukkit start - block invalid bounding boxes
+         double minX = boundingBox.minX,
+                 minY = boundingBox.minY,
