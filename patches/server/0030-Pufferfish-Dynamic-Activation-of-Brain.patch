@@ -46,7 +46,7 @@ index 11c1a367fbc25cb63738a00ad93fb0b0b3500e7d..4f6af1fa55047e7be9e57c1dd1c60e9d
      }
  
 +    private static void initDAB(){
-+        dearEnabled = get("optimizations.dab.enabled", true);
++        dearEnabled = get("optimizations.dab.enabled", false);
 +        startDistance = get("optimizations.dab.start-distance", 12,
 +                "This value determines how far away an entity has to be\n"+
 +                "from the player to start being effected by DEAR.");
