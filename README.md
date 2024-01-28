@@ -1,11 +1,9 @@
-# Luminol
+![image](https://github.com/LuminolMC/Luminol/assets/79621885/58577824-88d0-404c-8001-ea81f8b7424a)# Luminol
 [![MIT License](https://img.shields.io/github/license/LuminolMC/Luminol?style=flat-square)](LICENSE)
 [![Issues](https://img.shields.io/github/issues/LuminolMC/Luminol?style=flat-square)](https://github.com/LuminolMC/Luminol/issues)
 ![Commit Activity](https://img.shields.io/github/commit-activity/w/LuminolMC/Luminol?style=flat-square)
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/LuminolMC/Luminol?style=flat-square)
 ![GitHub all releases](https://img.shields.io/github/downloads/LuminolMC/Luminol/total?style=flat-square)
-
-[![Discord](https://img.shields.io/discord/1030133252134027304?color=%235865f2&label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/Sm2NsY5dpV)
 
 <h4>Luminol is a folia fork with many useful optimizations, configurable vanilla features, and more API supports, and it was designed for survival and anarchy servers</h4>
 
