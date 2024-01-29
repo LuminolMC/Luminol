@@ -1,32 +1,9 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Mon, 29 Jan 2024 11:51:27 +0000
+Date: Mon, 29 Jan 2024 13:28:54 +0000
 Subject: [PATCH] Leaves Command Utilities
 
 
-diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 6f5ddab2f98f71501af9a07f98ab7146f980997f..83df1f06b324c80c28152a97391d7afb31bdc38d 100644
---- a/src/main/java/me/earthme/luminol/LuminolConfig.java
-+++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -75,7 +75,17 @@ public class LuminolConfig {
-     public static boolean syncmaticaProtocol = false;
-     public static boolean syncmaticaQuota = false;
-     public static int syncmaticaQuotaLimit = 32767;
--
-+    public static boolean fakeplayerSupport = false;
-+    public static boolean fakeplayerSkipSleep = false;
-+    public static boolean fakeplayerSpawnPhantom = true;
-+    public static boolean alwaysSendFakeplayerData = true;
-+    public static int fakeplayerLimit = 20;
-+    public static List<String> unableFakeplayerNames = List.of("player-name");
-+    public static String fakeplayerPrefix = "";
-+    public static String fakeplayerSuffix = "";
-+    public static boolean fakeplayerResident = false;
-+    public static boolean openFakeplayerInventory = false;
-+    public static double fakeplayerRegenAmount = 0.010;
- 
- 
-     public static void init() throws IOException {
 diff --git a/src/main/java/top/leavesmc/leaves/command/CommandArgument.java b/src/main/java/top/leavesmc/leaves/command/CommandArgument.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..eadc6d168fb13299348b0c275ae352ee2f1e1ea2

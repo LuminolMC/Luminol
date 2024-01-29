@@ -1,14 +1,33 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Mon, 29 Jan 2024 12:35:09 +0000
+Date: Mon, 29 Jan 2024 13:29:14 +0000
 Subject: [PATCH] Leaves fakeplayer support
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 83df1f06b324c80c28152a97391d7afb31bdc38d..fa3f0008fc6e026778f75dd44584d3e6e2f77bb8 100644
+index 6f5ddab2f98f71501af9a07f98ab7146f980997f..fa3f0008fc6e026778f75dd44584d3e6e2f77bb8 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -102,6 +102,23 @@ public class LuminolConfig {
+@@ -75,7 +75,17 @@ public class LuminolConfig {
+     public static boolean syncmaticaProtocol = false;
+     public static boolean syncmaticaQuota = false;
+     public static int syncmaticaQuotaLimit = 32767;
+-
++    public static boolean fakeplayerSupport = false;
++    public static boolean fakeplayerSkipSleep = false;
++    public static boolean fakeplayerSpawnPhantom = true;
++    public static boolean alwaysSendFakeplayerData = true;
++    public static int fakeplayerLimit = 20;
++    public static List<String> unableFakeplayerNames = List.of("player-name");
++    public static String fakeplayerPrefix = "";
++    public static String fakeplayerSuffix = "";
++    public static boolean fakeplayerResident = false;
++    public static boolean openFakeplayerInventory = false;
++    public static double fakeplayerRegenAmount = 0.010;
+ 
+ 
+     public static void init() throws IOException {
+@@ -92,6 +102,23 @@ public class LuminolConfig {
          MAIN_CONFIG.save();
      }
  
@@ -32,7 +51,7 @@ index 83df1f06b324c80c28152a97391d7afb31bdc38d..fa3f0008fc6e026778f75dd44584d3e6
      public static void initTpsbar(){
          if (tpsbarEnabled){
              GlobalServerTpsBar.init();
-@@ -226,6 +243,7 @@ public class LuminolConfig {
+@@ -216,6 +243,7 @@ public class LuminolConfig {
          syncmaticaProtocol = get("gameplay.syncmatica_protocol",syncmaticaProtocol);
          syncmaticaQuota = get("gameplay.syncmatica_protocol_quota",syncmaticaQuota);
          syncmaticaQuotaLimit = get("gameplay.syncmatica_protocol_quota_limit",syncmaticaQuotaLimit);
