@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Mon, 29 Jan 2024 12:44:10 +0000
+Date: Tue, 30 Jan 2024 09:03:08 +0000
 Subject: [PATCH] Leaves fakeplayer API
 
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index b7e1c8bd8dd38e1a9e74925740b22dad61a75f49..36863cd765277b9b551ae04a4ecbee502c4d0a4e 100644
+index b7e1c8bd8dd38e1a9e74925740b22dad61a75f49..5ee1ba3847599ac67b5cd8ca26e61b1231c45dcd 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
 @@ -58,6 +58,7 @@ import org.jetbrains.annotations.Contract;
@@ -16,7 +16,7 @@ index b7e1c8bd8dd38e1a9e74925740b22dad61a75f49..36863cd765277b9b551ae04a4ecbee50
  
  /**
   * Represents the Bukkit core, for version and Server singleton handling
-@@ -2836,6 +2837,18 @@ public final class Bukkit {
+@@ -2836,6 +2837,17 @@ public final class Bukkit {
      }
      // Folia end - region threading API
  
@@ -31,12 +31,11 @@ index b7e1c8bd8dd38e1a9e74925740b22dad61a75f49..36863cd765277b9b551ae04a4ecbee50
 +    }
 +    // Leaves end - Bot API
 +
-+
      @NotNull
      public static Server.Spigot spigot() {
          return server.spigot();
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 85b169c04f44431363d4e14d4857140f160ceace..ed89520a9bf17a6f2665a17ded0c334d8f9bf130 100644
+index 85b169c04f44431363d4e14d4857140f160ceace..9e12552aca127892d122a2616d303d3cdfc67416 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
 @@ -58,6 +58,7 @@ import org.bukkit.util.CachedServerIcon;
@@ -52,6 +51,7 @@ index 85b169c04f44431363d4e14d4857140f160ceace..ed89520a9bf17a6f2665a17ded0c334d
      public boolean isGlobalTickThread();
      // Folia end - region threading API
 +
++
 +    // Leaves start - Bot API
 +    /**
 +     * Returns a bot manager.
@@ -60,22 +60,19 @@ index 85b169c04f44431363d4e14d4857140f160ceace..ed89520a9bf17a6f2665a17ded0c334d
 +     */
 +    @NotNull BotManager getBotManager();
 +    // Leaves end - Bot API
-+
  }
 diff --git a/src/main/java/top/leavesmc/leaves/entity/Bot.java b/src/main/java/top/leavesmc/leaves/entity/Bot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..02815077dcd6d5c1b155ef3ca5cd6e3a9c45c0b5
+index 0000000000000000000000000000000000000000..8816683c795f9be6a4f112203cfac3f59d8faba5
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/entity/Bot.java
-@@ -0,0 +1,51 @@
+@@ -0,0 +1,46 @@
 +package top.leavesmc.leaves.entity;
 +
 +import org.bukkit.entity.Player;
 +import org.jetbrains.annotations.NotNull;
 +import org.jetbrains.annotations.Nullable;
 +import top.leavesmc.leaves.entity.botaction.LeavesBotAction;
-+
-+import java.util.UUID;
 +
 +/**
 + * Represents a fakeplayer
@@ -98,15 +95,12 @@ index 0000000000000000000000000000000000000000..02815077dcd6d5c1b155ef3ca5cd6e3a
 +    @NotNull
 +    public String getRealName();
 +
-+    @Nullable
-+    public UUID getCreatePlayerUUID();
-+
 +    /**
 +     * Sets the fakeplayer action with args.
 +     *
 +     * @param action action name
 +     * @param player player who create this action
-+     * @param args   passed action arguments
++     * @param args passed action arguments
 +     */
 +    public boolean setBotAction(@NotNull String action, @NotNull Player player, @NotNull String[] args);
 +
@@ -115,7 +109,7 @@ index 0000000000000000000000000000000000000000..02815077dcd6d5c1b155ef3ca5cd6e3a
 +     *
 +     * @param action leaves bot action
 +     * @param player player who create this action
-+     * @param args   passed action arguments
++     * @param args passed action arguments
 +     */
 +    public boolean setBotAction(@NotNull LeavesBotAction action, @NotNull Player player, @NotNull String[] args);
 +}
@@ -475,58 +469,6 @@ index 0000000000000000000000000000000000000000..4a4fe07ce965d4a97e0d8105a91310da
 +    @NotNull
 +    public final Bot getBot() {
 +        return bot;
-+    }
-+}
-diff --git a/src/main/java/top/leavesmc/leaves/event/bot/BotInventoryOpenEvent.java b/src/main/java/top/leavesmc/leaves/event/bot/BotInventoryOpenEvent.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..e889f7e98ec9cb6a3b95d8ea865e25fffea662a1
---- /dev/null
-+++ b/src/main/java/top/leavesmc/leaves/event/bot/BotInventoryOpenEvent.java
-@@ -0,0 +1,46 @@
-+package top.leavesmc.leaves.event.bot;
-+
-+import org.bukkit.entity.Player;
-+import org.bukkit.event.Cancellable;
-+import org.bukkit.event.HandlerList;
-+import org.jetbrains.annotations.NotNull;
-+import org.jetbrains.annotations.Nullable;
-+import top.leavesmc.leaves.entity.Bot;
-+
-+public class BotInventoryOpenEvent extends BotEvent implements Cancellable {
-+    private static final HandlerList handlers = new HandlerList();
-+
-+    private final Player player;
-+    private boolean cancel = false;
-+
-+    public BotInventoryOpenEvent(@NotNull Bot who, @Nullable Player player) {
-+        super(who);
-+        this.player = player;
-+    }
-+
-+    @Override
-+    public boolean isCancelled() {
-+        return cancel;
-+    }
-+
-+    @Override
-+    public void setCancelled(boolean cancel) {
-+        this.cancel = cancel;
-+    }
-+
-+    @Nullable
-+    public Player getOpenPlayer() {
-+        return player;
-+    }
-+
-+
-+    @Override
-+    public @NotNull HandlerList getHandlers() {
-+        return handlers;
-+    }
-+
-+    @NotNull
-+    public static HandlerList getHandlerList() {
-+        return handlers;
 +    }
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/event/bot/BotJoinEvent.java b/src/main/java/top/leavesmc/leaves/event/bot/BotJoinEvent.java

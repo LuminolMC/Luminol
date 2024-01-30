@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Mon, 29 Jan 2024 13:22:53 +0000
+Date: Tue, 30 Jan 2024 08:59:03 +0000
 Subject: [PATCH] Leaves fakeplayer support
 
 
@@ -59,18 +59,6 @@ index e531453e3d25700e38ff41548c7e32e278a6304d..f924a238f211c22a00b8df67a209dcfe
      }
  
      public static <T> T get(String key,T def){
-diff --git a/src/main/java/net/minecraft/advancements/critereon/SimpleCriterionTrigger.java b/src/main/java/net/minecraft/advancements/critereon/SimpleCriterionTrigger.java
-index f0367a9cce13ef576fbb7023c0aba6eb48963606..7b156d147c409ded1b0385583e0b34d3bd5c48de 100644
---- a/src/main/java/net/minecraft/advancements/critereon/SimpleCriterionTrigger.java
-+++ b/src/main/java/net/minecraft/advancements/critereon/SimpleCriterionTrigger.java
-@@ -51,6 +51,7 @@ public abstract class SimpleCriterionTrigger<T extends SimpleCriterionTrigger.Si
-     }
- 
-     protected void trigger(ServerPlayer player, Predicate<T> predicate) {
-+        if (player instanceof top.leavesmc.leaves.bot.ServerBot) return; // Leaves - bot skip
-         PlayerAdvancements playerAdvancements = player.getAdvancements();
-         Set<CriterionTrigger.Listener<T>> set = (Set) playerAdvancements.criterionData.get(this); // Paper - fix AdvancementDataPlayer leak
-         if (set != null && !set.isEmpty()) {
 diff --git a/src/main/java/net/minecraft/network/Connection.java b/src/main/java/net/minecraft/network/Connection.java
 index b84e9d5ae5efe1a8257a5f1f78a0ab66113a698e..832f6851a3f72cefe95c96757645374ac592f33b 100644
 --- a/src/main/java/net/minecraft/network/Connection.java
@@ -91,10 +79,18 @@ index b84e9d5ae5efe1a8257a5f1f78a0ab66113a698e..832f6851a3f72cefe95c96757645374a
          if (this.packetListener != null) {
              throw new IllegalStateException("Listener already set");
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 675bbf1f69011f7f95fabc050c9877d6e70070b2..926b80aa09b0a593f4074efc86601ac176692c72 100644
+index 675bbf1f69011f7f95fabc050c9877d6e70070b2..87d8338900d09be1962965abfd62f7484fa31a25 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -669,6 +669,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -128,6 +128,7 @@ import net.minecraft.util.profiling.metrics.storage.MetricsPersister;
+ import net.minecraft.util.thread.ReentrantBlockableEventLoop;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.RandomSequences;
++import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.ai.village.VillageSiege;
+ import net.minecraft.world.entity.npc.CatSpawner;
+@@ -669,6 +670,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
          // Paper end
  
@@ -103,7 +99,7 @@ index 675bbf1f69011f7f95fabc050c9877d6e70070b2..926b80aa09b0a593f4074efc86601ac1
          this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
          this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
          this.connection.acceptConnections();
-@@ -962,6 +964,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -962,6 +965,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      // Folia end - region threading
  
      public void stopServer() {
@@ -128,7 +124,7 @@ index e38e2e5a7ddba9c140f362021b6be0b0974f7cd1..870a9c94885c983cd7a557b76cb4dbac
          AdvancementProgress advancementprogress = this.getOrStartProgress(advancement);
          boolean flag1 = advancementprogress.isDone();
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 3cba356b74362c2fc010d0c1bfb6eeecb449908e..45873f2c51a82287c5ab9bfec4d893bea39b42a5 100644
+index 3cba356b74362c2fc010d0c1bfb6eeecb449908e..afcf83aea7e1b43cb925856076d6c09aa9e47800 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -1438,6 +1438,13 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
@@ -137,7 +133,7 @@ index 3cba356b74362c2fc010d0c1bfb6eeecb449908e..45873f2c51a82287c5ab9bfec4d893be
                      this.serverEntity.removePairing(player);
 +                    // Leaves start - render bot
 +                    if (entity instanceof top.leavesmc.leaves.bot.ServerBot bot) {
-+                        if (bot.alwaysSendData) {
++                        if (me.earthme.luminol.LuminolConfig.alwaysSendFakeplayerData) {
 +                            bot.sendFakeData(player.connection, false);
 +                        }
 +                    }
@@ -146,10 +142,18 @@ index 3cba356b74362c2fc010d0c1bfb6eeecb449908e..45873f2c51a82287c5ab9bfec4d893be
  
              }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 755294e3f5b3fbcfbdc0cc85627b2487663ce591..5910c1585385d44e90280032ca3cc8e2ee2b4b70 100644
+index 755294e3f5b3fbcfbdc0cc85627b2487663ce591..ea409d2a03c35990c6857c24305346a6ec7f4bf8 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -183,6 +183,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
+@@ -98,7 +98,6 @@ import net.minecraft.util.Mth;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.util.Unit;
+ import net.minecraft.world.damagesource.DamageSource;
+-import net.minecraft.world.damagesource.DamageSources;
+ import net.minecraft.world.effect.MobEffectInstance;
+ import net.minecraft.world.effect.MobEffects;
+ import net.minecraft.world.entity.Entity;
+@@ -183,6 +182,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
  import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
  import org.bukkit.event.player.PlayerToggleSneakEvent;
  import org.bukkit.inventory.MainHand;
@@ -157,11 +161,10 @@ index 755294e3f5b3fbcfbdc0cc85627b2487663ce591..5910c1585385d44e90280032ca3cc8e2
  // CraftBukkit end
  
  public class ServerPlayer extends Player {
-@@ -826,21 +827,25 @@ public class ServerPlayer extends Player {
-             --this.invulnerableTime;
+@@ -827,20 +827,24 @@ public class ServerPlayer extends Player {
          }
  
--        // Paper start - Configurable container update tick rate
+         // Paper start - Configurable container update tick rate
 -        if (--containerUpdateDelay <= 0) {
 -            this.containerMenu.broadcastChanges();
 -            containerUpdateDelay = this.level().paperConfig().tickRates.containerUpdate;
@@ -172,7 +175,6 @@ index 755294e3f5b3fbcfbdc0cc85627b2487663ce591..5910c1585385d44e90280032ca3cc8e2
 -            this.containerMenu = this.inventoryMenu;
 +        // Leaves start - skip bot
 +        if (!(this instanceof ServerBot)) {
-+            // Paper start - Configurable container update tick rate
 +            if (--containerUpdateDelay <= 0) {
 +                this.containerMenu.broadcastChanges();
 +                containerUpdateDelay = this.level().paperConfig().tickRates.containerUpdate;
@@ -193,7 +195,7 @@ index 755294e3f5b3fbcfbdc0cc85627b2487663ce591..5910c1585385d44e90280032ca3cc8e2
          if (this.levitationStartPos != null) {
              CriteriaTriggers.LEVITATION.trigger(this, this.levitationStartPos, this.tickCount - this.levitationStartTime);
          }
-@@ -1065,7 +1070,7 @@ public class ServerPlayer extends Player {
+@@ -1065,7 +1069,7 @@ public class ServerPlayer extends Player {
          java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.getInventory().getContainerSize());
          boolean keepInventory = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
  
@@ -202,7 +204,7 @@ index 755294e3f5b3fbcfbdc0cc85627b2487663ce591..5910c1585385d44e90280032ca3cc8e2
              for (ItemStack item : this.getInventory().getContents()) {
                  if (!item.isEmpty() && !EnchantmentHelper.hasVanishingCurse(item)) {
                      loot.add(CraftItemStack.asCraftMirror(item));
-@@ -1730,6 +1735,13 @@ public class ServerPlayer extends Player {
+@@ -1730,6 +1734,13 @@ public class ServerPlayer extends Player {
                  this.lastSentHealth = -1.0F;
                  this.lastSentFood = -1;
  
@@ -236,19 +238,18 @@ index c4652f250e22f33e8505183b4050e08aedf9245c..18745ee33843d668613fd9e7f15d6a79
          player.connection = this;
          player.getTextFilter().join();
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 3f366ad035ada0ac8170d2925bbfe86b80bd84cb..f2329d24a4e3f4637b78d4894b0e6c99a0e00faa 100644
+index 3f366ad035ada0ac8170d2925bbfe86b80bd84cb..c90fc6a926e19c74358bda6c6f3fa11dafba97bc 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -123,6 +123,8 @@ import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
- import org.bukkit.event.player.PlayerSpawnChangeEvent;
- // CraftBukkit end
- 
+@@ -102,6 +102,7 @@ import net.minecraft.world.scores.Objective;
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Scoreboard; // Paper
+ import net.minecraft.world.scores.Team;
 +import top.leavesmc.leaves.bot.ServerBot;
-+
- public abstract class PlayerList {
+ import org.slf4j.Logger;
  
-     public static final File USERBANLIST_FILE = new File("banned-players.json");
-@@ -437,6 +439,21 @@ public abstract class PlayerList {
+ // CraftBukkit start
+@@ -437,6 +438,21 @@ public abstract class PlayerList {
  
          top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handlePlayerJoin(player); // Leaves - protocol
  
@@ -270,13 +271,13 @@ index 3f366ad035ada0ac8170d2925bbfe86b80bd84cb..f2329d24a4e3f4637b78d4894b0e6c99
          final net.kyori.adventure.text.Component jm = playerJoinEvent.joinMessage();
  
          if (jm != null && !jm.equals(net.kyori.adventure.text.Component.empty())) { // Paper - Adventure
-@@ -1092,6 +1109,13 @@ public abstract class PlayerList {
+@@ -1092,6 +1108,13 @@ public abstract class PlayerList {
          }
          // Paper end
  
 +        // Leaves start - bot support
 +        if (me.earthme.luminol.LuminolConfig.fakeplayerSupport) {
-+            ServerBot.getBots().forEach(bot1 ->
++            top.leavesmc.leaves.bot.ServerBot.getBots().forEach(bot1 ->
 +                bot1.sendFakeDataIfNeed(entityplayer1, true)); // Leaves - render bot
 +        }
 +        // Leaves end - bot support
@@ -284,12 +285,12 @@ index 3f366ad035ada0ac8170d2925bbfe86b80bd84cb..f2329d24a4e3f4637b78d4894b0e6c99
          // CraftBukkit end
          return entityplayer1;
      }
-@@ -1201,12 +1225,17 @@ public abstract class PlayerList {
+@@ -1201,12 +1224,17 @@ public abstract class PlayerList {
  
      public String[] getPlayerNamesArray() {
          List<ServerPlayer> players = new java.util.ArrayList<>(this.players); // Folia start - region threading
 -        String[] astring = new String[players.size()];
-+        String[] astring = new String[players.size() + ServerBot.getBots().size()];
++        String[] astring = new String[players.size() + ServerBot.getBots().size()]; // Leaves - fakeplayer support
  
          for (int i = 0; i < players.size(); ++i) {
              astring[i] = ((ServerPlayer) players.get(i)).getGameProfile().getName();
@@ -303,11 +304,10 @@ index 3f366ad035ada0ac8170d2925bbfe86b80bd84cb..f2329d24a4e3f4637b78d4894b0e6c99
  
          return astring;
      }
-@@ -1715,4 +1744,17 @@ public abstract class PlayerList {
+@@ -1715,4 +1743,16 @@ public abstract class PlayerList {
      public boolean isAllowCheatsForAllPlayers() {
          return this.allowCheatsForAllPlayers;
      }
-+
 +
 +    // Leaves start - fakeplayer support
 +    public void addNewBot(ServerBot bot) {
@@ -385,7 +385,7 @@ index f664da5a8413bb13cc95d2cf1604f11a5d285dae..2d5f6a69e0c2dc96375ec24d41522ae4
          FeatureFlagSet featureflagset = player.level().enabledFeatures();
  
 diff --git a/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java b/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java
-index a127b6cbaab211d324d42b3bddcd6ebd84c250e3..2649177134985505a341c40473dfdbb210d0ae87 100644
+index a127b6cbaab211d324d42b3bddcd6ebd84c250e3..6898de0b40e00125ba3153cacfc60a98493c8d38 100644
 --- a/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java
 +++ b/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java
 @@ -70,6 +70,11 @@ public class PhantomSpawner implements CustomSpawner {
@@ -393,15 +393,15 @@ index a127b6cbaab211d324d42b3bddcd6ebd84c250e3..2649177134985505a341c40473dfdbb2
                                      int j = Mth.clamp(serverstatisticmanager.getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)), 1, Integer.MAX_VALUE);
                                      boolean flag2 = true;
 +                                    // Leaves start - fakeplayer spawn
-+                                    if (entityplayer instanceof top.leavesmc.leaves.bot.ServerBot bot && bot.spawnPhantom) {
-+                                        j = bot.notSleepTicks;
++                                    if (me.earthme.luminol.LuminolConfig.fakeplayerSpawnPhantom && entityplayer instanceof top.leavesmc.leaves.bot.ServerBot) {
++                                        j = world.paperConfig().entities.behavior.playerInsomniaStartTicks + 1;
 +                                    }
 +                                    // Leaves end - fakeplayer spawn
  
                                      if (randomsource.nextInt(j) >= world.paperConfig().entities.behavior.playerInsomniaStartTicks) { // Paper
                                          BlockPos blockposition1 = blockposition.above(20 + randomsource.nextInt(15)).east(-10 + randomsource.nextInt(21)).south(-10 + randomsource.nextInt(21));
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index ee66241a422acb8920395fd5e41578a966746f5c..913ea63d7103d6a54990b55683d4cf0341d4b722 100644
+index ee66241a422acb8920395fd5e41578a966746f5c..a73fc518d5b6c156bf31a1d08d0a0fd0b31bd271 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -264,6 +264,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -420,13 +420,12 @@ index ee66241a422acb8920395fd5e41578a966746f5c..913ea63d7103d6a54990b55683d4cf03
  
      // Paper start - Folia region threading API
      private final io.papermc.paper.threadedregions.scheduler.FoliaRegionScheduler regionizedScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaRegionScheduler(); // Folia - region threading
-@@ -3241,4 +3243,12 @@ public final class CraftServer implements Server {
+@@ -3241,4 +3243,11 @@ public final class CraftServer implements Server {
      }
  
      // Paper end
 +
-+
-+    //Leaves start - Bot API
++    // Leaves start - Bot API
 +    @Override
 +    public CraftBotManager getBotManager() {
 +        return botManager;
@@ -462,10 +461,10 @@ index 9f070a9f0894d88688ff50efc3f4dba8188c3885..5699adccb5c2e5e7e6612940cf42fcf9
              // Water Animals
 diff --git a/src/main/java/top/leavesmc/leaves/bot/BotCommand.java b/src/main/java/top/leavesmc/leaves/bot/BotCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4563284facbfd01733d6a0efdfe7d0cabebdc1e7
+index 0000000000000000000000000000000000000000..9aa304d4709149ce1104d05bb375d3cf7f54729e
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/BotCommand.java
-@@ -0,0 +1,330 @@
+@@ -0,0 +1,274 @@
 +package top.leavesmc.leaves.bot;
 +
 +import org.bukkit.Bukkit;
@@ -513,14 +512,13 @@ index 0000000000000000000000000000000000000000..4563284facbfd01733d6a0efdfe7d0ca
 +            list.add("create");
 +            list.add("remove");
 +            list.add("action");
-+            list.add("config");
 +            list.add("list");
 +        }
 +
 +        if (args.length == 2) {
 +            switch (args[0]) {
 +                case "create" -> list.add("<BotName>");
-+                case "remove", "action", "config" ->
++                case "remove", "action" ->
 +                    list.addAll(ServerBot.getBots().stream().map(e -> e.getName().getString()).toList());
 +                case "list" -> list.addAll(Bukkit.getWorlds().stream().map(WorldInfo::getName).toList());
 +            }
@@ -533,16 +531,6 @@ index 0000000000000000000000000000000000000000..4563284facbfd01733d6a0efdfe7d0ca
 +                    list.addAll(Actions.getNames());
 +                }
 +                case "create" -> list.add("<BotSkinName>");
-+                case "config" -> list.addAll(acceptConfig);
-+            }
-+        }
-+
-+        if (args.length == 4) {
-+            switch (args[0]) {
-+                case "config" -> {
-+                    list.add("true");
-+                    list.add("false");
-+                }
 +            }
 +        }
 +
@@ -552,13 +540,12 @@ index 0000000000000000000000000000000000000000..4563284facbfd01733d6a0efdfe7d0ca
 +                list.addAll(action.getArgument().tabComplete(args.length - 4));
 +            }
 +        }
-+
 +        return list;
 +    }
 +
 +    @Override
 +    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String[] args) {
-+        if (!testPermission(sender) || !me.earthme.luminol.LuminolConfig.fakeplayerSupport) return true;
++        if (!testPermission(sender)) return true;
 +
 +        if (args.length == 0) {
 +            sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -571,8 +558,6 @@ index 0000000000000000000000000000000000000000..4563284facbfd01733d6a0efdfe7d0ca
 +            case "remove" -> this.onRemove(sender, args);
 +
 +            case "action" -> this.onAction(sender, args);
-+
-+            case "config" -> this.onConfig(sender, args);
 +
 +            case "list" -> this.onList(sender, args);
 +
@@ -593,7 +578,7 @@ index 0000000000000000000000000000000000000000..4563284facbfd01733d6a0efdfe7d0ca
 +
 +        if (canCreate(sender, args[1])) {
 +            if (sender instanceof Player player) {
-+                new ServerBot.BotCreateState(player.getLocation(), args[1], args.length < 3 ? args[1] : args[2]).createAsync(bot -> bot.createPlayer = player.getUniqueId());
++                new ServerBot.BotCreateState(player.getLocation(), args[1], args.length < 3 ? args[1] : args[2]).createAsync(null);
 +            } else if (sender instanceof ConsoleCommandSender) {
 +                if (args.length < 6) {
 +                    sender.sendMessage(ChatColor.RED + "Use /bot create <name> <skin_name> <bukkit_world_name> <x> <y> <z> to create a fakeplayer");
@@ -707,48 +692,6 @@ index 0000000000000000000000000000000000000000..4563284facbfd01733d6a0efdfe7d0ca
 +
 +        bot.setBotAction(newAction);
 +        sender.sendMessage("Action " + action.getName() + " has been issued to " + bot.getName().getString());
-+    }
-+
-+    private static final List<String> acceptConfig = List.of("skip_sleep", "spawn_phantom", "always_send_data");
-+
-+    private void onConfig(CommandSender sender, String @NotNull [] args) {
-+        if (args.length < 3) {
-+            sender.sendMessage(ChatColor.RED + "Use /bot config <name> <config> to modify fakeplayer's config");
-+            return;
-+        }
-+
-+        ServerBot bot = ServerBot.getBot(args[1]);
-+        if (bot == null) {
-+            sender.sendMessage(ChatColor.RED + "This fakeplayer is not in server");
-+            return;
-+        }
-+
-+        if (!acceptConfig.contains(args[2])) {
-+            sender.sendMessage(ChatColor.RED + "This config is not accept");
-+            return;
-+        }
-+
-+        if (args.length < 4) {
-+            switch (args[2]) {
-+                case "skip_sleep" -> sender.sendMessage(bot.getScoreboardName() + "'s skip_sleep: " + bot.fauxSleeping);
-+                case "spawn_phantom" -> {
-+                    sender.sendMessage(bot.getScoreboardName() + "'s spawn_phantom: " + bot.spawnPhantom);
-+                    if (bot.spawnPhantom) {
-+                        sender.sendMessage(bot.getScoreboardName() + "'s not_sleeping_ticks: " + bot.notSleepTicks);
-+                    }
-+                }
-+                case "always_send_data" ->
-+                    sender.sendMessage(bot.getScoreboardName() + "'s always_send_data: " + bot.alwaysSendData);
-+            }
-+        } else {
-+            boolean value = args[3].equals("true");
-+            switch (args[2]) {
-+                case "skip_sleep" -> bot.fauxSleeping = value;
-+                case "spawn_phantom" -> bot.spawnPhantom = value;
-+                case "always_send_data" -> bot.alwaysSendData = value;
-+            }
-+            sender.sendMessage(bot.getScoreboardName() + "'s " + args[2] + " changed: " + value);
-+        }
 +    }
 +
 +    private void onList(CommandSender sender, String @NotNull [] args) {
@@ -1028,10 +971,10 @@ index 0000000000000000000000000000000000000000..c3f114fba0759221b5fea0ccc4862f05
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/bot/BotUtil.java b/src/main/java/top/leavesmc/leaves/bot/BotUtil.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8e8edd0a9fb53449fa3d1bee81629d667d0aa572
+index 0000000000000000000000000000000000000000..be3a40e3100ec838cf8de6437cc6b1b0c454bc68
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/BotUtil.java
-@@ -0,0 +1,183 @@
+@@ -0,0 +1,182 @@
 +package top.leavesmc.leaves.bot;
 +
 +import com.google.common.base.Charsets;
@@ -1041,7 +984,6 @@ index 0000000000000000000000000000000000000000..8e8edd0a9fb53449fa3d1bee81629d66
 +import net.minecraft.core.NonNullList;
 +import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.nbt.ListTag;
-+import net.minecraft.nbt.NbtAccounter;
 +import net.minecraft.nbt.NbtIo;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraft.world.entity.EquipmentSlot;
@@ -1264,10 +1206,10 @@ index 0000000000000000000000000000000000000000..daaece30b2a3983f1cc9ee9a851e8f37
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/bot/ServerBot.java b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0440eeef8
+index 0000000000000000000000000000000000000000..dcdc4fac1bf972085ea4cd789efd27370410e5e1
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
-@@ -0,0 +1,760 @@
+@@ -0,0 +1,715 @@
 +package top.leavesmc.leaves.bot;
 +
 +import com.google.common.collect.Lists;
@@ -1277,9 +1219,6 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +import com.mojang.authlib.GameProfile;
 +import com.mojang.authlib.properties.Property;
 +import io.papermc.paper.threadedregions.RegionizedServer;
-+import io.papermc.paper.threadedregions.ThreadedRegionizer;
-+import io.papermc.paper.threadedregions.TickRegionScheduler;
-+import io.papermc.paper.util.TickThread;
 +import net.minecraft.Util;
 +import net.minecraft.core.BlockPos;
 +import net.minecraft.network.Connection;
@@ -1322,17 +1261,19 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +import org.bukkit.Location;
 +import org.bukkit.Material;
 +import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.scheduler.CraftScheduler;
++import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.plugin.Plugin;
 +import org.bukkit.util.Vector;
++import org.jetbrains.annotations.Contract;
 +import org.jetbrains.annotations.NotNull;
-+import me.earthme.luminol.LuminolConfig;
 +import top.leavesmc.leaves.bot.agent.BotAction;
 +import top.leavesmc.leaves.bot.agent.actions.StopAction;
 +import top.leavesmc.leaves.entity.Bot;
 +import top.leavesmc.leaves.entity.CraftBot;
 +import top.leavesmc.leaves.event.bot.BotCreateEvent;
-+import top.leavesmc.leaves.event.bot.BotInventoryOpenEvent;
 +import top.leavesmc.leaves.event.bot.BotJoinEvent;
 +import top.leavesmc.leaves.util.MathUtils;
 +
@@ -1350,10 +1291,8 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +import java.util.List;
 +import java.util.Map;
 +import java.util.UUID;
-+import java.util.concurrent.CompletableFuture;
 +import java.util.concurrent.CopyOnWriteArrayList;
 +import java.util.function.Consumer;
-+import java.util.function.Supplier;
 +
 +// TODO remake all
 +public class ServerBot extends ServerPlayer {
@@ -1369,16 +1308,11 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +    public boolean waterSwim;
 +    private Vec3 knockback;
 +    public BotCreateState createState;
-+    public UUID createPlayer;
 +
 +    private final ServerStatsCounter stats;
 +    private final BotInventoryContainer container;
 +
 +    private static final List<ServerBot> bots = new CopyOnWriteArrayList<>();
-+
-+    public boolean spawnPhantom;
-+    public int notSleepTicks;
-+    public boolean alwaysSendData;
 +
 +    private ServerBot(MinecraftServer server, ServerLevel world, GameProfile profile) {
 +        super(server, world, profile, ClientInformation.createDefault());
@@ -1392,14 +1326,10 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +        this.removeOnDeath = true;
 +        this.stats = new BotStatsCounter(server);
 +        this.container = new BotInventoryContainer(this);
++        this.fauxSleeping = me.earthme.luminol.LuminolConfig.fakeplayerSkipSleep;
 +        this.waterSwim = true;
 +        this.knockback = Vec3.ZERO;
 +        this.tracingRange = world.spigotConfig.playerTrackingRange * world.spigotConfig.playerTrackingRange;
-+        this.notSleepTicks = 0;
-+
-+        this.fauxSleeping = LuminolConfig.fakeplayerSkipSleep;
-+        this.spawnPhantom = LuminolConfig.fakeplayerSpawnPhantom;
-+        this.alwaysSendData = LuminolConfig.alwaysSendFakeplayerData;
 +    }
 +
 +    public static ServerBot createBot(@NotNull BotCreateState state) {
@@ -1409,70 +1339,45 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +
 +        MinecraftServer server = MinecraftServer.getServer();
 +
-+        Supplier<ServerBot> creator = () -> {
-+            BotCreateEvent event = new BotCreateEvent(state.name, state.skinName, state.loc, ChatColor.YELLOW + state.name + " joined the game");
-+            server.server.getPluginManager().callEvent(event);
++        BotCreateEvent event = new BotCreateEvent(state.name, state.skinName, state.loc, ChatColor.YELLOW + state.name + " joined the game");
++        server.server.getPluginManager().callEvent(event);
 +
-+            if (event.isCancelled()) {
-+                return null;
-+            }
-+
-+            Location location = event.getCreateLocation();
-+
-+            ServerLevel world = ((CraftWorld) location.getWorld()).getHandle();
-+            CustomGameProfile profile = new CustomGameProfile(BotUtil.getBotUUID(state), state.name, state.skin);
-+
-+            ServerBot bot = new ServerBot(server, world, profile);
-+
-+            bot.connection = new ServerGamePacketListenerImpl(server, new Connection(PacketFlow.SERVERBOUND) { // ?
-+                @Override
-+                public void send(@NotNull Packet<?> packet) {
-+                }
-+
-+                @Override
-+                public void send(@NotNull Packet<?> packet, @Nullable PacketSendListener packetsendlistener) {
-+                }
-+
-+                @Override
-+                public void send(@NotNull Packet<?> packet, @Nullable PacketSendListener callbacks, boolean flush) {
-+                }
-+            }, bot, CommonListenerCookie.createInitial(profile));
-+            bot.isRealPlayer = true;
-+            bot.createState = state;
-+
-+            if (event.getJoinMessage() != null) {
-+                Bukkit.broadcastMessage(event.getJoinMessage());
-+            }
-+
-+            bot.teleportTo(location.getX(), location.getY(), location.getZ());
-+            bot.setRot(location.getYaw(), location.getPitch());
-+            bot.getBukkitEntity().setRotation(location.getYaw(), location.getPitch());
-+            world.addFreshEntity(bot, CreatureSpawnEvent.SpawnReason.COMMAND);
-+
-+            bot.renderAll();
-+            server.getPlayerList().addNewBot(bot);
-+            bots.add(bot);
-+
-+            BotJoinEvent event1 = new BotJoinEvent(bot.getBukkitPlayer());
-+            server.server.getPluginManager().callEvent(event1);
-+
-+            return bot;
-+        };
-+
-+        if (TickThread.isTickThreadFor(((CraftWorld) state.loc.getWorld()).getHandle(),state.loc.getBlockX() >> 4,state.loc.getBlockZ() >> 4)){
-+            return creator.get();
++        if (event.isCancelled()) {
++            return null;
 +        }
 +
-+        return CompletableFuture.supplyAsync(
-+                creator,
-+                task ->
-+                        RegionizedServer.getInstance().taskQueue.queueTickTaskQueue(
-+                                ((CraftWorld) state.loc.getWorld()).getHandle(),
-+                                state.loc.getBlockX() >> 4,
-+                                state.loc.getBlockZ() >> 4,
-+                                task
-+                        )
-+        ).join();
++        Location location = event.getCreateLocation();
++
++        ServerLevel world = ((CraftWorld) location.getWorld()).getHandle();
++        CustomGameProfile profile = new CustomGameProfile(BotUtil.getBotUUID(state), state.name, state.skin);
++
++        ServerBot bot = new ServerBot(server, world, profile);
++
++        bot.connection = new ServerGamePacketListenerImpl(server, new Connection(PacketFlow.SERVERBOUND) {
++            @Override
++            public void send(@NotNull Packet<?> packet, @Nullable PacketSendListener packetsendlistener) {
++            }
++        }, bot, CommonListenerCookie.createInitial(profile));
++        bot.isRealPlayer = true;
++        bot.createState = state;
++
++        if (event.getJoinMessage() != null) {
++            Bukkit.broadcastMessage(event.getJoinMessage());
++        }
++
++        bot.teleportTo(location.getX(), location.getY(), location.getZ());
++        bot.setRot(location.getYaw(), location.getPitch());
++        bot.getBukkitEntity().setRotation(location.getYaw(), location.getPitch());
++        world.addFreshEntity(bot, CreatureSpawnEvent.SpawnReason.COMMAND);
++
++        bot.renderAll();
++        server.getPlayerList().addNewBot(bot);
++        bots.add(bot);
++
++        BotJoinEvent event1 = new BotJoinEvent(bot.getBukkitPlayer());
++        server.server.getPluginManager().callEvent(event1);
++
++        return bot;
 +    }
 +
 +    public static boolean isCreateLegal(@NotNull String name) {
@@ -1505,7 +1410,7 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +    }
 +
 +    public boolean needSendFakeData(ServerPlayer player) {
-+        return alwaysSendData && (player.level() == this.level() && player.position().distanceToSqr(this.position()) > this.tracingRange);
++        return me.earthme.luminol.LuminolConfig.alwaysSendFakeplayerData && (player.level() == this.level() && player.position().distanceToSqr(this.position()) > this.tracingRange);
 +    }
 +
 +    public void sendFakeDataIfNeed(ServerPlayer player, boolean login) {
@@ -1515,11 +1420,11 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +    }
 +
 +    public void sendFakeData(ServerPlayerConnection playerConnection, boolean login) {
-+        playerConnection.send(new ClientboundAddEntityPacket(this));
++            playerConnection.send(new ClientboundAddEntityPacket(this));
 +        if (login) {
-+            Bukkit.getScheduler().runTaskLater(CraftScheduler.MINECRAFT, () -> {
++            playerConnection.getPlayer().getBukkitEntity().taskScheduler.schedule(task -> {
 +                connection.send(new ClientboundRotateHeadPacket(this, (byte) ((getYRot() * 256f) / 360f)));
-+            }, 10);
++            },null,10);
 +        } else {
 +            connection.send(new ClientboundRotateHeadPacket(this, (byte) ((getYRot() * 256f) / 360f)));
 +        }
@@ -1600,10 +1505,6 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +            return;
 +        }
 +
-+        if (spawnPhantom) {
-+            notSleepTicks++;
-+        }
-+
 +        if (fireTicks > 0) {
 +            --fireTicks;
 +        }
@@ -1620,20 +1521,18 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +        this.updateLocation();
 +        this.updatePlayerPose();
 +
-+        if (TickRegionScheduler.getCurrentRegion().getData().getCurrentTick() % 20 == 0) {
-+            float health = getHealth();
-+            float maxHealth = getMaxHealth();
-+            float regenAmount = (float) (me.earthme.luminol.LuminolConfig.fakeplayerRegenAmount * 20);
-+            float amount;
++        float health = getHealth();
++        float maxHealth = getMaxHealth();
++        float regenAmount = 0.010f;
++        float amount;
 +
-+            if (health < maxHealth - regenAmount) {
-+                amount = health + regenAmount;
-+            } else {
-+                amount = maxHealth;
-+            }
-+
-+            this.setHealth(amount);
++        if (health < maxHealth - regenAmount) {
++            amount = health + regenAmount;
++        } else {
++            amount = maxHealth;
 +        }
++
++        this.setHealth(amount);
 +
 +        BlockPos blockposition = this.getOnPosLegacy();
 +        BlockState iblockdata = this.level().getBlockState(blockposition);
@@ -1851,13 +1750,9 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +    @Override
 +    public @NotNull InteractionResult interact(@NotNull Player player, @NotNull InteractionHand hand) {
 +        if (me.earthme.luminol.LuminolConfig.openFakeplayerInventory) {
-+            if (player instanceof ServerPlayer player1 && player.getMainHandItem().isEmpty()) {
-+                BotInventoryOpenEvent event = new BotInventoryOpenEvent(this.getBukkitEntity(), player1.getBukkitEntity());
-+                server.server.getPluginManager().callEvent(event);
-+                if (!event.isCancelled()) {
-+                    player.openMenu(new SimpleMenuProvider((i, inventory, p) -> ChestMenu.sixRows(i, inventory, container), getDisplayName()));
-+                    return InteractionResult.SUCCESS;
-+                }
++            if (player.getMainHandItem().isEmpty()) {
++                player.openMenu(new SimpleMenuProvider((i, inventory, p) -> ChestMenu.sixRows(i, inventory, container), getDisplayName()));
++                return InteractionResult.SUCCESS;
 +            }
 +        }
 +        return super.interact(player, hand);
@@ -1994,19 +1889,21 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +
 +        public void createAsync(Consumer<ServerBot> consumer) {
 +            Bukkit.getAsyncScheduler().runNow(CraftScheduler.MINECRAFT,scheduledTask -> {
-+                try {
-+                    if (skinName != null) {
-+                        this.skin = MojangAPI.getSkin(skinName);
-+                    }
-+
-+
-+                    ServerBot bot = createBot(this);
-+                    if (bot != null && consumer != null) {
-+                        consumer.accept(bot);
-+                    }
-+                }catch (Exception e){
-+                    MinecraftServer.LOGGER.error("Exception in processing async task for fakeplayer!",e);
++                if (skinName != null) {
++                    this.skin = MojangAPI.getSkin(skinName);
 +                }
++
++                RegionizedServer.getInstance().taskQueue.queueTickTaskQueue(
++                        ((CraftWorld) loc.getWorld()).getHandle(),
++                        loc.getBlockX() >> 4,
++                        loc.getBlockZ() >> 4,
++                        ()->{
++                            ServerBot bot = createBot(this);
++                            if (bot != null && consumer != null) {
++                                consumer.accept(bot);
++                            }
++                        }
++                );
 +            });
 +        }
 +
@@ -2873,23 +2770,17 @@ index 0000000000000000000000000000000000000000..345932e779f5187355ca722c2bb9b05f
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/bot/agent/actions/UseItemOnAction.java b/src/main/java/top/leavesmc/leaves/bot/agent/actions/UseItemOnAction.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f4837f60909763df89ea7474f70dd0236360e657
+index 0000000000000000000000000000000000000000..886e37227e66dc25653b8ad53fef600c705aa101
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/agent/actions/UseItemOnAction.java
-@@ -0,0 +1,56 @@
+@@ -0,0 +1,40 @@
 +package top.leavesmc.leaves.bot.agent.actions;
 +
 +import net.minecraft.server.level.ServerPlayer;
 +import net.minecraft.world.InteractionHand;
 +import net.minecraft.world.level.ClipContext;
-+import net.minecraft.world.level.block.Blocks;
-+import net.minecraft.world.level.block.entity.BlockEntity;
-+import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
-+import net.minecraft.world.level.block.state.BlockState;
 +import net.minecraft.world.phys.BlockHitResult;
 +import net.minecraft.world.phys.HitResult;
-+import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 +import org.jetbrains.annotations.NotNull;
 +import top.leavesmc.leaves.bot.ServerBot;
 +import top.leavesmc.leaves.bot.agent.BotAction;
@@ -2915,43 +2806,27 @@ index 0000000000000000000000000000000000000000..f4837f60909763df89ea7474f70dd023
 +    @Override
 +    public boolean doTick(@NotNull ServerBot bot) {
 +        HitResult result = bot.getRayTrace(5, ClipContext.Fluid.NONE);
-+        if (result instanceof BlockHitResult blockHitResult) {
-+            BlockState state = bot.serverLevel().getBlockState(blockHitResult.getBlockPos());
++        if (result.getType() == HitResult.Type.BLOCK) {
 +            bot.punch();
-+            if (state.getBlock() == Blocks.TRAPPED_CHEST) {
-+                BlockEntity entity = bot.serverLevel().getBlockEntity(blockHitResult.getBlockPos());
-+                if (entity instanceof TrappedChestBlockEntity chestBlockEntity) {
-+                    chestBlockEntity.startOpen(bot);
-+                    Bukkit.getScheduler().runTaskLater(CraftScheduler.MINECRAFT, () -> chestBlockEntity.stopOpen(bot), 1);
-+                    return true;
-+                }
-+            } else {
-+                bot.updateItemInMainHand();
-+                return bot.gameMode.useItemOn(bot, bot.level(), bot.getItemInHand(InteractionHand.MAIN_HAND), InteractionHand.MAIN_HAND, (BlockHitResult) result).consumesAction();
-+            }
++            bot.updateItemInMainHand();
++            return bot.gameMode.useItemOn(bot, bot.level(), bot.getItemInHand(InteractionHand.MAIN_HAND), InteractionHand.MAIN_HAND, (BlockHitResult) result).consumesAction();
 +        }
 +        return false;
 +    }
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/bot/agent/actions/UseItemOnOffhandAction.java b/src/main/java/top/leavesmc/leaves/bot/agent/actions/UseItemOnOffhandAction.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4ab84fba3624a8e8c4d345c03fe678a012a5c367
+index 0000000000000000000000000000000000000000..16ae37e2ffb4189041986e759d563d00a9126ad8
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/agent/actions/UseItemOnOffhandAction.java
-@@ -0,0 +1,56 @@
+@@ -0,0 +1,40 @@
 +package top.leavesmc.leaves.bot.agent.actions;
 +
 +import net.minecraft.server.level.ServerPlayer;
 +import net.minecraft.world.InteractionHand;
 +import net.minecraft.world.level.ClipContext;
-+import net.minecraft.world.level.block.Blocks;
-+import net.minecraft.world.level.block.entity.BlockEntity;
-+import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
-+import net.minecraft.world.level.block.state.BlockState;
 +import net.minecraft.world.phys.BlockHitResult;
 +import net.minecraft.world.phys.HitResult;
-+import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 +import org.jetbrains.annotations.NotNull;
 +import top.leavesmc.leaves.bot.ServerBot;
 +import top.leavesmc.leaves.bot.agent.BotAction;
@@ -2977,20 +2852,10 @@ index 0000000000000000000000000000000000000000..4ab84fba3624a8e8c4d345c03fe678a0
 +    @Override
 +    public boolean doTick(@NotNull ServerBot bot) {
 +        HitResult result = bot.getRayTrace(5, ClipContext.Fluid.NONE);
-+        if (result instanceof BlockHitResult blockHitResult) {
-+            BlockState state = bot.serverLevel().getBlockState(blockHitResult.getBlockPos());
++        if (result.getType() == HitResult.Type.BLOCK) {
 +            bot.punch();
-+            if (state.getBlock() == Blocks.TRAPPED_CHEST) {
-+                BlockEntity entity = bot.serverLevel().getBlockEntity(blockHitResult.getBlockPos());
-+                if (entity instanceof TrappedChestBlockEntity chestBlockEntity) {
-+                    chestBlockEntity.startOpen(bot);
-+                    Bukkit.getScheduler().runTaskLater(CraftScheduler.MINECRAFT, () -> chestBlockEntity.stopOpen(bot), 1);
-+                    return true;
-+                }
-+            } else {
-+                bot.updateItemInMainHand();
-+                return bot.gameMode.useItemOn(bot, bot.level(), bot.getItemInHand(InteractionHand.OFF_HAND), InteractionHand.OFF_HAND, (BlockHitResult) result).consumesAction();
-+            }
++            bot.updateItemInOffHand();
++            return bot.gameMode.useItemOn(bot, bot.level(), bot.getItemInHand(InteractionHand.OFF_HAND), InteractionHand.OFF_HAND, (BlockHitResult) result).consumesAction();
 +        }
 +        return false;
 +    }
@@ -3112,10 +2977,10 @@ index 340eaca64c96180b895a075ce9e44402cd104eed..39e90dcff0de259373d7955021c29397
  }
 diff --git a/src/main/java/top/leavesmc/leaves/entity/CraftBot.java b/src/main/java/top/leavesmc/leaves/entity/CraftBot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..713240da3ba37915b455d952a45ae7f68b8294ee
+index 0000000000000000000000000000000000000000..e30ce391f638778fc805ca75287917af99b37443
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/entity/CraftBot.java
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,60 @@
 +package top.leavesmc.leaves.entity;
 +
 +import org.bukkit.craftbukkit.CraftServer;
@@ -3127,8 +2992,6 @@ index 0000000000000000000000000000000000000000..713240da3ba37915b455d952a45ae7f6
 +import top.leavesmc.leaves.bot.agent.Actions;
 +import top.leavesmc.leaves.bot.agent.BotAction;
 +import top.leavesmc.leaves.entity.botaction.LeavesBotAction;
-+
-+import java.util.UUID;
 +
 +public class CraftBot extends CraftPlayer implements Bot {
 +
@@ -3144,11 +3007,6 @@ index 0000000000000000000000000000000000000000..713240da3ba37915b455d952a45ae7f6
 +    @Override
 +    public @NotNull String getRealName() {
 +        return getHandle().createState.getRealName();
-+    }
-+
-+    @Override
-+    public @Nullable UUID getCreatePlayerUUID() {
-+        return getHandle().createPlayer;
 +    }
 +
 +    @Override
