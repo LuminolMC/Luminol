@@ -1257,7 +1257,7 @@ index 0000000000000000000000000000000000000000..daaece30b2a3983f1cc9ee9a851e8f37
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/bot/ServerBot.java b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0440eeef8
+index 0000000000000000000000000000000000000000..d40e7c57a951c9acdd952cf3121a1436cf3929e4
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
 @@ -0,0 +1,760 @@
@@ -1510,9 +1510,9 @@ index 0000000000000000000000000000000000000000..30391d5dc0e1bdaeaf9ee190e74c3da0
 +    public void sendFakeData(ServerPlayerConnection playerConnection, boolean login) {
 +        playerConnection.send(new ClientboundAddEntityPacket(this));
 +        if (login) {
-+            Bukkit.getScheduler().runTaskLater(CraftScheduler.MINECRAFT, () -> {
++            playerConnection.getPlayer().getBukkitEntity().taskScheduler.schedule(task -> {
 +                connection.send(new ClientboundRotateHeadPacket(this, (byte) ((getYRot() * 256f) / 360f)));
-+            }, 10);
++            },null,10);
 +        } else {
 +            connection.send(new ClientboundRotateHeadPacket(this, (byte) ((getYRot() * 256f) / 360f)));
 +        }
