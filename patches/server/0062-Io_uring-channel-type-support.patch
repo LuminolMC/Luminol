@@ -1,0 +1,92 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Tue, 30 Jan 2024 13:08:25 +0000
+Subject: [PATCH] Io_uring channel type support
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 8a926993088d33983f75071b3320dd67c3e857c3..aa1033e0de7d59c32acd2afa58c0b916588b97ed 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -39,6 +39,7 @@ dependencies {
+     log4jPlugins.annotationProcessorConfigurationName("org.apache.logging.log4j:log4j-core:2.19.0") // Paper - Needed to generate meta for our Log4j plugins
+     runtimeOnly(log4jPlugins.output)
+     alsoShade(log4jPlugins.output)
++    implementation("io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.21.Final:linux-x86_64") //Luminol - io_uring Libraries
+     implementation("io.netty:netty-codec-haproxy:4.1.97.Final") // Paper - Add support for proxy protocol
+     // Paper end
+     implementation("org.apache.logging.log4j:log4j-iostreams:2.19.0") // Paper - remove exclusion
+diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
+index f924a238f211c22a00b8df67a209dcfea751039c..740c1de1d61cb047139cadac041b381cb976de5f 100644
+--- a/src/main/java/me/earthme/luminol/LuminolConfig.java
++++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
+@@ -37,6 +37,7 @@ public class LuminolConfig {
+     public static boolean fixSpectorTeleportFolia = false;
+     public static boolean disableRootUserWarning = false;
+     public static boolean fixDoubleEntitySchedulerRetring = false;
++    public static boolean enableIoUring = false;
+ 
+     public static boolean safeTeleportation = true;
+     public static boolean enableSandDuping = false;
+@@ -185,6 +186,7 @@ public class LuminolConfig {
+         disableOfflineModeWarning = get("misc.disable_offline_mode_warning",disableOfflineModeWarning);
+         disableRootUserWarning = get("misc.disable_root_user_warning",disableRootUserWarning);
+         fixDoubleEntitySchedulerRetring = get("misc.fix_folia_double_entity_scheduler_retring",fixDoubleEntitySchedulerRetring,"Fix https://github.com/PaperMC/Folia/pull/181 on Folia");
++        enableIoUring = get("misc.enable_io_uring_support",enableIoUring);
+ 
+         if (tpsbarEnabled){
+             initTpsbar();
+diff --git a/src/main/java/net/minecraft/server/network/ServerConnectionListener.java b/src/main/java/net/minecraft/server/network/ServerConnectionListener.java
+index 81090d1b5d67506268a41c6387a1d45302e88a5c..7bdf3a669c5b7a6b0dd71b94ce56a5beda38d29d 100644
+--- a/src/main/java/net/minecraft/server/network/ServerConnectionListener.java
++++ b/src/main/java/net/minecraft/server/network/ServerConnectionListener.java
+@@ -20,9 +20,11 @@ import io.netty.channel.epoll.EpollServerSocketChannel;
+ import io.netty.channel.local.LocalAddress;
+ import io.netty.channel.local.LocalServerChannel;
+ import io.netty.channel.nio.NioEventLoopGroup;
+-import io.netty.channel.socket.ServerSocketChannel;
+ import io.netty.channel.socket.nio.NioServerSocketChannel;
+ import io.netty.handler.timeout.ReadTimeoutHandler;
++import io.netty.incubator.channel.uring.IOUring;
++import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
++import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
+ import io.netty.util.HashedWheelTimer;
+ import io.netty.util.Timeout;
+ import io.netty.util.Timer;
+@@ -35,6 +37,8 @@ import java.util.List;
+ import java.util.concurrent.TimeUnit;
+ import java.util.function.Supplier;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.LuminolConfig;
+ import net.minecraft.CrashReport;
+ import net.minecraft.ReportedException;
+ import net.minecraft.network.BandwidthDebugMonitor;
+@@ -73,6 +77,10 @@ public class ServerConnectionListener {
+     }
+     // Paper end
+ 
++    //Luminol start - io_uring support
++    public static final Supplier<IOUringEventLoopGroup> SERVER_IO_URING_WORKER_GROUP = Suppliers.memoize(() -> new IOUringEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty IO_URING Client IO #%d").setDaemon(true).setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(LOGGER)).build()));
++    //Luminol end
++
+     public ServerConnectionListener(MinecraftServer server) {
+         this.server = server;
+         this.running = true;
+@@ -100,7 +108,15 @@ public class ServerConnectionListener {
+                 // Paper end
+                 eventloopgroup = (EventLoopGroup) ServerConnectionListener.SERVER_EPOLL_EVENT_GROUP.get();
+                 ServerConnectionListener.LOGGER.info("Using epoll channel type");
+-            } else {
++            }
++            //Luminol start - io_uring support
++            else if (IOUring.isAvailable() && LuminolConfig.enableIoUring){
++                eventloopgroup = SERVER_IO_URING_WORKER_GROUP.get();
++                oclass = IOUringServerSocketChannel.class;
++                ServerConnectionListener.LOGGER.info("Using io_uring channel type");
++            }
++            //Luminol end
++            else {
+                 oclass = NioServerSocketChannel.class;
+                 eventloopgroup = (EventLoopGroup) ServerConnectionListener.SERVER_EVENT_GROUP.get();
+                 ServerConnectionListener.LOGGER.info("Using default channel type");
