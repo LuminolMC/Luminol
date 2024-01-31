@@ -17,7 +17,7 @@ index 1bdeb0e9d0c04509d7ed4003f6b79c806dc55eed..c0199b93a69a2d0b99d7c61a1bdb55fc
      // Paper end
      implementation("org.apache.logging.log4j:log4j-iostreams:2.19.0") // Paper - remove exclusion
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index fa3f0008fc6e026778f75dd44584d3e6e2f77bb8..1d0ba882fe06624a16b5b6fb03cc679a872fb595 100644
+index c6cce369373fbc46fb4f87a3b2f9d8ba827264f1..a83e7c5bde1ea4ca152e4581c7f60e149951f78d 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -35,6 +35,7 @@ public class LuminolConfig {
@@ -37,7 +37,7 @@ index fa3f0008fc6e026778f75dd44584d3e6e2f77bb8..1d0ba882fe06624a16b5b6fb03cc679a
          if (tpsbarEnabled){
              initTpsbar();
 diff --git a/src/main/java/net/minecraft/server/network/ServerConnectionListener.java b/src/main/java/net/minecraft/server/network/ServerConnectionListener.java
-index 35bf160d10b56fb84d4cb845b61c1d61337e48ca..092883ed467d8f545e91fdd0740d1d633f52e04b 100644
+index 35bf160d10b56fb84d4cb845b61c1d61337e48ca..4de318f879aae2bf2859b19522111444a0f27550 100644
 --- a/src/main/java/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/src/main/java/net/minecraft/server/network/ServerConnectionListener.java
 @@ -20,9 +20,11 @@ import io.netty.channel.epoll.EpollServerSocketChannel;
@@ -73,20 +73,19 @@ index 35bf160d10b56fb84d4cb845b61c1d61337e48ca..092883ed467d8f545e91fdd0740d1d63
      public ServerConnectionListener(MinecraftServer server) {
          this.server = server;
          this.running = true;
-@@ -100,7 +108,15 @@ public class ServerConnectionListener {
-                 // Paper end - Unix domain socket support
-                 eventloopgroup = (EventLoopGroup) ServerConnectionListener.SERVER_EPOLL_EVENT_GROUP.get();
-                 ServerConnectionListener.LOGGER.info("Using epoll channel type");
--            } else {
-+            }
+@@ -90,7 +98,14 @@ public class ServerConnectionListener {
+             Class oclass;
+             EventLoopGroup eventloopgroup;
+ 
+-            if (Epoll.isAvailable() && this.server.isEpollEnabled()) {
 +            //Luminol start - io_uring support
-+            else if (IOUring.isAvailable() && LuminolConfig.enableIoUring){
++            if (IOUring.isAvailable() && LuminolConfig.enableIoUring){
 +                eventloopgroup = SERVER_IO_URING_WORKER_GROUP.get();
 +                oclass = IOUringServerSocketChannel.class;
 +                ServerConnectionListener.LOGGER.info("Using io_uring channel type");
 +            }
++            else if (Epoll.isAvailable() && this.server.isEpollEnabled()) {
 +            //Luminol end
-+            else {
-                 oclass = NioServerSocketChannel.class;
-                 eventloopgroup = (EventLoopGroup) ServerConnectionListener.SERVER_EVENT_GROUP.get();
-                 ServerConnectionListener.LOGGER.info("Using default channel type");
+                 // Paper start - Unix domain socket support
+                 if (address instanceof io.netty.channel.unix.DomainSocketAddress) {
+                     oclass = io.netty.channel.epoll.EpollServerDomainSocketChannel.class;
