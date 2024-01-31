@@ -67,7 +67,7 @@ index 81090d1b5d67506268a41c6387a1d45302e88a5c..637d321b75dc7b5653ff9aa6134f900c
      // Paper end
  
 +    //Luminol start - io_uring support
-+    public static final Supplier<IOUringEventLoopGroup> SERVER_IO_URING_WORKER_GROUP = Suppliers.memoize(() -> new IOUringEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty IO_URING Client IO #%d").setDaemon(true).setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(LOGGER)).build()));
++    public static final Supplier<IOUringEventLoopGroup> SERVER_IO_URING_WORKER_GROUP = Suppliers.memoize(() -> new IOUringEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty IO_URING Server IO #%d").setDaemon(true).setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(LOGGER)).build()));
 +    //Luminol end
 +
      public ServerConnectionListener(MinecraftServer server) {
