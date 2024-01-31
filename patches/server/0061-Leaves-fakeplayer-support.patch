@@ -5,7 +5,7 @@ Subject: [PATCH] Leaves fakeplayer support
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index e531453e3d25700e38ff41548c7e32e278a6304d..f924a238f211c22a00b8df67a209dcfea751039c 100644
+index e531453e3d25700e38ff41548c7e32e278a6304d..610642b0a0c3f17c66ec27ed812b97c68cee1be6 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -78,7 +78,17 @@ public class LuminolConfig {
@@ -39,7 +39,7 @@ index e531453e3d25700e38ff41548c7e32e278a6304d..f924a238f211c22a00b8df67a209dcfe
 +        fakeplayerSkipSleep = get("gameplay.fakeplayer.fakeplayer_skip_sleep",fakeplayerSkipSleep);
 +        fakeplayerResident = get("gameplay.fakeplayer.resident",fakeplayerResident);
 +        fakeplayerSpawnPhantom = get("gameplay.fakeplayer.spawn_phantom_for_fakeplayer",fakeplayerSpawnPhantom);
-+        fakeplayerRegenAmount = get("gameplay.fakeplayer.regen_amount",fakeplayerRegenAmount);
++        fakeplayerRegenAmount = Double.parseDouble(get("gameplay.fakeplayer.regen_amount",String.valueOf(fakeplayerRegenAmount)));
 +        unableFakeplayerNames = get("gameplay.fakeplayer.name_black_list",unableFakeplayerNames);
 +
 +        if (fakeplayerSupport){
