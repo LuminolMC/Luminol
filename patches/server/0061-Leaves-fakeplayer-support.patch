@@ -4,6 +4,19 @@ Date: Tue, 30 Jan 2024 08:59:03 +0000
 Subject: [PATCH] Leaves fakeplayer support
 
 
+diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java b/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java
+index 2b48833023771fa965f131890ade98e9da3f5976..75c16116f684d434c1aa554d8ed13a638751772a 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java
++++ b/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java
+@@ -124,6 +124,8 @@ public final class RegionShutdownThread extends TickThread {
+ 
+     @Override
+     public final void run() {
++        top.leavesmc.leaves.bot.ServerBot.saveOrRemoveAllBot(); // Leaves - save or remove bot
++
+         // await scheduler termination
+         LOGGER.info("Awaiting scheduler termination for 60s");
+         if (TickRegions.getScheduler().halt(true, TimeUnit.SECONDS.toNanos(60L))) {
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
 index e531453e3d25700e38ff41548c7e32e278a6304d..610642b0a0c3f17c66ec27ed812b97c68cee1be6 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
@@ -1206,10 +1219,10 @@ index 0000000000000000000000000000000000000000..daaece30b2a3983f1cc9ee9a851e8f37
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/bot/ServerBot.java b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..dcdc4fac1bf972085ea4cd789efd27370410e5e1
+index 0000000000000000000000000000000000000000..809b467ef317e498e1682bd3f592c616f5affb36
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
-@@ -0,0 +1,715 @@
+@@ -0,0 +1,732 @@
 +package top.leavesmc.leaves.bot;
 +
 +import com.google.common.collect.Lists;
@@ -1833,11 +1846,28 @@ index 0000000000000000000000000000000000000000..dcdc4fac1bf972085ea4cd789efd2737
 +    }
 +
 +    public static boolean removeAllBot() {
-+        Iterator<ServerBot> iterator = bots.iterator();
-+        while (iterator.hasNext()) {
-+            ServerBot bot = iterator.next();
-+            bot.die(bot.damageSources().fellOutOfWorld());
-+        }
++        CompletableFuture.allOf(
++                bots.stream()
++                        .map(bot ->{
++                            if (TickThread.isTickThreadFor(bot)){
++                                bot.die(bot.damageSources().fellOutOfWorld());
++                                return CompletableFuture.completedFuture(null);
++                            }
++
++                            return CompletableFuture.runAsync(()->{
++                                        bot.die(bot.damageSources().fellOutOfWorld());
++                            }, task ->
++                                    RegionizedServer.getInstance().taskQueue.queueTickTaskQueue(
++                                            bot.serverLevel(),
++                                            bot.sectionX,
++                                            bot.sectionZ,
++                                            task
++                                    )
++                            );
++                        })
++                        .toArray(CompletableFuture[]::new)
++        ).join();
++        bots.clear();
 +        return true;
 +    }
 +
