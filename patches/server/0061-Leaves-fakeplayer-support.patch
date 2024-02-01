@@ -1219,10 +1219,10 @@ index 0000000000000000000000000000000000000000..daaece30b2a3983f1cc9ee9a851e8f37
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/bot/ServerBot.java b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..809b467ef317e498e1682bd3f592c616f5affb36
+index 0000000000000000000000000000000000000000..35eecd67a743643496959d6eaeaf10a485aa651a
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
-@@ -0,0 +1,732 @@
+@@ -0,0 +1,734 @@
 +package top.leavesmc.leaves.bot;
 +
 +import com.google.common.collect.Lists;
@@ -1232,6 +1232,7 @@ index 0000000000000000000000000000000000000000..809b467ef317e498e1682bd3f592c616
 +import com.mojang.authlib.GameProfile;
 +import com.mojang.authlib.properties.Property;
 +import io.papermc.paper.threadedregions.RegionizedServer;
++import io.papermc.paper.util.TickThread;
 +import net.minecraft.Util;
 +import net.minecraft.core.BlockPos;
 +import net.minecraft.network.Connection;
@@ -1304,6 +1305,7 @@ index 0000000000000000000000000000000000000000..809b467ef317e498e1682bd3f592c616
 +import java.util.List;
 +import java.util.Map;
 +import java.util.UUID;
++import java.util.concurrent.CompletableFuture;
 +import java.util.concurrent.CopyOnWriteArrayList;
 +import java.util.function.Consumer;
 +
