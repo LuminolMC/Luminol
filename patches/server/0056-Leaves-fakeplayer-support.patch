@@ -4,6 +4,19 @@ Date: Mon, 29 Jan 2024 13:29:14 +0000
 Subject: [PATCH] Leaves fakeplayer support
 
 
+diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java b/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java
+index 2b48833023771fa965f131890ade98e9da3f5976..75c16116f684d434c1aa554d8ed13a638751772a 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java
++++ b/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java
+@@ -124,6 +124,8 @@ public final class RegionShutdownThread extends TickThread {
+ 
+     @Override
+     public final void run() {
++        top.leavesmc.leaves.bot.ServerBot.saveOrRemoveAllBot(); // Leaves - save or remove bot
++
+         // await scheduler termination
+         LOGGER.info("Awaiting scheduler termination for 60s");
+         if (TickRegions.getScheduler().halt(true, TimeUnit.SECONDS.toNanos(60L))) {
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
 index 6f5ddab2f98f71501af9a07f98ab7146f980997f..c6cce369373fbc46fb4f87a3b2f9d8ba827264f1 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
@@ -1257,10 +1270,10 @@ index 0000000000000000000000000000000000000000..daaece30b2a3983f1cc9ee9a851e8f37
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/bot/ServerBot.java b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..d40e7c57a951c9acdd952cf3121a1436cf3929e4
+index 0000000000000000000000000000000000000000..2cd6877c59659edc1ada5ad0a5d13ec2f106e41b
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
-@@ -0,0 +1,760 @@
+@@ -0,0 +1,781 @@
 +package top.leavesmc.leaves.bot;
 +
 +import com.google.common.collect.Lists;
@@ -1452,7 +1465,11 @@ index 0000000000000000000000000000000000000000..d40e7c57a951c9acdd952cf3121a1436
 +            return bot;
 +        };
 +
-+        if (TickThread.isTickThreadFor(((CraftWorld) state.loc.getWorld()).getHandle(),state.loc.getBlockX() >> 4,state.loc.getBlockZ() >> 4)){
++        if (TickThread.isTickThreadFor(
++                ((CraftWorld) state.loc.getWorld()).getHandle(),
++                state.loc.getBlockX() >> 4,
++                state.loc.getBlockZ() >> 4
++        )){
 +            return creator.get();
 +        }
 +
@@ -1931,11 +1948,28 @@ index 0000000000000000000000000000000000000000..d40e7c57a951c9acdd952cf3121a1436
 +    }
 +
 +    public static boolean removeAllBot() {
-+        Iterator<ServerBot> iterator = bots.iterator();
-+        while (iterator.hasNext()) {
-+            ServerBot bot = iterator.next();
-+            bot.die(bot.damageSources().fellOutOfWorld());
-+        }
++        CompletableFuture.allOf(
++                bots.stream()
++                        .map(bot ->{
++                            if (TickThread.isTickThreadFor(bot)){
++                                bot.die(bot.damageSources().fellOutOfWorld());
++                                return CompletableFuture.completedFuture(null);
++                            }
++
++                            return CompletableFuture.runAsync(()->{
++                                        bot.die(bot.damageSources().fellOutOfWorld());
++                            }, task ->
++                                    RegionizedServer.getInstance().taskQueue.queueTickTaskQueue(
++                                            bot.serverLevel(),
++                                            bot.sectionX,
++                                            bot.sectionZ,
++                                            task
++                                    )
++                            );
++                        })
++                        .toArray(CompletableFuture[]::new)
++        ).join();
++        bots.clear();
 +        return true;
 +    }
 +
