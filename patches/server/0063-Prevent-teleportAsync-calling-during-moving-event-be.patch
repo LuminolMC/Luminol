@@ -90,7 +90,7 @@ index e24b55dc96c2e3904e3c03d6bfa769aedf767b3b..1e5eb1277e1b4f2ba51fadbe2d882198
              return false;
          }
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-index 44a6118d3bd67a95180f750c17967561946e2e87..509a556baafd46356243cc783cf1edb4e7a61bb6 100644
+index 44a6118d3bd67a95180f750c17967561946e2e87..d642f4d42ae7e73642929708a198294e4c5a24d4 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 @@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap;
@@ -102,7 +102,15 @@ index 44a6118d3bd67a95180f750c17967561946e2e87..509a556baafd46356243cc783cf1edb4
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
-@@ -426,7 +428,21 @@ public abstract class AbstractMinecart extends Entity {
+@@ -20,6 +22,7 @@ import net.minecraft.nbt.NbtUtils;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.damagesource.DamageSource;
+@@ -426,7 +429,21 @@ public abstract class AbstractMinecart extends Entity {
              this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
  
              if (!from.equals(to)) {
