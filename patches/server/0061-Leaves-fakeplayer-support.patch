@@ -1219,10 +1219,10 @@ index 0000000000000000000000000000000000000000..daaece30b2a3983f1cc9ee9a851e8f37
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/bot/ServerBot.java b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..35eecd67a743643496959d6eaeaf10a485aa651a
+index 0000000000000000000000000000000000000000..e9101aeae36b919659b865d1cdb800c16ff29180
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/bot/ServerBot.java
-@@ -0,0 +1,734 @@
+@@ -0,0 +1,735 @@
 +package top.leavesmc.leaves.bot;
 +
 +import com.google.common.collect.Lists;
@@ -1851,10 +1851,11 @@ index 0000000000000000000000000000000000000000..35eecd67a743643496959d6eaeaf10a4
 +        CompletableFuture.allOf(
 +                bots.stream()
 +                        .map(bot ->{
-+                            if (TickThread.isTickThreadFor(bot)){
++                            //Do not check if it is on region thread,return to the target region anyway
++                            /*if (TickThread.isTickThreadFor(bot)){
 +                                bot.die(bot.damageSources().fellOutOfWorld());
 +                                return CompletableFuture.completedFuture(null);
-+                            }
++                            }*/
 +
 +                            return CompletableFuture.runAsync(()->{
 +                                        bot.die(bot.damageSources().fellOutOfWorld());
