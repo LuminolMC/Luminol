@@ -37,3 +37,6 @@ For maven
   <version>1.20.4-R0.1-SNAPSHOT</version>
 </dependency>
 ```
+
+## BStats
+![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")
