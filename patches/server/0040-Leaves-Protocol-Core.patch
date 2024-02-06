@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 13:26:53 +0000
+Date: Tue, 6 Feb 2024 04:03:25 +0000
 Subject: [PATCH] Leaves Protocol Core
 
 
@@ -36,7 +36,7 @@ index af86f752c33a2990405fea058b7c41c437ba9d46..bada9fae1e7178162429e1f5a1608b9c
      }
  
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index 87922e561b4949e7b4ea124f3ecdcd94792825a3..d459013788b077aacd6acd527b1cb39685d5303f 100644
+index 7ae11e8716d45a53cab24a3966bcb880df69027c..53783a2b174a46fd79bc7ae6fc5a8e6fc5e56a24 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -139,6 +139,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
@@ -44,7 +44,7 @@ index 87922e561b4949e7b4ea124f3ecdcd94792825a3..d459013788b077aacd6acd527b1cb396
      @Override
      public void handleCustomPayload(ServerboundCustomPayloadPacket packet) {
 +        top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handlePayload(player, packet.payload()); // Leaves - protocol
-         // Paper start - handle brand payload packet
+         // Paper start - Brand support
          if (packet.payload() instanceof net.minecraft.network.protocol.common.custom.BrandPayload brandPayload) {
              this.player.clientBrandName = brandPayload.brand();
 @@ -156,6 +157,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
@@ -56,7 +56,7 @@ index 87922e561b4949e7b4ea124f3ecdcd94792825a3..d459013788b077aacd6acd527b1cb396
              } catch (Exception ex) {
                  ServerGamePacketListenerImpl.LOGGER.error("Couldn\'t register custom payload", ex);
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 5d4876fc53eb12ee8e4a0159177e05cee847f077..8d776e633f6b61b06c3ed1dcfcd86141a9feab8c 100644
+index d13edeff0de64cb77d7668e5b964cabcf9729388..c8c72cefba44ce8587a9ae22f5a87d3199f8ca5f 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -433,6 +433,8 @@ public abstract class PlayerList {
@@ -68,7 +68,7 @@ index 5d4876fc53eb12ee8e4a0159177e05cee847f077..8d776e633f6b61b06c3ed1dcfcd86141
          final net.kyori.adventure.text.Component jm = playerJoinEvent.joinMessage();
  
          if (jm != null && !jm.equals(net.kyori.adventure.text.Component.empty())) { // Paper - Adventure
-@@ -689,6 +691,7 @@ public abstract class PlayerList {
+@@ -688,6 +690,7 @@ public abstract class PlayerList {
          return this.remove(entityplayer, net.kyori.adventure.text.Component.translatable("multiplayer.player.left", net.kyori.adventure.text.format.NamedTextColor.YELLOW, io.papermc.paper.configuration.GlobalConfiguration.get().messages.useDisplayNameInQuitMessage ? entityplayer.getBukkitEntity().displayName() : io.papermc.paper.adventure.PaperAdventure.asAdventure(entityplayer.getDisplayName())));
      }
      public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer, net.kyori.adventure.text.Component leaveMessage) {
@@ -77,7 +77,7 @@ index 5d4876fc53eb12ee8e4a0159177e05cee847f077..8d776e633f6b61b06c3ed1dcfcd86141
          ServerLevel worldserver = entityplayer.serverLevel();
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 1d8681ee2c71c06a596a6eff650753a358de22c1..39099a6fcb431faf329fff2774988cf64189b43f 100644
+index 57243238d9363cc68c1022871d62b41c424b8a75..23cd0290f8939aec85b5699feb6ac7f12bde14a7 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -469,6 +469,7 @@ public final class CraftServer implements Server {

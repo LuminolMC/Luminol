@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 07:37:51 +0000
+Date: Tue, 6 Feb 2024 01:44:36 +0000
 Subject: [PATCH] Add config for server brand name
 
 
 diff --git a/src/main/java/com/destroystokyo/paper/network/PaperServerListPingEventImpl.java b/src/main/java/com/destroystokyo/paper/network/PaperServerListPingEventImpl.java
-index 5d7110a33957a597592cacb864c947eb053e8563..25cda48a6ab9a703d64c391007f5c32c368fdbe2 100644
+index 6ed2114f577ce12d2d493985e798609c7d83f15e..8200391c3177284d2e18b8fc1d532a9a9e4c4ad1 100644
 --- a/src/main/java/com/destroystokyo/paper/network/PaperServerListPingEventImpl.java
 +++ b/src/main/java/com/destroystokyo/paper/network/PaperServerListPingEventImpl.java
 @@ -1,6 +1,7 @@
@@ -19,14 +19,14 @@ index 5d7110a33957a597592cacb864c947eb053e8563..25cda48a6ab9a703d64c391007f5c32c
 @@ -14,7 +15,7 @@ class PaperServerListPingEventImpl extends PaperServerListPingEvent {
  
      PaperServerListPingEventImpl(MinecraftServer server, StatusClient client, int protocolVersion, @Nullable CachedServerIcon icon) {
-         super(client, server.server.motd(), server.getPlayerCount(), server.getMaxPlayers(),
+         super(client, server.motd(), server.getPlayerCount(), server.getMaxPlayers(),
 -                server.getServerModName() + ' ' + server.getServerVersion(), protocolVersion, icon);
 +                LuminolConfig.fakeVanillaModeEnabled ? server.getServerVersion() : server.getServerModName() + ' ' + server.getServerVersion(), protocolVersion, icon);//Luminol - Fake vanilla mode
          this.server = server;
      }
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index b2e33a1a29c67f6f9768f547adeb34632548c7d0..26b85e3caf2671159b36963296777ecdf70a0231 100644
+index 22aff010859dded150b6e3dd0644fe3c38dbaea9..bf1df7da39dc42bda2e4b54ae3f6856399f5cb10 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -54,6 +54,8 @@ import java.util.stream.Collectors;
@@ -38,12 +38,12 @@ index b2e33a1a29c67f6f9768f547adeb34632548c7d0..26b85e3caf2671159b36963296777ecd
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -1951,7 +1953,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1954,7 +1956,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
--        return "Luminol"; //Luminol - Luminol > // Folia - Folia > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
-+        return LuminolConfig.fakeVanillaModeEnabled ? "vanilla" : LuminolConfig.serverModName; //Luminol //Luminol - Luminol > // Folia - Folia > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+-        return "Luminol"; // Paper // Folia - Folia //Luminol - Luminol
++        return LuminolConfig.fakeVanillaModeEnabled ? "vanilla" : LuminolConfig.serverModName; // Paper // Folia - Folia //Luminol - Luminol //Luminol - Add config for this
      }
  
      public SystemReport fillSystemReport(SystemReport details) {

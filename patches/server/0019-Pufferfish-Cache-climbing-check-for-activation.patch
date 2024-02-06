@@ -5,10 +5,10 @@ Subject: [PATCH] Pufferfish Cache climbing check for activation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 5e78570110dd57cac16e073e3051f76460e19540..ec20ae65db0b3d835b58b471f90f3862283423e6 100644
+index 18c9a35624d6d3c94efd5df8e97c4257fd199d0d..f04517cb4a0c134344481c2779fea5bf49f1482d 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -311,7 +311,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -310,7 +310,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      public double yo;
      public double zo;
      private Vec3 position;
@@ -18,10 +18,10 @@ index 5e78570110dd57cac16e073e3051f76460e19540..ec20ae65db0b3d835b58b471f90f3862
      private Vec3 deltaMovement;
      private float yRot;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 8d8c80a41e01df4d0fef7d045b9c5d283a8f168d..81cf3721fd93af5ee307226cdea926d3ad443f77 100644
+index 28da90b59f60d3f7618a42e149467a3a55c91682..dd50c93283dfce2ed33d3eece48e1829b9cdc9d0 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -142,7 +142,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
+@@ -141,7 +141,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
  import org.bukkit.event.player.PlayerItemConsumeEvent;
  // CraftBukkit end
  
@@ -29,7 +29,7 @@ index 8d8c80a41e01df4d0fef7d045b9c5d283a8f168d..81cf3721fd93af5ee307226cdea926d3
  
  public abstract class LivingEntity extends Entity implements Attackable {
  
-@@ -2013,6 +2012,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2014,6 +2013,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return this.lastClimbablePos;
      }
  
@@ -51,10 +51,10 @@ index 8d8c80a41e01df4d0fef7d045b9c5d283a8f168d..81cf3721fd93af5ee307226cdea926d3
          if (this.isSpectator()) {
              return false;
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index 5f1dee3a1d5a7b0391bad60b53eda1c5586058aa..e960c307434736af5a0fff626d6bccf5cd46f35d 100644
+index f8718d91f4c15c74d6e6dd5f60f7f05f45f63655..50fafff765b2494c075784cc5342d086c8dc97b2 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
-@@ -306,7 +306,7 @@ public class ActivationRange
+@@ -305,7 +305,7 @@ public class ActivationRange
          if ( entity instanceof LivingEntity )
          {
              LivingEntity living = (LivingEntity) entity;

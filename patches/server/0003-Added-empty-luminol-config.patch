@@ -122,7 +122,7 @@ index 0000000000000000000000000000000000000000..1f9ff0fc33fa36c90fc4cbbd21b7b790
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 98ea5cecac2ab647acfb4d8bbea8ada9872cc4cd..e5eeb361fc29c831a76f87c60896b5dd23f58736 100644
+index 0f8c868fce0a054a0ba356350baf4c3824c2c958..5a71ee8d50818c5d6e7a6a2fee05a5c16108b50a 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -19,6 +19,8 @@ import java.util.Locale;
@@ -143,7 +143,7 @@ index 98ea5cecac2ab647acfb4d8bbea8ada9872cc4cd..e5eeb361fc29c831a76f87c60896b5dd
          this.paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
          this.paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 653728709b275fee822e55a511e67ec11fdc48f7..daf8c44ec34fad2330d23e9f32c26ed67597bf0c 100644
+index a16fc5ba55dbde0cf7f968884da40d70a754a0d8..0a2d50b72506115644af5682d72f8ee04e45796b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -38,6 +38,8 @@ import java.util.stream.Collectors;
@@ -155,7 +155,7 @@ index 653728709b275fee822e55a511e67ec11fdc48f7..daf8c44ec34fad2330d23e9f32c26ed6
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.Util;
-@@ -772,6 +774,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -767,6 +769,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
      }
      // Folia end - region threading
  
@@ -164,7 +164,7 @@ index 653728709b275fee822e55a511e67ec11fdc48f7..daf8c44ec34fad2330d23e9f32c26ed6
      // Add env and gen to constructor, IWorldDataServer -> WorldDataServer
      public ServerLevel(MinecraftServer minecraftserver, Executor executor, LevelStorageSource.LevelStorageAccess convertable_conversionsession, PrimaryLevelData iworlddataserver, ResourceKey<Level> resourcekey, LevelStem worlddimension, ChunkProgressListener worldloadlistener, boolean flag, long i, List<CustomSpawner> list, boolean flag1, @Nullable RandomSequences randomsequences, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
          // IRegistryCustom.Dimension iregistrycustom_dimension = minecraftserver.registryAccess(); // CraftBukkit - decompile error
-@@ -856,6 +860,12 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -851,6 +855,12 @@ public class ServerLevel extends Level implements WorldGenLevel {
          this.chunkTaskScheduler = new io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler(this, io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.workerThreads); // Paper - rewrite chunk system
          this.entityLookup = new io.papermc.paper.chunk.system.entity.EntityLookup(this, new EntityCallbacks()); // Paper - rewrite chunk system
          this.updateTickData(); // Folia - region threading - make sure it is initialised before ticked

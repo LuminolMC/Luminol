@@ -99,7 +99,7 @@ public class Main {
 ```
 
 diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
-index 8ec8084195e0400de76460b445012d605fe05724..e8fed9c43073eb443af289c524935cfaccf8e12c 100644
+index cb22cac2b8c4eaf705b76fd4a9d8b82fb8eb0140..f24132f5ab6362829e88559304173bd9a259caa3 100644
 --- a/src/main/java/io/papermc/paper/util/MCUtil.java
 +++ b/src/main/java/io/papermc/paper/util/MCUtil.java
 @@ -165,13 +165,11 @@ public final class MCUtil {

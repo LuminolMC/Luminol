@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 24 Dec 2023 08:18:35 +0800
+From: MrHua269 <novau233@163.com>
+Date: Tue, 6 Feb 2024 01:53:06 +0000
 Subject: [PATCH] Add config for sand duping
 
 
@@ -25,7 +25,7 @@ index 36ca0b94d29d81e5f1f2aff4a38ead0b363dd1c7..9db3bdd7a7d0b2a110e927ee4781eee4
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-index acf2bfe7421774c1a8d8ac1a23b34880df6cab6a..2af822f94306ae3d839e3acbb5a5fedd1bfcecbb 100644
+index 25b7b85cbd1130c5320e55b3c6b6f81ec228da81..018e4acb2ad6795e6c5059a47023e1b5c8713705 100644
 --- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 @@ -4,6 +4,8 @@ import com.mojang.logging.LogUtils;
@@ -46,9 +46,9 @@ index acf2bfe7421774c1a8d8ac1a23b34880df6cab6a..2af822f94306ae3d839e3acbb5a5fedd
              return;
          }
          // Paper end - fix sand duping
-@@ -150,7 +152,7 @@ public class FallingBlockEntity extends Entity {
-             this.move(MoverType.SELF, this.getDeltaMovement());
+@@ -149,7 +151,7 @@ public class FallingBlockEntity extends Entity {
  
+             this.move(MoverType.SELF, this.getDeltaMovement());
              // Paper start - fix sand duping
 -            if (this.isRemoved()) {
 +            if (!LuminolConfig.enableSandDuping && this.isRemoved()) { //Luminol - Add config for sand duping

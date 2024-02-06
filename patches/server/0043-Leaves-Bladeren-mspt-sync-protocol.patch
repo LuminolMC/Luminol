@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 13:33:13 +0000
+Date: Tue, 6 Feb 2024 04:08:12 +0000
 Subject: [PATCH] Leaves Bladeren mspt sync protocol
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 277623f29ca4a00432d70f40612f3ae247f09144..36e8870f89b58d3f01e671480da4c64a502ab7b8 100644
+index 63984447d9a6a00a6dc6f0dc1056c8c87b8e110f..6936497ed6d3d54d429e25673e0ce29465538768 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -68,6 +68,9 @@ public class LuminolConfig {
+@@ -66,6 +66,9 @@ public class LuminolConfig {
      public static boolean pcaSyncProtocol = false;
      public static String pcaSyncPlayerEntity = "NOBODY";
      public static boolean bladerenLeavesProtocol = false;
@@ -18,7 +18,7 @@ index 277623f29ca4a00432d70f40612f3ae247f09144..36e8870f89b58d3f01e671480da4c64a
  
  
      public static void init() throws IOException {
-@@ -201,6 +204,8 @@ public class LuminolConfig {
+@@ -197,6 +200,8 @@ public class LuminolConfig {
          pcaSyncProtocol = get("gameplay.enable_pca_sync_protocol",pcaSyncProtocol);
          pcaSyncPlayerEntity = get("gameplay.pca_sync_player_entity",pcaSyncPlayerEntity,"Available values: NOBODY,EVERYBODY,OPS,OPS_AND_SELF");
          bladerenLeavesProtocol = get("gameplay.bladeren_leaves_protocol",bladerenLeavesProtocol);

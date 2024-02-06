@@ -5,10 +5,10 @@ Subject: [PATCH] Piston fixes from molean server
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 589810272fef6fa47076b05c266a20402d7d8f0d..4cdb0e62a3027ae292e1d818e1a06a47496676af 100644
+index 03752939200823c8b3df40f1ec602917da725067..b1a17c730939f39ba81209a368c215c236f203b0 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -1438,7 +1438,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -1429,7 +1429,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
          if (movement.lengthSqr() <= 1.0E-7D) {
              return movement;
          } else {
@@ -18,7 +18,7 @@ index 589810272fef6fa47076b05c266a20402d7d8f0d..4cdb0e62a3027ae292e1d818e1a06a47
              if (i != this.pistonDeltasGameTime) {
                  Arrays.fill(this.pistonDeltas, 0.0D);
 diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-index 1818ab63209017b45a46a80802d500f2d042a208..157255e0fdcd2531ba3635d44bf57a84f454bb9b 100644
+index be74adc86f0ca467f3b59e7b57fd47a8f381d86e..3482ed0449478b258d85751ffc90ce677acbc60f 100644
 --- a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 @@ -152,7 +152,7 @@ public class PistonBaseBlock extends DirectionalBlock {
@@ -31,7 +31,7 @@ index 1818ab63209017b45a46a80802d500f2d042a208..157255e0fdcd2531ba3635d44bf57a84
                      }
                  }
 diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java b/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
-index a595abb43853cd4c3f5886a83527c6cbe4a3e8f7..2284dfcb09d9a7c6f670e5266a3f2856c2d40e8d 100644
+index 1c23597f172f46eec714b510acfedb415bb01bff..3262398db1b053115b83ed6aab15f9fef511d5d3 100644
 --- a/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
 @@ -277,7 +277,7 @@ public class PistonMovingBlockEntity extends BlockEntity {

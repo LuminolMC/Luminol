@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 07:59:46 +0000
+Date: Tue, 6 Feb 2024 02:17:20 +0000
 Subject: [PATCH] Kaiiju region format settings
 
 
@@ -75,10 +75,10 @@ index 74573c50c903cfbe5f9617be5b75c21647f05a91..3d526d7cfb313e419de89be1b2756519
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 26b85e3caf2671159b36963296777ecdf70a0231..f53c689db8f330708d1ad683951b113bca11a139 100644
+index bf1df7da39dc42bda2e4b54ae3f6856399f5cb10..76522b9fd7c0aaa17ab6df2183dfb30da2a35a68 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -927,7 +927,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -925,7 +925,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              // Paper start - rewrite chunk system
              worldserver.save((ProgressListener) null, flush, worldserver.noSave && !force, close);
              if (flush) {
@@ -87,7 +87,7 @@ index 26b85e3caf2671159b36963296777ecdf70a0231..f53c689db8f330708d1ad683951b113b
              }
              // Paper end - rewrite chunk system
          }
-@@ -951,7 +951,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -949,7 +949,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
                  //MinecraftServer.LOGGER.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", worldserver2.getChunkSource().chunkMap.getStorageName()); // Paper - move up
              }
  

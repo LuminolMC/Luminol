@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 07:49:42 +0000
+Date: Tue, 6 Feb 2024 01:56:30 +0000
 Subject: [PATCH] Add config for incorrect tripwire updating fixing
 
 
@@ -25,7 +25,7 @@ index dffa9db569fcef2feec75072fe86c9a6ded80aa4..a49da370c91211d4e2274f72d62c911a
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
-index 0f6ea0adb4b99d934e1a3fcb92562dffb2a45f63..023731d23c0610e1a42bf308866509aef464e299 100644
+index 7f2dcf6a9e69779e6f898284b58fb1e32902000c..c9177a8c94cb47ac8082404bbe86cbc121a9e064 100644
 --- a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
 @@ -4,6 +4,8 @@ import com.google.common.base.MoreObjects;

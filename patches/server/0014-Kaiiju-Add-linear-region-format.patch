@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 08:05:11 +0000
+Date: Tue, 6 Feb 2024 02:43:58 +0000
 Subject: [PATCH] Kaiiju Add linear region format
 
 
@@ -19,21 +19,6 @@ index 83660616a26d989ce441e17acab103ab166304d8..1bdeb0e9d0c04509d7ed4003f6b79c80
      implementation("com.electronwill.night-config:toml:3.6.0") //Luminol - Night config
      // Paper start
      implementation("org.jline:jline-terminal-jansi:3.21.0")
-diff --git a/src/main/java/com/destroystokyo/paper/io/PaperFileIOThread.java b/src/main/java/com/destroystokyo/paper/io/PaperFileIOThread.java
-index f2c27e0ac65be4b75c1d86ef6fd45fdb538d96ac..00724993d0448454d14a47652b039b88052b8a4f 100644
---- a/src/main/java/com/destroystokyo/paper/io/PaperFileIOThread.java
-+++ b/src/main/java/com/destroystokyo/paper/io/PaperFileIOThread.java
-@@ -314,8 +314,8 @@ public final class PaperFileIOThread extends QueueExecutorThread {
-         public abstract void writeData(final int x, final int z, final CompoundTag compound) throws IOException;
-         public abstract CompoundTag readData(final int x, final int z) throws IOException;
- 
--        public abstract <T> T computeForRegionFile(final int chunkX, final int chunkZ, final Function<RegionFile, T> function);
--        public abstract <T> T computeForRegionFileIfLoaded(final int chunkX, final int chunkZ, final Function<RegionFile, T> function);
-+        public abstract <T> T computeForRegionFile(final int chunkX, final int chunkZ, final Function<dev.kaiijumc.kaiiju.region.AbstractRegionFile, T> function); // Kaiiju
-+        public abstract <T> T computeForRegionFileIfLoaded(final int chunkX, final int chunkZ, final Function<dev.kaiijumc.kaiiju.region.AbstractRegionFile, T> function); // Kaiiju
- 
-         public static final class InProgressWrite {
-             public long writeCounter;
 diff --git a/src/main/java/dev/kaiijumc/kaiiju/region/AbstractRegionFile.java b/src/main/java/dev/kaiijumc/kaiiju/region/AbstractRegionFile.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..249303116d3cfadd078ebf0ae6e44bf99eed6a47
@@ -480,10 +465,10 @@ index 0000000000000000000000000000000000000000..e800c6103396530efe5acd0b4081a3cd
 +    }
 +}
 diff --git a/src/main/java/io/papermc/paper/chunk/system/io/RegionFileIOThread.java b/src/main/java/io/papermc/paper/chunk/system/io/RegionFileIOThread.java
-index 8a11e10b01fa012b2f98b1c193c53251e848f909..61001e76b38f8647b33e73b5cc15b4b6785cf49a 100644
+index 2934f0cf0ef09c84739312b00186c2ef0019a165..b46acbc078f3d3bfb0f3ede3f1cc172f4b48c5df 100644
 --- a/src/main/java/io/papermc/paper/chunk/system/io/RegionFileIOThread.java
 +++ b/src/main/java/io/papermc/paper/chunk/system/io/RegionFileIOThread.java
-@@ -811,7 +811,7 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
+@@ -816,7 +816,7 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
                                                 final ChunkDataController taskController) {
          final ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
          if (intendingToBlock) {
@@ -492,7 +477,7 @@ index 8a11e10b01fa012b2f98b1c193c53251e848f909..61001e76b38f8647b33e73b5cc15b4b6
                  if (file == null) { // null if no regionfile exists
                      return Boolean.FALSE;
                  }
-@@ -824,7 +824,7 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
+@@ -829,7 +829,7 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
                  return Boolean.FALSE;
              } // else: it either exists or is not known, fall back to checking the loaded region file
  
@@ -501,7 +486,7 @@ index 8a11e10b01fa012b2f98b1c193c53251e848f909..61001e76b38f8647b33e73b5cc15b4b6
                  if (file == null) { // null if not loaded
                      // not sure at this point, let the I/O thread figure it out
                      return Boolean.TRUE;
-@@ -1126,9 +1126,9 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
+@@ -1131,9 +1131,9 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
              return this.getCache().doesRegionFileNotExistNoIO(new ChunkPos(chunkX, chunkZ));
          }
  
@@ -513,7 +498,7 @@ index 8a11e10b01fa012b2f98b1c193c53251e848f909..61001e76b38f8647b33e73b5cc15b4b6
              synchronized (cache) {
                  try {
                      regionFile = cache.getRegionFile(new ChunkPos(chunkX, chunkZ), existingOnly, true);
-@@ -1141,19 +1141,19 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
+@@ -1146,19 +1146,19 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
                  return function.apply(regionFile);
              } finally {
                  if (regionFile != null) {
@@ -537,7 +522,7 @@ index 8a11e10b01fa012b2f98b1c193c53251e848f909..61001e76b38f8647b33e73b5cc15b4b6
                  }
              }
  
-@@ -1161,7 +1161,7 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
+@@ -1166,7 +1166,7 @@ public final class RegionFileIOThread extends PrioritisedQueueExecutorThread {
                  return function.apply(regionFile);
              } finally {
                  if (regionFile != null) {
@@ -547,7 +532,7 @@ index 8a11e10b01fa012b2f98b1c193c53251e848f909..61001e76b38f8647b33e73b5cc15b4b6
              }
          }
 diff --git a/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java b/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
-index 513833c2ea23df5b079d157bc5cb89d5c9754c0b..bd377033987bf7ded03016d1d8f05fd039bffbb5 100644
+index 9017907c0ec67a37a506f09b7e4499cef7885279..f4ed74401ae574ca3e7867df1e47d0e1af867f10 100644
 --- a/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
 +++ b/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
 @@ -84,8 +84,13 @@ public class ThreadedWorldUpgrader {
@@ -592,7 +577,7 @@ index 3d526d7cfb313e419de89be1b275651982be42c7..90a6cfd011aaefe66fda79f887380ab2
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 4c160f62336acdbcd835ebbf7f683205a776ce79..d01443026d0d85e017464cdd46d08f37386d46ef 100644
+index 21ec49acb3c1241d9286959c42a7f8363f637e4f..5fc083b58f6f120d234513c7c36999f034e1d869 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -211,7 +211,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
@@ -613,9 +598,9 @@ index 4c160f62336acdbcd835ebbf7f683205a776ce79..d01443026d0d85e017464cdd46d08f37
          this.setServerViewDistance(viewDistance);
          // Paper start
          this.dataRegionManager = new io.papermc.paper.chunk.SingleThreadChunkRegionManager(this.level, 2, (1.0 / 3.0), 1, 6, "Data", DataRegionData::new, DataRegionSectionData::new);
-@@ -822,13 +822,13 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -808,13 +808,13 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+     }
  
-     // Paper start - chunk status cache "api"
      public ChunkStatus getChunkStatusOnDiskIfCached(ChunkPos chunkPos) {
 -        net.minecraft.world.level.chunk.storage.RegionFile regionFile = regionFileCache.getRegionFileIfLoaded(chunkPos);
 +        dev.kaiijumc.kaiiju.region.AbstractRegionFile regionFile = regionFileCache.getRegionFileIfLoaded(chunkPos); // Kaiiju
@@ -629,7 +614,7 @@ index 4c160f62336acdbcd835ebbf7f683205a776ce79..d01443026d0d85e017464cdd46d08f37
  
          if (regionFile == null || !regionFileCache.chunkExists(chunkPos)) {
              return null;
-@@ -846,7 +846,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -832,7 +832,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
      }
  
      public void updateChunkStatusOnDisk(ChunkPos chunkPos, @Nullable CompoundTag compound) throws IOException {
@@ -639,10 +624,10 @@ index 4c160f62336acdbcd835ebbf7f683205a776ce79..d01443026d0d85e017464cdd46d08f37
          regionFile.setStatus(chunkPos.x, chunkPos.z, ChunkSerializer.getStatus(compound));
      }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index fd158c56cb73c2107a073f1cd68a87658c8eb1d9..ec95159ba13e75ee8fc495307f19b587d3b80cf1 100644
+index 00593eadeadc74429a05d83e10964781b6311c54..b3dde336a8fb38b6ab30019c6d66ef1a47b25d9d 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -454,8 +454,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -449,8 +449,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
      private static final class EntityRegionFileStorage extends net.minecraft.world.level.chunk.storage.RegionFileStorage {
  
@@ -653,7 +638,7 @@ index fd158c56cb73c2107a073f1cd68a87658c8eb1d9..ec95159ba13e75ee8fc495307f19b587
          }
  
          protected void write(ChunkPos pos, net.minecraft.nbt.CompoundTag nbt) throws IOException {
-@@ -818,7 +818,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -813,7 +813,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
          // CraftBukkit end
          boolean flag2 = minecraftserver.forceSynchronousWrites();
          DataFixer datafixer = minecraftserver.getFixerUpper();
@@ -663,7 +648,7 @@ index fd158c56cb73c2107a073f1cd68a87658c8eb1d9..ec95159ba13e75ee8fc495307f19b587
          // this.entityManager = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage, this.entitySliceManager); // Paper // Paper - rewrite chunk system
          StructureTemplateManager structuretemplatemanager = minecraftserver.getStructureManager();
 diff --git a/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java b/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java
-index f2a7cb6ebed7a4b4019a09af2a025f624f6fe9c9..8b8540ff42f3fb224920969ea00d25161986169c 100644
+index 77dd632a266f4abed30b87b7909d77857c01e316..b79f324dcf4256dc9a5824a0a8e27a9e790eb781 100644
 --- a/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java
 +++ b/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java
 @@ -61,7 +61,7 @@ public class WorldUpgrader {
@@ -689,7 +674,7 @@ index f2a7cb6ebed7a4b4019a09af2a025f624f6fe9c9..8b8540ff42f3fb224920969ea00d2516
              }
  
              ImmutableMap<ResourceKey<Level>, ChunkStorage> immutablemap1 = builder1.build();
-@@ -235,7 +240,7 @@ public class WorldUpgrader {
+@@ -241,7 +246,7 @@ public class WorldUpgrader {
          File file = this.levelStorage.getDimensionPath(world).toFile();
          File file1 = new File(file, "region");
          File[] afile = file1.listFiles((file2, s) -> {
@@ -698,7 +683,7 @@ index f2a7cb6ebed7a4b4019a09af2a025f624f6fe9c9..8b8540ff42f3fb224920969ea00d2516
          });
  
          if (afile == null) {
-@@ -254,7 +259,11 @@ public class WorldUpgrader {
+@@ -260,7 +265,11 @@ public class WorldUpgrader {
                      int l = Integer.parseInt(matcher.group(2)) << 5;
  
                      try {
@@ -727,26 +712,23 @@ index 5150d447c9dc2f539446749c8bee102050bab4ed..187ff795192c7eb56dffafa1ff6fa306
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkStorage.java b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkStorage.java
-index 4a84ada69c6abc8f2743579d4451e639836274b4..ba2433b636f137c4b282df9fa3718cfff7c94919 100644
+index d16d7c2fed89fb1347df7ddd95856e7f08c22e8a..e4200692f6a33a12d00120f7a661de3e57a671dd 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkStorage.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkStorage.java
-@@ -37,11 +37,12 @@ public class ChunkStorage implements AutoCloseable {
-     public final RegionFileStorage regionFileCache;
-     // Paper end - async chunk loading
+@@ -36,9 +36,9 @@ public class ChunkStorage implements AutoCloseable {
+     @Nullable
+     private volatile LegacyStructureDataHandler legacyStructureHandler;
  
 -    public ChunkStorage(Path directory, DataFixer dataFixer, boolean dsync) {
 +    public ChunkStorage(dev.kaiijumc.kaiiju.region.RegionFileFormat format, int linearCompression, Path directory, DataFixer dataFixer, boolean dsync) { // Kaiiju
          this.fixerUpper = dataFixer;
-         // Paper start - async chunk io
-         // remove IO worker
--        this.regionFileCache = new RegionFileStorage(directory, dsync, true); // Paper - nuke IOWorker // Paper - Attempt to recalculate regionfile header if it is corrupt
-+
-+        this.regionFileCache = new RegionFileStorage(format,linearCompression,directory, dsync, true); // Paper - nuke IOWorker // Paper - Attempt to recalculate regionfile header if it is corrupt
-         // Paper end - async chunk io
+-        this.regionFileCache = new RegionFileStorage(directory, dsync, true); // Paper - rewrite chunk system; async chunk IO & Attempt to recalculate regionfile header if it is corrupt
++        this.regionFileCache = new RegionFileStorage(format,linearCompression,directory, dsync, true); // Paper - rewrite chunk system; async chunk IO & Attempt to recalculate regionfile header if it is corrupt //Kaiiju
      }
  
+     public boolean isOldChunkAround(ChunkPos chunkPos, int checkRadius) {
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFile.java b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFile.java
-index 22de360e6775943c0c8bd5717c78d49b45e70d6d..04c9230a76c0c0e0c69c5a71853a92e05037c7d7 100644
+index 6cf83502a954cce9c562ec036bfeddb477d38b73..a450533cd01dab4ae165dc93f6c57553fee831c8 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFile.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFile.java
 @@ -26,7 +26,7 @@ import net.minecraft.nbt.NbtIo; // Paper
@@ -785,7 +767,7 @@ index 22de360e6775943c0c8bd5717c78d49b45e70d6d..04c9230a76c0c0e0c69c5a71853a92e0
          if (!this.canRecalcHeader) {
              return false;
          }
-@@ -954,10 +965,10 @@ public class RegionFile implements AutoCloseable {
+@@ -955,10 +966,10 @@ public class RegionFile implements AutoCloseable {
      private static int getChunkIndex(int x, int z) {
          return (x & 31) + (z & 31) * 32;
      }
@@ -798,7 +780,7 @@ index 22de360e6775943c0c8bd5717c78d49b45e70d6d..04c9230a76c0c0e0c69c5a71853a92e0
          final int offset = getChunkIndex(x, z);
          boolean previous = this.oversized[offset] == 1;
          this.oversized[offset] = (byte) (oversized ? 1 : 0);
-@@ -996,7 +1007,7 @@ public class RegionFile implements AutoCloseable {
+@@ -997,7 +1008,7 @@ public class RegionFile implements AutoCloseable {
          return this.regionFile.getParent().resolve(this.regionFile.getFileName().toString().replaceAll("\\.mca$", "") + "_oversized_" + x + "_" + z + ".nbt");
      }
  
@@ -808,7 +790,7 @@ index 22de360e6775943c0c8bd5717c78d49b45e70d6d..04c9230a76c0c0e0c69c5a71853a92e0
          try (DataInputStream out = new DataInputStream(new java.io.BufferedInputStream(new InflaterInputStream(Files.newInputStream(file))))) {
              return NbtIo.read((java.io.DataInput) out);
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
-index 31dddd4776d71872d1c471519e4e46432df282f2..402a14e6b20da2d69e0f614b8a27fba9a8f9adcd 100644
+index fe312b1aef579cb4bf81bdd967cf72ff880d7505..db9e4386ca95bdaba0a4a4e13e3a90d2bcfbae91 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
 @@ -21,9 +21,13 @@ public class RegionFileStorage implements AutoCloseable {
@@ -893,7 +875,7 @@ index 31dddd4776d71872d1c471519e4e46432df282f2..402a14e6b20da2d69e0f614b8a27fba9
 @@ -123,28 +131,45 @@ public class RegionFileStorage implements AutoCloseable {
              }
              // Paper end - cache regionfile does not exist state
-             if (this.regionCache.size() >= io.papermc.paper.configuration.GlobalConfiguration.get().misc.regionFileCacheSize) { // Paper - configurable
+             if (this.regionCache.size() >= io.papermc.paper.configuration.GlobalConfiguration.get().misc.regionFileCacheSize) { // Paper - Sanitise RegionFileCache and make configurable
 -                ((RegionFile) this.regionCache.removeLast()).close();
 +                this.regionCache.removeLast().close(); // Kaiiju
              }
@@ -943,16 +925,16 @@ index 31dddd4776d71872d1c471519e4e46432df282f2..402a14e6b20da2d69e0f614b8a27fba9
              }
              // Paper end
              return regionfile1;
-@@ -172,7 +197,7 @@ public class RegionFileStorage implements AutoCloseable {
+@@ -156,7 +181,7 @@ public class RegionFileStorage implements AutoCloseable {
+         org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO PAPER - You may ask for help on Discord, but do not file an issue. These error messages can not be removed.");
      }
- 
  
 -    private static CompoundTag readOversizedChunk(RegionFile regionfile, ChunkPos chunkCoordinate) throws IOException {
 +    private static CompoundTag readOversizedChunk(dev.kaiijumc.kaiiju.region.AbstractRegionFile regionfile, ChunkPos chunkCoordinate) throws IOException { // Kaiiju
          synchronized (regionfile) {
              try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(chunkCoordinate)) {
                  CompoundTag oversizedData = regionfile.getOversizedData(chunkCoordinate.x, chunkCoordinate.z);
-@@ -219,14 +244,14 @@ public class RegionFileStorage implements AutoCloseable {
+@@ -191,14 +216,14 @@ public class RegionFileStorage implements AutoCloseable {
      @Nullable
      public CompoundTag read(ChunkPos pos) throws IOException {
          // CraftBukkit start - SPIGOT-5680: There's no good reason to preemptively create files on read, save that for writing
@@ -969,7 +951,7 @@ index 31dddd4776d71872d1c471519e4e46432df282f2..402a14e6b20da2d69e0f614b8a27fba9
          // We add the regionfile parameter to avoid the potential deadlock (on fileLock) if we went back to obtain a regionfile
          // if we decide to re-read
          // Paper end
-@@ -236,7 +261,7 @@ public class RegionFileStorage implements AutoCloseable {
+@@ -208,7 +233,7 @@ public class RegionFileStorage implements AutoCloseable {
  
          // Paper start
          if (regionfile.isOversized(pos.x, pos.z)) {
@@ -978,7 +960,7 @@ index 31dddd4776d71872d1c471519e4e46432df282f2..402a14e6b20da2d69e0f614b8a27fba9
              return readOversizedChunk(regionfile, pos);
          }
          // Paper end
-@@ -250,12 +275,12 @@ public class RegionFileStorage implements AutoCloseable {
+@@ -222,12 +247,12 @@ public class RegionFileStorage implements AutoCloseable {
                      if (this.isChunkData) {
                          ChunkPos chunkPos = ChunkSerializer.getChunkCoordinate(nbttagcompound);
                          if (!chunkPos.equals(pos)) {
@@ -994,7 +976,7 @@ index 31dddd4776d71872d1c471519e4e46432df282f2..402a14e6b20da2d69e0f614b8a27fba9
                              return null;
                          }
                      }
-@@ -289,13 +314,13 @@ public class RegionFileStorage implements AutoCloseable {
+@@ -261,13 +286,13 @@ public class RegionFileStorage implements AutoCloseable {
  
          return nbttagcompound;
          } finally { // Paper start
@@ -1010,25 +992,25 @@ index 31dddd4776d71872d1c471519e4e46432df282f2..402a14e6b20da2d69e0f614b8a27fba9
          if (regionfile == null) {
              return;
          }
-@@ -325,7 +350,7 @@ public class RegionFileStorage implements AutoCloseable {
-     }
+@@ -298,7 +323,7 @@ public class RegionFileStorage implements AutoCloseable {
  
      protected void write(ChunkPos pos, @Nullable CompoundTag nbt) throws IOException {
--        RegionFile regionfile = this.getRegionFile(pos, nbt == null, true); // CraftBukkit // Paper // Paper start - rewrite chunk system
-+        dev.kaiijumc.kaiiju.region.AbstractRegionFile regionfile = this.getRegionFile(pos, nbt == null, true); // CraftBukkit // Paper // Paper start - rewrite chunk system // Kaiiju
+         // Paper start - rewrite chunk system
+-        RegionFile regionfile = this.getRegionFile(pos, nbt == null, true); // CraftBukkit
++        dev.kaiijumc.kaiiju.region.AbstractRegionFile regionfile = this.getRegionFile(pos, nbt == null, true); // CraftBukkit // Kaiiju
          if (nbt == null && regionfile == null) {
              return;
          }
-@@ -375,7 +400,7 @@ public class RegionFileStorage implements AutoCloseable {
-         }
-         // Paper end
-         } finally { // Paper start
+@@ -353,7 +378,7 @@ public class RegionFileStorage implements AutoCloseable {
+         // Paper end - Chunk save reattempt
+         // Paper start - rewrite chunk system
+         } finally {
 -            regionfile.fileLock.unlock();
 +            regionfile.getFileLock().unlock(); // Kaiiju
-         } // Paper end
+         }
+         // Paper end - rewrite chunk system
      }
- 
-@@ -384,7 +409,7 @@ public class RegionFileStorage implements AutoCloseable {
+@@ -363,7 +388,7 @@ public class RegionFileStorage implements AutoCloseable {
          ObjectIterator objectiterator = this.regionCache.values().iterator();
  
          while (objectiterator.hasNext()) {
@@ -1037,7 +1019,7 @@ index 31dddd4776d71872d1c471519e4e46432df282f2..402a14e6b20da2d69e0f614b8a27fba9
  
              try {
                  regionfile.close();
-@@ -400,7 +425,7 @@ public class RegionFileStorage implements AutoCloseable {
+@@ -379,7 +404,7 @@ public class RegionFileStorage implements AutoCloseable {
          ObjectIterator objectiterator = this.regionCache.values().iterator();
  
          while (objectiterator.hasNext()) {
@@ -1062,13 +1044,13 @@ index 4aac1979cf57300825a999c876fcf24d3170e68e..3b96582f15d0985b670b5b5a1548800d
          this.factory = factory;
          this.fixerUpper = dataFixer;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 6bb19a9a4150f516c32bc155eafe99fc1afb75b1..77900dde881b260b73b87664484cce55e60a9900 100644
+index d3bdc355bee762b90a77528e9da96d74e6b174ae..f5e12147b7e387f34b9ef648c9a2a3ec77522496 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -569,7 +569,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+                 world.getChunk(x, z); // make sure we're at ticket level 32 or lower
                  return true;
              }
- 
 -            net.minecraft.world.level.chunk.storage.RegionFile file;
 +            dev.kaiijumc.kaiiju.region.AbstractRegionFile file; // Kaiiju
              try {

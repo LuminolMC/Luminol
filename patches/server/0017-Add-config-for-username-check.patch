@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 11:37:52 +0000
+Date: Tue, 6 Feb 2024 03:11:28 +0000
 Subject: [PATCH] Add config for username check
 
 
@@ -25,7 +25,7 @@ index c3a481cb7bea0619b1af0e3203e9d88514e84c62..0929a5a167691bde7dedaa1e2812b34a
          if (tpsbarEnabled){
              initTpsbar();
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index d809dd5f6aa39fcd7583d7db822450297225eb49..2bb775563c6672349aa6b6f1b2821006ec48eb09 100644
+index aa4b461bbb2c8c4753f7c9057bab1740de2c0284..4801c59cb3604257fb1016726e4c66ade7295f2e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 @@ -44,6 +44,7 @@ import org.bukkit.craftbukkit.util.Waitable;

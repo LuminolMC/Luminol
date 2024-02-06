@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 07:55:57 +0000
+Date: Tue, 6 Feb 2024 02:06:42 +0000
 Subject: [PATCH] Add config for vanilla random
 
 
@@ -25,15 +25,15 @@ index 8d1ce8eae252fcf05b6a62d2dc467d6d503d3df4..89d8ffc947d265e0e81943ad851e868b
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 1cc5acb21363aae7020a0ebf23c00caeab5074b7..5e78570110dd57cac16e073e3051f76460e19540 100644
+index 4cc0a97c0c3cef23b10930e204039c4450543907..18c9a35624d6d3c94efd5df8e97c4257fd199d0d 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -575,7 +575,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -565,7 +565,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
          this.bb = Entity.INITIAL_AABB;
          this.stuckSpeedMultiplier = Vec3.ZERO;
          this.nextStep = 1.0F;
--        this.random = SHARED_RANDOM; // Paper
-+        this.random = LuminolConfig.useVanillaRandomSource ? RandomSource.create() : SHARED_RANDOM;//Luminol - Add config for vanilla random SHARED_RANDOM; // Paper
+-        this.random = SHARED_RANDOM; // Paper - Share random for entities to make them more random
++        this.random = LuminolConfig.useVanillaRandomSource ? RandomSource.create() : SHARED_RANDOM;//Luminol - Add config for vanilla random SHARED_RANDOM // Paper - Share random for entities to make them more random
          this.remainingFireTicks = -this.getFireImmuneTicks();
          this.fluidHeight = new Object2DoubleArrayMap(2);
          this.fluidOnEyes = new HashSet();

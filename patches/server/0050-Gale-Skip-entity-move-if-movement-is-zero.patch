@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sun, 28 Jan 2024 09:29:26 +0000
+Date: Tue, 6 Feb 2024 04:21:05 +0000
 Subject: [PATCH] Gale Skip entity move if movement is zero
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 235f96fd0f2c74356f986017f514d2805f88ef46..0b90847929c3c89ba5b8ac578f181c67d5209957 100644
+index ea7fe58bd68895dedeed2df1a7f1276d7fe5b70d..2016547a88e5f8c0a7f1913c74b22e04cfa9b089 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -320,6 +320,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -319,6 +319,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      public float yRotO;
      public float xRotO;
      private AABB bb;
@@ -16,7 +16,7 @@ index 235f96fd0f2c74356f986017f514d2805f88ef46..0b90847929c3c89ba5b8ac578f181c67
      public boolean onGround;
      public boolean horizontalCollision;
      public boolean verticalCollision;
-@@ -1100,6 +1101,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -1090,6 +1091,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      //Luminol end
  
      public void move(MoverType movementType, Vec3 movement) {
@@ -25,10 +25,10 @@ index 235f96fd0f2c74356f986017f514d2805f88ef46..0b90847929c3c89ba5b8ac578f181c67
 +            return;
 +        }
 +        // Gale end - VMP - skip entity move if movement is zero
+         final Vec3 originalMovement = movement; // Paper - Expose pre-collision velocity
          // Paper start - detailed watchdog information
          io.papermc.paper.util.TickThread.ensureTickThread("Cannot move an entity off-main");
-         //Luminol start - Fix high position moving
-@@ -4938,6 +4944,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4924,6 +4930,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
  
      public final void setBoundingBox(AABB boundingBox) {

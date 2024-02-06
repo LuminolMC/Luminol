@@ -1,15 +1,15 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Thu, 1 Feb 2024 09:41:59 +0000
+Date: Tue, 6 Feb 2024 04:33:45 +0000
 Subject: [PATCH] Prevent teleportAsync calling during moving event being
  handled
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index a83e7c5bde1ea4ca152e4581c7f60e149951f78d..b94af7029256f68c1092e3e18221f4a8417d4f89 100644
+index 39b089fa8e347f5efba3be071164d831d4dc95c2..9f0a45c1fba3e14c15bbb33f5f96b8674496de29 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -44,6 +44,8 @@ public class LuminolConfig {
+@@ -43,6 +43,8 @@ public class LuminolConfig {
      public static boolean useVanillaRandomSource = false;
      public static boolean fixLargePosMoving = false;
      public static boolean warnOnLargeMovingDetected = true;
@@ -18,7 +18,7 @@ index a83e7c5bde1ea4ca152e4581c7f60e149951f78d..b94af7029256f68c1092e3e18221f4a8
  
      public static RegionFileFormat regionFormatName = RegionFileFormat.ANVIL;
      public static int regionFormatLinearCompressionLevel = 1;
-@@ -194,6 +196,8 @@ public class LuminolConfig {
+@@ -192,6 +194,8 @@ public class LuminolConfig {
          useVanillaRandomSource = get("fixes.use_vanilla_random_source",useVanillaRandomSource,"RNG feature related");
          fixLargePosMoving = get("fixes.fix_large_pos_moving", fixLargePosMoving,"Fix an entity moving issue on folia which is not fixed yet");
          warnOnLargeMovingDetected = get("fixes.warn_on_large_pos_moving",warnOnLargeMovingDetected);
@@ -28,7 +28,7 @@ index a83e7c5bde1ea4ca152e4581c7f60e149951f78d..b94af7029256f68c1092e3e18221f4a8
          regionFormatName = RegionFileFormat.fromString(get("save.region-format.format", regionFormatName.name()));
          if (regionFormatName.equals(RegionFileFormat.INVALID)) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 7cc601e86e90a6b893fb9d76af0161531e9408d7..088422dabe469f62f1d3d136d5ac104582fdc0f2 100644
+index 3baf7f920334931dd53cd174c462c2e52d315ced..3dd6f29e55b02939db8b4509967cba685c83ae18 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -334,6 +334,10 @@ public class ServerPlayer extends Player {
@@ -43,10 +43,10 @@ index 7cc601e86e90a6b893fb9d76af0161531e9408d7..088422dabe469f62f1d3d136d5ac1045
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 835f51aa807c09a85b7b1e81f9b616f3f3ae90f4..48da486fc85e3220cb5c91ae14490f8ac51d0a88 100644
+index cb4acce1c458331f7e1db423a446f8b337bdfe57..c4521696c589c56f325036db34e1d452a97cb326 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -685,7 +685,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -684,7 +684,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
                      Location oldTo = to.clone();
                      PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -56,7 +56,7 @@ index 835f51aa807c09a85b7b1e81f9b616f3f3ae90f4..48da486fc85e3220cb5c91ae14490f8a
  
                      // If the event is cancelled we move the player back to their old location.
                      if (event.isCancelled()) {
-@@ -1619,7 +1621,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -1634,7 +1636,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
                                      Location oldTo = to.clone();
                                      PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -67,10 +67,10 @@ index 835f51aa807c09a85b7b1e81f9b616f3f3ae90f4..48da486fc85e3220cb5c91ae14490f8a
                                      // If the event is cancelled we move the player back to their old location.
                                      if (event.isCancelled()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 00574a968b358138c5f97659c17bfd964d2d4930..64737ec024b02882ebb727fd80532e9b8af666fc 100644
+index 11e992e88dc9e7a268535d356eab1e60db57b7ac..0b3d1b18b2be65ba662f65687b06771de3bf6e54 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4004,6 +4004,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -3992,6 +3992,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
                                         java.util.function.Consumer<Entity> teleportComplete) {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot teleport entity async");
  
@@ -133,7 +133,7 @@ index d514ec1e4cbdc579c3a61533998437903afdc8b6..c547376967360402d22657d25e110036
              // CraftBukkit end
              if (this.getMinecartType() == AbstractMinecart.Type.RIDEABLE && this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/Boat.java b/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
-index a849f88f015cee3cb1f9d84e44708dd3a45c27ac..85534b9cd689143e5e978c1efca85d0e79331144 100644
+index db6aa75d642f4a7258f197933671907faf79c8f2..b7c792f75dda1c62ee3730b8204c347848710a9c 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
 @@ -2,6 +2,8 @@ package net.minecraft.world.entity.vehicle;

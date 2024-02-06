@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 12:27:05 +0000
+Date: Tue, 6 Feb 2024 03:52:35 +0000
 Subject: [PATCH] Gale Variable entity wake-up duration
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 4f6af1fa55047e7be9e57c1dd1c60e9d96d12187..793dc5b35e9a0665d486a74ce5b776b43b941ee2 100644
+index fead5b1be39083f3fe28be8c41dc78dcac4b59da..aed42e6fa85c8ab5b57e1d09dd840bb49ffe0006 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -56,6 +56,7 @@ public class LuminolConfig {
@@ -25,7 +25,7 @@ index 4f6af1fa55047e7be9e57c1dd1c60e9d96d12187..793dc5b35e9a0665d486a74ce5b776b4
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index 1690809e85ad4e65e09097f1db0139137bc335ed..ee691edd1ee2c97df0ea925a546a13492254f426 100644
+index bcb21ed7f9d425d94d62822c32ec77a197ce3dd6..9cde36cb62b73b96467033901172b22a3c373081 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
 @@ -76,28 +76,41 @@ public class ActivationRange

@@ -5,10 +5,10 @@ Subject: [PATCH] Pufferfish Reduce entity fluid lookups if no fluids
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index c5d038a00d2fcc17ba813c14e355729c4529dd74..abf7fc1e7a05a741e9258af014411d4ac5e6626c 100644
+index f04517cb4a0c134344481c2779fea5bf49f1482d..8a3e11b80d8935b54be2a4a815ee58f5d116424e 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5206,16 +5206,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -5189,16 +5189,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
  
      public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tag, double speed) {
@@ -34,7 +34,7 @@ index c5d038a00d2fcc17ba813c14e355729c4529dd74..abf7fc1e7a05a741e9258af014411d4a
              double d1 = 0.0D;
              boolean flag = this.isPushedByFluid();
              boolean flag1 = false;
-@@ -5223,14 +5225,61 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -5206,14 +5208,61 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
              int k1 = 0;
              BlockPos.MutableBlockPos blockposition_mutableblockposition = new BlockPos.MutableBlockPos();
  
@@ -102,7 +102,7 @@ index c5d038a00d2fcc17ba813c14e355729c4529dd74..abf7fc1e7a05a741e9258af014411d4a
  
                              if (d2 >= axisalignedbb.minY) {
                                  flag1 = true;
-@@ -5252,9 +5301,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -5235,9 +5284,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
                                  // CraftBukkit end
                              }
                          }
@@ -116,7 +116,7 @@ index c5d038a00d2fcc17ba813c14e355729c4529dd74..abf7fc1e7a05a741e9258af014411d4a
              if (vec3d.length() > 0.0D) {
                  if (k1 > 0) {
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
-index f0de72afad4bb571153436399386a6a8a70582a6..45b7527341fcb6d24f35318cedb522646b5ee1c2 100644
+index 796bbef3544e06b8e7aac7e8ac5f740a2613f4bd..2422ca3ffc6ab7178cacf933b8013f85e7de4bd9 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 @@ -25,6 +25,7 @@ public class LevelChunkSection {
@@ -143,11 +143,11 @@ index f0de72afad4bb571153436399386a6a8a70582a6..45b7527341fcb6d24f35318cedb52264
          }
  
          this.updateBlockCallback(x, y, z, iblockdata1, state); // Paper - optimise collisions
-@@ -161,6 +164,7 @@ public class LevelChunkSection {
-                 if (fluid.isRandomlyTicking()) {
-                     this.tickingFluidCount = (short) (this.tickingFluidCount + 1);
-                 }
+@@ -162,6 +165,7 @@ public class LevelChunkSection {
+                     if (fluid.isRandomlyTicking()) {
+                         this.tickingFluidCount = (short) (this.tickingFluidCount + 1);
+                     }
 +                this.fluidStateCount++; // Pufferfish
-             }
+                 }
  
-             // Paper start - optimise collisions
+                 // Paper start - optimise collisions

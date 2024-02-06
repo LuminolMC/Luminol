@@ -1,15 +1,15 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 13:29:09 +0000
+Date: Tue, 6 Feb 2024 04:05:46 +0000
 Subject: [PATCH] Leaves PCA sync protocol
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 6c60dd4bc09be71f950391adc1d735fe1dc6404a..dc8c9f18289a5e01a4a5ccc99d6693ea98c4162a 100644
+index a15bf25fb01fb9cf239ecb8c05d795c61d6a8bb9..da818a35faf396e94192ee9ef18c2e5aaef5077a 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -65,6 +65,10 @@ public class LuminolConfig {
-     public static boolean enableAsyncMobSpawning = false;
+@@ -63,6 +63,10 @@ public class LuminolConfig {
+     public static int asyncPathProcessingKeepalive = 60;
      public static boolean useAlternateKeepAlive = false;
  
 +    public static boolean pcaSyncProtocol = false;
@@ -19,9 +19,9 @@ index 6c60dd4bc09be71f950391adc1d735fe1dc6404a..dc8c9f18289a5e01a4a5ccc99d6693ea
      public static void init() throws IOException {
          PARENT_FOLDER.mkdir();
  
-@@ -192,6 +196,9 @@ public class LuminolConfig {
-         enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning,"Not recommended to use this because it may cause some thread safe issue");
-         RegionizedWorldData.initMobSpawningExecutor();
+@@ -188,6 +192,9 @@ public class LuminolConfig {
+         if (!asyncPathProcessing)
+             asyncPathProcessingMaxThreads = 0;
          useAlternateKeepAlive = get("optimizations.enable_alternative_keep_alive_handling",useAlternateKeepAlive,"Enabling this sends a keepalive packet once per second to a player, and only kicks for timeout if none of them were responded to in 30 seconds. Responding to any of them in any order will keep the player connected. AKA, it won't kick your players because one packet gets dropped somewhere along the lines(From purpur)");
 +
 +        pcaSyncProtocol = get("gameplay.enable_pca_sync_protocol",pcaSyncProtocol);
@@ -85,7 +85,7 @@ index e7115f1635821e0aab32e8aeea6914388dc24639..6593ae2dad5d1f7d8e403d08cd425a64
      @Override
      public boolean stillValid(Player player) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index ca17d9953ec207f64ed7386f116d9db540282a75..e89d248247d3c61fbec0c98c09b586e34d9a245f 100644
+index d04fc84eef11adb5ea64077f48794b6ed7fb3ada..192b81ea4973b1fb478574ee798d68e884e8be3c 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 @@ -570,6 +570,16 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
@@ -127,7 +127,7 @@ index 416aa989ebb18a8741cc9d605a1180ab830f6643..b73c3dc28a95279285e911bfed3bc3d3
      protected Component getDefaultName() {
          return Component.translatable("container.barrel");
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
-index 560a6e7b7888a87011aa48d7c9a17949bf086f8d..9e5dd6d920ab8805f71519a0ff74f1888ec5bc0e 100644
+index 56b328c64bea0ffd51930d8ba15fb87a36e6d8a1..218f697bc075140c62f461870aff3121d671480d 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
 @@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
@@ -209,7 +209,7 @@ index 4a62ac73dd89bc3c2aed1e58152e93c5043c6633..2d5230a001b933337d90972357b8c7b4
      public boolean stillValid(Player player) {
          return Container.stillValidBlockEntity(this, player);
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-index d66806565770cb03a21794f99e5c4b0f3040b26a..034bc37a8b50a3c9904f4f53c8758b1b02b458b1 100644
+index 3514022d898a24052c917ebf55dcef3e757d6836..8a94c9af960a22a1598c7c9ccb7ecad9a311e619 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 @@ -220,6 +220,16 @@ public class ChestBlockEntity extends RandomizableContainerBlockEntity implement
@@ -305,10 +305,10 @@ index 1fa22445a4ecc8c08dbcf0cc6bd39dc5003604c4..c1492fce06cdc00a8e82977f0c474a54
      public int[] getSlotsForFace(Direction side) {
          return ShulkerBoxBlockEntity.SLOTS;
 diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
-index 2c3e1b420303a3c3a9315983fbc7e47423f7d9e4..29a8331e498eba333283b41c3e6a87a7ad97747c 100644
+index b00e3b9b628f3d2a2fdbf1d2c77904963c16d3ac..5df29ac0a351a5f29189e548afc52b303031b1a2 100644
 --- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
 +++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
-@@ -45,7 +45,7 @@ import org.bukkit.scheduler.BukkitWorker;
+@@ -47,7 +47,7 @@ import org.bukkit.scheduler.BukkitWorker;
   */
  public class CraftScheduler implements BukkitScheduler {
  

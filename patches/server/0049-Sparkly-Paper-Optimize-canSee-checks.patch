@@ -5,10 +5,10 @@ Subject: [PATCH] Sparkly Paper Optimize canSee checks
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index d01443026d0d85e017464cdd46d08f37386d46ef..7272b1d5c314465c22df7ffa83a0675e4b1d34d3 100644
+index 5fc083b58f6f120d234513c7c36999f034e1d869..369b0eabe2313eea0ce71553baa965bc71794274 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
-@@ -1422,7 +1422,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -1408,7 +1408,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
                  // Folia end - region threading
  
                  // CraftBukkit start - respect vanish API
@@ -18,7 +18,7 @@ index d01443026d0d85e017464cdd46d08f37386d46ef..7272b1d5c314465c22df7ffa83a0675e
                  }
                  // CraftBukkit end
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index c41537b78922f85e8c7099be0b38f341b8c531a6..9481456671ee7cb880b4f1a83a41d3d4f7e7bc7f 100644
+index 91678602a5509b7ee0ff792d1a626e271b7db6b9..be0e51bfb6d083781693edf3644d637aa07c551f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -181,7 +181,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -30,7 +30,7 @@ index c41537b78922f85e8c7099be0b38f341b8c531a6..9481456671ee7cb880b4f1a83a41d3d4
      private final Set<UUID> unlistedEntities = new HashSet<>(); // Paper - Add Listing API for Player
      private static final WeakHashMap<Plugin, WeakReference<Plugin>> pluginWeakReferences = new WeakHashMap<>();
      private int hash = 0;
-@@ -2143,9 +2143,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2116,9 +2116,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
  
      @Override
      public boolean canSee(org.bukkit.entity.Entity entity) {

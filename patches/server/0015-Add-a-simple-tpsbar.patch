@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 11:36:40 +0000
+Date: Tue, 6 Feb 2024 03:05:31 +0000
 Subject: [PATCH] Add a simple tpsbar
 
 
@@ -318,7 +318,7 @@ index 0000000000000000000000000000000000000000..59c39402d896d0ba75a9ca7e6c74a01a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index e5eeb361fc29c831a76f87c60896b5dd23f58736..59de20edb5a770a380c26f13ba1b830e3c0c1875 100644
+index 5a71ee8d50818c5d6e7a6a2fee05a5c16108b50a..c16f92ac58bbaac875450e2c019772d13384d1de 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -1,20 +1,16 @@
@@ -353,7 +353,7 @@ index e5eeb361fc29c831a76f87c60896b5dd23f58736..59de20edb5a770a380c26f13ba1b830e
          //Util.shutdownExecutors(); // Paper - moved into super
          SkullBlockEntity.clear();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index bd9edb8271e3111431d45eb908d8336e0e7e23bc..90969df697f3f0d6d77d8584924c28a844c1535d 100644
+index c8ee0307fa6c13c34a1db80ddf65d8381fd556be..1e5df8a667dad52aef51e4c22e1e0234548a17f6 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -285,6 +285,7 @@ public class ServerPlayer extends Player {
@@ -365,10 +365,10 @@ index bd9edb8271e3111431d45eb908d8336e0e7e23bc..90969df697f3f0d6d77d8584924c28a8
      public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances getViewDistances() {
          return this.viewDistances.get();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 003684843c2a9fc709619c1de8cf73dbb1b25c42..c41537b78922f85e8c7099be0b38f341b8c531a6 100644
+index fc301fcf812b79ac7ceae710132a762f101b82b2..91678602a5509b7ee0ff792d1a626e271b7db6b9 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2284,6 +2284,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2257,6 +2257,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                  handle.expToDrop = data.getInt("expToDrop");
                  handle.keepLevel = data.getBoolean("keepLevel");
              }
@@ -379,7 +379,7 @@ index 003684843c2a9fc709619c1de8cf73dbb1b25c42..c41537b78922f85e8c7099be0b38f341
          }
      }
  
-@@ -2305,6 +2309,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2278,6 +2282,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          data.putLong("lastPlayed", System.currentTimeMillis());
          data.putString("lastKnownName", handle.getScoreboardName());
  

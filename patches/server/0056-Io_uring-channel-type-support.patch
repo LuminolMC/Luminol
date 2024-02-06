@@ -17,10 +17,10 @@ index 1bdeb0e9d0c04509d7ed4003f6b79c806dc55eed..c0199b93a69a2d0b99d7c61a1bdb55fc
      // Paper end
      implementation("org.apache.logging.log4j:log4j-iostreams:2.19.0") // Paper - remove exclusion
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index c6cce369373fbc46fb4f87a3b2f9d8ba827264f1..a83e7c5bde1ea4ca152e4581c7f60e149951f78d 100644
+index 6d2318f31a38d5111679ab1bc8f7a474d44f86ed..39b089fa8e347f5efba3be071164d831d4dc95c2 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -35,6 +35,7 @@ public class LuminolConfig {
+@@ -34,6 +34,7 @@ public class LuminolConfig {
      public static boolean disableUsernameCheck = false;
      public static boolean disableOfflineModeWarning = false;
      public static boolean fixSpectorTeleportFolia = false;
@@ -28,7 +28,7 @@ index c6cce369373fbc46fb4f87a3b2f9d8ba827264f1..a83e7c5bde1ea4ca152e4581c7f60e14
  
      public static boolean safeTeleportation = true;
      public static boolean enableSandDuping = false;
-@@ -180,6 +181,7 @@ public class LuminolConfig {
+@@ -178,6 +179,7 @@ public class LuminolConfig {
          disableUsernameCheck = get("misc.disable_username_check",disableUsernameCheck,"Disable username check that can accept usernames with other characters(such as Chinese).Not recommended to use");
          fixSpectorTeleportFolia = get("misc.fix_folia_spector_teleport",fixSpectorTeleportFolia);
          disableOfflineModeWarning = get("misc.disable_offline_mode_warning",disableOfflineModeWarning);
@@ -37,7 +37,7 @@ index c6cce369373fbc46fb4f87a3b2f9d8ba827264f1..a83e7c5bde1ea4ca152e4581c7f60e14
          if (tpsbarEnabled){
              initTpsbar();
 diff --git a/src/main/java/net/minecraft/server/network/ServerConnectionListener.java b/src/main/java/net/minecraft/server/network/ServerConnectionListener.java
-index 35bf160d10b56fb84d4cb845b61c1d61337e48ca..4de318f879aae2bf2859b19522111444a0f27550 100644
+index 6e95017f4c36208abdf344e3b7d55efe2d5b4e10..96237f8665d58be4fd86524daa0160cc7f9f5c1f 100644
 --- a/src/main/java/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/src/main/java/net/minecraft/server/network/ServerConnectionListener.java
 @@ -20,9 +20,11 @@ import io.netty.channel.epoll.EpollServerSocketChannel;
@@ -64,7 +64,7 @@ index 35bf160d10b56fb84d4cb845b61c1d61337e48ca..4de318f879aae2bf2859b19522111444
  import net.minecraft.network.BandwidthDebugMonitor;
 @@ -73,6 +77,10 @@ public class ServerConnectionListener {
      }
-     // Paper end
+     // Paper end - prevent blocking on adding a new connection while the server is ticking
  
 +    //Luminol start - io_uring support
 +    public static final Supplier<IOUringEventLoopGroup> SERVER_IO_URING_WORKER_GROUP = Suppliers.memoize(() -> new IOUringEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty IO_URING Server IO #%d").setDaemon(true).setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(LOGGER)).build()));

@@ -5,7 +5,7 @@ Subject: [PATCH] Gale Don't load chunks to activate climbing entities
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 793dc5b35e9a0665d486a74ce5b776b43b941ee2..fcd532898e099a809969603941b90fdd415b03c3 100644
+index aed42e6fa85c8ab5b57e1d09dd840bb49ffe0006..5a5a868a3715db24635ad5531005b022daa28c7d 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
 @@ -57,6 +57,7 @@ public class LuminolConfig {
@@ -25,10 +25,10 @@ index 793dc5b35e9a0665d486a74ce5b776b43b941ee2..fcd532898e099a809969603941b90fdd
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 67be79d5b458a30d080a4f68803d20b7b3df4c7f..bf055d7bd246c5a80a60111134f4db15920a46c5 100644
+index 874187e6b2c14b11ce63b3b58cf5ddb0f911475d..884e4d34ac1cadfb59a65f7e420030b5f1b965c6 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5404,6 +5404,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -5387,6 +5387,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
          return this.feetBlockState;
      }
  
@@ -46,10 +46,10 @@ index 67be79d5b458a30d080a4f68803d20b7b3df4c7f..bf055d7bd246c5a80a60111134f4db15
          return this.chunkPosition;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index c224488866c901604de744c59c7dbd3881251199..00990c41986ec717a318f756e1a73a0a94a82b39 100644
+index 81984f462da4acec1e1a6bcbe52ad0d10d6767f4..dc80c44f52bb7acaf7d90e1c6f01c4de981f69b4 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -2034,19 +2034,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2035,19 +2035,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
      public boolean onClimableCached() {
          if (!this.blockPosition().equals(this.lastClimbingPosition)) {

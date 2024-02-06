@@ -1,31 +1,31 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 13:25:30 +0000
+Date: Tue, 6 Feb 2024 04:01:44 +0000
 Subject: [PATCH] Purpur use alternative keep alive
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index af0087be0615d40d036390afc4944ed516180c7d..6c60dd4bc09be71f950391adc1d735fe1dc6404a 100644
+index 785dc39724f3fb2e27a9fbbe9ea6b4e489b9e0ec..a15bf25fb01fb9cf239ecb8c05d795c61d6a8bb9 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -63,6 +63,7 @@ public class LuminolConfig {
+@@ -61,6 +61,7 @@ public class LuminolConfig {
+     public static boolean asyncPathProcessing = false;
      public static int asyncPathProcessingMaxThreads = 0;
      public static int asyncPathProcessingKeepalive = 60;
-     public static boolean enableAsyncMobSpawning = false;
 +    public static boolean useAlternateKeepAlive = false;
  
      public static void init() throws IOException {
          PARENT_FOLDER.mkdir();
-@@ -190,6 +191,7 @@ public class LuminolConfig {
+@@ -186,6 +187,7 @@ public class LuminolConfig {
+             asyncPathProcessingMaxThreads = Math.max(Runtime.getRuntime().availableProcessors() / 4, 1);
+         if (!asyncPathProcessing)
              asyncPathProcessingMaxThreads = 0;
-         enableAsyncMobSpawning = get("optimizations.enable_async_mob_spawning",enableAsyncMobSpawning,"Not recommended to use this because it may cause some thread safe issue");
-         RegionizedWorldData.initMobSpawningExecutor();
 +        useAlternateKeepAlive = get("optimizations.enable_alternative_keep_alive_handling",useAlternateKeepAlive,"Enabling this sends a keepalive packet once per second to a player, and only kicks for timeout if none of them were responded to in 30 seconds. Responding to any of them in any order will keep the player connected. AKA, it won't kick your players because one packet gets dropped somewhere along the lines(From purpur)");
      }
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index bdeb70fdcd2985c9ffd7cfb77f75d1bd1eb49a02..87922e561b4949e7b4ea124f3ecdcd94792825a3 100644
+index 22f0d91df0a81040d72c499fbff32b3a9d41598f..7ae11e8716d45a53cab24a3966bcb880df69027c 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -51,6 +51,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
@@ -49,8 +49,8 @@ index bdeb70fdcd2985c9ffd7cfb77f75d1bd1eb49a02..87922e561b4949e7b4ea124f3ecdcd94
 +                keepAlives.clear(); // we got a valid response, lets roll with it and forget the rest
 +            }
 +        } else
-+        // Purpur end
-         //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - This shouldn't be on the main thread
++            // Purpur end
+         //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - handle ServerboundKeepAlivePacket async
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
 @@ -221,6 +232,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack

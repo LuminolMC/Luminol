@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 13:43:43 +0000
+Date: Tue, 6 Feb 2024 04:17:43 +0000
 Subject: [PATCH] Teleport async if the entity was moving to another region
 
 
 diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 6626961d57fff6475ec82da57941d8dad6455bc6..a535ab9432010b15dfb07f206d15c285d1f76597 100644
+index ec372d91ed60534ecbe0d2b28ba3b9abda800683..3f560bd27c5a43c5681b50492e04290dda51f37e 100644
 --- a/src/main/java/me/earthme/luminol/LuminolConfig.java
 +++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -41,6 +41,8 @@ public class LuminolConfig {
+@@ -40,6 +40,8 @@ public class LuminolConfig {
      public static boolean enableVoidTrading = false;
      public static boolean allowIncorrectTripwireUpdating = false;
      public static boolean useVanillaRandomSource = false;
@@ -17,7 +17,7 @@ index 6626961d57fff6475ec82da57941d8dad6455bc6..a535ab9432010b15dfb07f206d15c285
  
      public static RegionFileFormat regionFormatName = RegionFileFormat.ANVIL;
      public static int regionFormatLinearCompressionLevel = 1;
-@@ -161,6 +163,8 @@ public class LuminolConfig {
+@@ -159,6 +161,8 @@ public class LuminolConfig {
          enableVoidTrading = get("fixes.enable_void_trading",enableVoidTrading);
          allowIncorrectTripwireUpdating = get("fixes.allow_incorrect_trip_wire_updaing",allowIncorrectTripwireUpdating);
          useVanillaRandomSource = get("fixes.use_vanilla_random_source",useVanillaRandomSource,"RNG feature related");
@@ -27,7 +27,7 @@ index 6626961d57fff6475ec82da57941d8dad6455bc6..a535ab9432010b15dfb07f206d15c285
          regionFormatName = RegionFileFormat.fromString(get("save.region-format.format", regionFormatName.name()));
          if (regionFormatName.equals(RegionFileFormat.INVALID)) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 4cdb0e62a3027ae292e1d818e1a06a47496676af..235f96fd0f2c74356f986017f514d2805f88ef46 100644
+index b1a17c730939f39ba81209a368c215c236f203b0..ea7fe58bd68895dedeed2df1a7f1276d7fe5b70d 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
@@ -38,7 +38,7 @@ index 4cdb0e62a3027ae292e1d818e1a06a47496676af..235f96fd0f2c74356f986017f514d280
  import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
  import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
  import java.util.Arrays;
-@@ -1094,9 +1095,39 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -1084,10 +1085,40 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
      // Paper end - detailed watchdog information
  
@@ -47,6 +47,7 @@ index 4cdb0e62a3027ae292e1d818e1a06a47496676af..235f96fd0f2c74356f986017f514d280
 +    //Luminol end
 +
      public void move(MoverType movementType, Vec3 movement) {
+         final Vec3 originalMovement = movement; // Paper - Expose pre-collision velocity
          // Paper start - detailed watchdog information
          io.papermc.paper.util.TickThread.ensureTickThread("Cannot move an entity off-main");
 +        //Luminol start - Fix high position moving

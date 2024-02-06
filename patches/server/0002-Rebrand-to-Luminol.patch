@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: M2ke4U <79621885+MrHua269@users.noreply.github.com>
-Date: Sun, 26 Nov 2023 08:20:54 +0800
+From: MrHua269 <novau233@163.com>
+Date: Tue, 6 Feb 2024 01:35:36 +0000
 Subject: [PATCH] Rebrand to Luminol
 
 
@@ -51,20 +51,20 @@ index e2f704c115fd6e00960bb56bb0779f1100c89c17..72b9343979de5aa8bb399cbe7cb8a795
  
          return history != null ? TextComponent.ofChildren(updateMessage, Component.newline(), history) : updateMessage;
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4383528df7627c5eb7cba1218f1b4e524e4fe956..b2e33a1a29c67f6f9768f547adeb34632548c7d0 100644
+index b73699a08a368e6305759438c00066b0d5e7b39a..22aff010859dded150b6e3dd0644fe3c38dbaea9 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1951,7 +1951,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1954,7 +1954,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
--        return "Folia"; // Folia - Folia > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
-+        return "Luminol"; //Luminol - Luminol > // Folia - Folia > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+-        return "Folia"; // Paper // Folia - Folia
++        return "Luminol"; // Paper // Folia - Folia //Luminol - Luminol
      }
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index f97f764c70243a57e78b62af9971677d5e49c66d..1d8681ee2c71c06a596a6eff650753a358de22c1 100644
+index 3f266934e70a5f29d55d390841e536999cec8582..57243238d9363cc68c1022871d62b41c424b8a75 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -264,7 +264,7 @@ import javax.annotation.Nullable; // Paper

@@ -27,7 +27,7 @@ index 1f9ff0fc33fa36c90fc4cbbd21b7b790de581632..36ca0b94d29d81e5f1f2aff4a38ead0b
  
      public static <T> T get(String key,T def){
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index cc4eb106b3ff1953de11f1faa7c04f3f9982fca2..1cc5acb21363aae7020a0ebf23c00caeab5074b7 100644
+index eade31ea668c171dceafee958e265041a439c54b..4cc0a97c0c3cef23b10930e204039c4450543907 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -24,6 +24,8 @@ import java.util.function.BiConsumer;
@@ -39,7 +39,7 @@ index cc4eb106b3ff1953de11f1faa7c04f3f9982fca2..1cc5acb21363aae7020a0ebf23c00cae
  import net.minecraft.BlockUtil;
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
-@@ -4055,6 +4057,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4043,6 +4045,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
  
      protected boolean tryEndPortal() {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
