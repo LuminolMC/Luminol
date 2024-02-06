@@ -1,3 +1,5 @@
+<img src="Luminol-02.png" alt="Logo" align="right" width="250">
+
 # Luminol
 [![MIT License](https://img.shields.io/github/license/LuminolMC/Luminol?style=flat-square)](LICENSE)
 [![Issues](https://img.shields.io/github/issues/LuminolMC/Luminol?style=flat-square)](https://github.com/LuminolMC/Luminol/issues)
@@ -37,3 +39,6 @@ For maven
   <version>1.20.4-R0.1-SNAPSHOT</version>
 </dependency>
 ```
+
+## BStats
+![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")
