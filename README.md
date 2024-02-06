@@ -1,13 +1,16 @@
-<img src="Luminol-02.png" alt="Logo" align="right" width="250">
+<img src="./public/image/Luminol_5.png" alt="Logo" align="right" width="250">
 
 # Luminol
+
+<h4>Luminol is a folia fork with many useful optimizations, configurable vanilla features, and more API supports, and it was designed for survival and anarchy servers</h4>
+
+**English** | [中文](https://github.com/LuminolMC/Luminol/blob/master/README_CN.md)
+
 [![MIT License](https://img.shields.io/github/license/LuminolMC/Luminol?style=flat-square)](LICENSE)
 [![Issues](https://img.shields.io/github/issues/LuminolMC/Luminol?style=flat-square)](https://github.com/LuminolMC/Luminol/issues)
 ![Commit Activity](https://img.shields.io/github/commit-activity/w/LuminolMC/Luminol?style=flat-square)
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/LuminolMC/Luminol?style=flat-square)
 ![GitHub all releases](https://img.shields.io/github/downloads/LuminolMC/Luminol/total?style=flat-square)
-
-<h4>Luminol is a folia fork with many useful optimizations, configurable vanilla features, and more API supports, and it was designed for survival and anarchy servers</h4>
 
 ## Features
  - Configurable vanilla features
@@ -28,7 +31,7 @@ To build a paperclip jar, you need to run the following command. You can find th
 For gradle:
 ```kotlin
 dependencies {
-    compileOnly("me.earthme.luminol:luminol-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("me.earthme.luminol:luminol-api:1.20.2-R0.1-SNAPSHOT")
 }
  ```
 For maven
@@ -36,7 +39,7 @@ For maven
 <dependency>
   <groupId>me.earthme.luminol</groupId>
   <artifactId>luminol-api</artifactId>
-  <version>1.20.4-R0.1-SNAPSHOT</version>
+  <version>1.20.2-R0.1-SNAPSHOT</version>
 </dependency>
 ```
 
