@@ -4,7 +4,7 @@
 
 <h4>Luminol is a folia fork with many useful optimizations, configurable vanilla features, and more API supports, and it was designed for survival and anarchy servers</h4>
 
-**English** | [中文](https://github.com/LuminolMC/Luminol/blob/master/README_CN.md)
+**English** | [中文](./README_CN.md)
 
 [![MIT License](https://img.shields.io/github/license/LuminolMC/Luminol?style=flat-square)](LICENSE)
 [![Issues](https://img.shields.io/github/issues/LuminolMC/Luminol?style=flat-square)](https://github.com/LuminolMC/Luminol/issues)
