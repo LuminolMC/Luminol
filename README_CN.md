@@ -4,7 +4,7 @@
 
 <h4>Luminol 是一个基于folia的分支，具有许多有用的优化、可配置的原版特性和更多的API支持，它专为生存和无政府服务器设计</h4>
 
-[English](https://github.com/LuminolMC/Luminol/blob/master/README.md) | **中文**
+[English](./README.md) | **中文**
 
 [![MIT License](https://img.shields.io/github/license/LuminolMC/Luminol?style=flat-square)](LICENSE)
 [![Issues](https://img.shields.io/github/issues/LuminolMC/Luminol?style=flat-square)](https://github.com/LuminolMC/Luminol/issues)
