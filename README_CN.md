@@ -1,4 +1,4 @@
-<img src="./public/image/Luminol_2.png" alt="Logo" align="right" width="250">
+<img src="./public/image/Luminol_5.png" alt="Logo" align="right" width="250">
 
 # Luminol
 
