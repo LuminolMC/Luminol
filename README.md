@@ -43,5 +43,14 @@ For maven
 </dependency>
 ```
 
+## Contact
+> If you are interested in this project or have any issue, feel free to ask us.
+
+QQ Group: 368632360
+
+## About Issue
+When you meet any problems, just ask us, we will do our best to solve it, but remember to state your problem clear and provide enough logs etc.
+
+
 ## BStats
 ![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")

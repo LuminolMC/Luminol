@@ -43,5 +43,13 @@ dependencies {
 </dependency>
 ```
 
+## 联系方式
+> 如果您对这个项目感兴趣或有任何问题，请随时向我们提问。
+
+QQ群：368632360
+
+## 关于 Issue
+当您遇到任何问题时，请向我们提问，我们将尽力解决，但请记得清楚地描述您的问题并提供足够的日志等信息。
+
 ## BStats
 ![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")
