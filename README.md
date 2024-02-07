@@ -54,3 +54,10 @@ When you meet any problems, just ask us, we will do our best to solve it, but re
 
 ## BStats
 ![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")
+
+## Please star us
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Lumino&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Luminol&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=LuminolMC/Luminol&type=Date" />
+  </picture>
