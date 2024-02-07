@@ -1,0 +1,288 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Wed, 7 Feb 2024 08:59:41 +0000
+Subject: [PATCH] Leaves Bladeren Protocol
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesBladerenProtocolConfig.java b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesBladerenProtocolConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..b882549a3c3bc8c192014fd6e1ac7b4f0feddafc
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesBladerenProtocolConfig.java
+@@ -0,0 +1,24 @@
++package me.earthme.luminol.config.modules.gameplay;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class LeavesBladerenProtocolConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enable_base_protocol")
++    public static boolean enableBaseProtocol = false;
++    @ConfigInfo(baseName = "enable_mspt_sync_protocol")
++    public static boolean msptSyncProtocol = false;
++    @ConfigInfo(baseName = "mspt_sync_interval")
++    public static int msptSyncTickInterval = 20;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.GAMEPLAY;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "leaves_bladeren_protocol";
++    }
++}
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/bladeren/BladerenProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/bladeren/BladerenProtocol.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..6415f17fa6c06199e59705a29605d2aef834fc17
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/protocol/bladeren/BladerenProtocol.java
+@@ -0,0 +1,150 @@
++package top.leavesmc.leaves.protocol.bladeren;
++
++import com.google.common.collect.Maps;
++import net.minecraft.nbt.CompoundTag;
++import net.minecraft.network.FriendlyByteBuf;
++import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.level.ServerPlayer;
++import org.jetbrains.annotations.Contract;
++import org.jetbrains.annotations.NotNull;
++import top.leavesmc.leaves.protocol.core.LeavesProtocol;
++import top.leavesmc.leaves.protocol.core.ProtocolHandler;
++import top.leavesmc.leaves.protocol.core.ProtocolUtils;
++
++import java.util.HashMap;
++import java.util.Map;
++import java.util.function.BiConsumer;
++
++@LeavesProtocol(namespace = "bladeren")
++public class BladerenProtocol {
++
++    public static final String PROTOCOL_ID = "bladeren";
++    public static final String PROTOCOL_VERSION = "1.0.0";
++
++    private static final ResourceLocation HELLO_ID = id("hello");
++    private static final ResourceLocation FEATURE_MODIFY_ID = id("feature_modify");
++
++    private static final Map<String, BiConsumer<ServerPlayer, CompoundTag>> registeredFeatures = Maps.newConcurrentMap();
++
++    @Contract("_ -> new")
++    public static @NotNull ResourceLocation id(String path) {
++        return new ResourceLocation(PROTOCOL_ID, path);
++    }
++
++    @ProtocolHandler.PayloadReceiver(payload = BladerenHelloPayload.class, payloadId = "hello")
++    private static void handleHello(@NotNull ServerPlayer player, @NotNull BladerenHelloPayload payload) {
++        if (me.earthme.luminol.config.modules.gameplay.LeavesBladerenProtocolConfig.enableBaseProtocol) {
++            String clientVersion = payload.version;
++            CompoundTag tag = payload.nbt;
++
++            if (tag != null) {
++                CompoundTag featureNbt = tag.getCompound("Features");
++                for (String name : featureNbt.getAllKeys()) {
++
++                    final BiConsumer<ServerPlayer,CompoundTag> target = registeredFeatures.get(name);
++
++                    if (target != null){
++                        target.accept(player, featureNbt.getCompound(name));
++                    }
++                }
++            }
++        }
++    }
++
++    @ProtocolHandler.PayloadReceiver(payload = BladerenFeatureModifyPayload.class, payloadId = "feature_modify")
++    private static void handleModify(@NotNull ServerPlayer player, @NotNull BladerenFeatureModifyPayload payload) {
++        if (me.earthme.luminol.config.modules.gameplay.LeavesBladerenProtocolConfig.enableBaseProtocol) {
++            String name = payload.name;
++            CompoundTag tag = payload.nbt;
++
++            final BiConsumer<ServerPlayer,CompoundTag> target = registeredFeatures.get(name);
++
++            if (target != null){
++                target.accept(player, tag);
++            }
++        }
++    }
++
++    @ProtocolHandler.PlayerJoin
++    public static void onPlayerJoin(@NotNull ServerPlayer player) {
++        if (me.earthme.luminol.config.modules.gameplay.LeavesBladerenProtocolConfig.enableBaseProtocol) {
++            CompoundTag tag = new CompoundTag();
++            LeavesFeatureSet.writeNBT(tag);
++            ProtocolUtils.sendPayloadPacket(player, new BladerenHelloPayload(PROTOCOL_VERSION, tag));
++        }
++    }
++
++    public static void registerFeature(String name, BiConsumer<ServerPlayer, CompoundTag> consumer) {
++        registeredFeatures.put(name, consumer);
++    }
++
++    public static class LeavesFeatureSet {
++
++        private static final Map<String, LeavesFeature> features = new HashMap<>();
++
++        public static void writeNBT(@NotNull CompoundTag tag) {
++            CompoundTag featureNbt = new CompoundTag();
++            features.values().forEach(feature -> feature.writeNBT(featureNbt));
++            tag.put("Features", featureNbt);
++        }
++
++        public static void register(LeavesFeature feature) {
++            features.put(feature.name, feature);
++        }
++    }
++
++    public record LeavesFeature(String name, String value) {
++
++        @NotNull
++        @Contract("_, _ -> new")
++        public static LeavesFeature of(String name, boolean value) {
++            return new LeavesFeature(name, Boolean.toString(value));
++        }
++
++        public void writeNBT(@NotNull CompoundTag rules) {
++            CompoundTag rule = new CompoundTag();
++            rule.putString("Feature", name);
++            rule.putString("Value", value);
++            rules.put(name, rule);
++        }
++    }
++
++    public record BladerenFeatureModifyPayload(String name, CompoundTag nbt) implements CustomPacketPayload {
++
++        public BladerenFeatureModifyPayload(ResourceLocation location, FriendlyByteBuf buf) {
++            this(buf.readUtf(), buf.readNbt());
++        }
++
++        @Override
++        public void write(@NotNull FriendlyByteBuf buf) {
++            buf.writeUtf(name);
++            buf.writeNbt(nbt);
++        }
++
++        @Override
++        @NotNull
++        public ResourceLocation id() {
++            return FEATURE_MODIFY_ID;
++        }
++    }
++
++    public record BladerenHelloPayload(String version, CompoundTag nbt) implements CustomPacketPayload {
++
++        public BladerenHelloPayload(ResourceLocation location, @NotNull FriendlyByteBuf buf) {
++            this(buf.readUtf(64), buf.readNbt());
++        }
++
++        @Override
++        public void write(@NotNull FriendlyByteBuf buf) {
++            buf.writeUtf(version);
++            buf.writeNbt(nbt);
++        }
++
++        @Override
++        @NotNull
++        public ResourceLocation id() {
++            return HELLO_ID;
++        }
++    }
++}
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..db63ea1cf65e6ca06bd1c6ce978193e068a9a951
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/protocol/bladeren/MsptSyncProtocol.java
+@@ -0,0 +1,90 @@
++package top.leavesmc.leaves.protocol.bladeren;
++
++import io.papermc.paper.threadedregions.ThreadedRegionizer;
++import io.papermc.paper.threadedregions.TickData;
++import io.papermc.paper.threadedregions.TickRegions;
++import it.unimi.dsi.fastutil.objects.ObjectArrayList;
++import it.unimi.dsi.fastutil.objects.ObjectLists;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
++import org.jetbrains.annotations.Contract;
++import org.jetbrains.annotations.NotNull;
++import top.leavesmc.leaves.protocol.core.LeavesProtocol;
++import top.leavesmc.leaves.protocol.core.ProtocolHandler;
++import top.leavesmc.leaves.protocol.core.ProtocolUtils;
++
++import java.util.List;
++
++@LeavesProtocol(namespace = "bladeren")
++public class MsptSyncProtocol {
++
++    public static final String PROTOCOL_ID = "bladeren";
++
++    private static final ResourceLocation MSPT_SYNC = id("mspt_sync");
++
++    private static final List<ServerPlayer> players = ObjectLists.synchronize(new ObjectArrayList<>());
++
++    private static int tickCounter = 0;
++
++    @Contract("_ -> new")
++    public static @NotNull ResourceLocation id(String path) {
++        return new ResourceLocation(PROTOCOL_ID, path);
++    }
++
++    @ProtocolHandler.Init
++    public static void init() {
++        BladerenProtocol.registerFeature("mspt_sync", (player, compoundTag) -> {
++            if (compoundTag.getString("Value").equals("true"))  {
++                onPlayerSubmit(player);
++            } else {
++                onPlayerLoggedOut(player);
++            }
++        });
++    }
++
++    @ProtocolHandler.PlayerLeave
++    public static void onPlayerLoggedOut(@NotNull ServerPlayer player) {
++        if (me.earthme.luminol.config.modules.gameplay.LeavesBladerenProtocolConfig.msptSyncProtocol) {
++            players.remove(player);
++        }
++    }
++
++    @ProtocolHandler.Ticker
++    public static void tick() {
++        if (me.earthme.luminol.config.modules.gameplay.LeavesBladerenProtocolConfig.msptSyncProtocol) {
++            if (players.isEmpty()) {
++                return;
++            }
++
++            if (tickCounter++ % me.earthme.luminol.config.modules.gameplay.LeavesBladerenProtocolConfig.msptSyncTickInterval == 0) {
++                for (ServerPlayer player : players){
++                    final ThreadedRegionizer.ThreadedRegion<TickRegions.TickRegionData, TickRegions.TickRegionSectionData> region = ((ServerLevel) player.level()).regioniser.getRegionAtUnsynchronised(player.sectionX,player.sectionZ);
++
++                    if (region == null){
++                        continue;
++                    }
++
++                    final TickData.TickReportData reportData = region.getData().getRegionSchedulingHandle().getTickReport5s(System.nanoTime());
++
++                    if (reportData != null){
++                        final TickData.SegmentData tpsData = reportData.tpsData().segmentAll();
++                        final double mspt = reportData.timePerTickData().segmentAll().average() / 1.0E6;
++                        final double tps = tpsData.average();
++
++                        ProtocolUtils.sendPayloadPacket(player, MSPT_SYNC, buf -> {
++                            buf.writeDouble(mspt);
++                            buf.writeDouble(tps);
++                        });
++                    }
++                }
++            }
++        }
++    }
++
++    public static void onPlayerSubmit(@NotNull ServerPlayer player) {
++        if (me.earthme.luminol.config.modules.gameplay.LeavesBladerenProtocolConfig.msptSyncProtocol) {
++            players.add(player);
++        }
++    }
++}

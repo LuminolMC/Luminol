@@ -1,39 +1,45 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Tue, 6 Feb 2024 01:55:03 +0000
+Date: Wed, 7 Feb 2024 00:59:18 +0000
 Subject: [PATCH] Add config for void trading
 
 
-diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index 9db3bdd7a7d0b2a110e927ee4781eee489d0da9b..dffa9db569fcef2feec75072fe86c9a6ded80aa4 100644
---- a/src/main/java/me/earthme/luminol/LuminolConfig.java
-+++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -16,6 +16,7 @@ public class LuminolConfig {
- 
-     public static boolean safeTeleportation = true;
-     public static boolean enableSandDuping = false;
-+    public static boolean enableVoidTrading = false;
- 
-     public static void init() throws IOException {
-         PARENT_FOLDER.mkdir();
-@@ -37,6 +38,7 @@ public class LuminolConfig {
- 
-         safeTeleportation = get("fixes.enable_safe_teleportation",safeTeleportation,"If this enabled,the end portals will not teleport removed entities.");
-         enableSandDuping = get("fixes.enable_sand_duping",enableSandDuping,"If this enabled,The value of safe teleportation will always be false and sand duping will be enabled");
-+        enableVoidTrading = get("fixes.enable_void_trading",enableVoidTrading);
-     }
- 
-     public static <T> T get(String key,T def){
+diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/VoidTradingFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/VoidTradingFixConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..a72f3a6cf1580f901b12417cac10303090a3370f
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/fixes/VoidTradingFixConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.fixes;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class VoidTradingFixConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.FIXES;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "void_trading";
++    }
++}
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 0a2d50b72506115644af5682d72f8ee04e45796b..00593eadeadc74429a05d83e10964781b6311c54 100644
+index a16fc5ba55dbde0cf7f968884da40d70a754a0d8..9e82dc98ef2d4da39839699f455e0ef20ab4ef65 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -3056,7 +3056,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -3046,7 +3046,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
              // Spigot Start
              if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(entity instanceof ServerPlayer) || entity.getRemovalReason() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
                  // Paper start - Fix merchant inventory not closing on entity removal
 -                if (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null) {
-+                if (!LuminolConfig.enableVoidTrading && (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null)) { //Luminol - Add config for void trading
++                if (!me.earthme.luminol.config.modules.fixes.VoidTradingFixConfig.enabled && (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null)) { //Luminol - Add config for void trading
                      merchant.getTrader().closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.UNLOADED);
                  }
                  // Paper end - Fix merchant inventory not closing on entity removal

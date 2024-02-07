@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Wed, 7 Feb 2024 06:30:03 +0000
+Subject: [PATCH] Try fixing folia spector teleportation
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaSpectorTeleportationFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaSpectorTeleportationFixConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..8487799cdfb776eaca33b57f7c99ae3aeadb890d
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaSpectorTeleportationFixConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.fixes;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class FoliaSpectorTeleportationFixConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean fixSpectorTeleportFolia = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.FIXES;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "folia.fix_spector_teleportation";
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 92a2e116f47d1434cc406709c3bcf85fedd2bb86..59f3ea98d0346d5b92053e13fa20048e3a946203 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -17,6 +17,8 @@ import java.util.OptionalInt;
+ import java.util.Set;
+ import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig;
+ import net.minecraft.BlockUtil;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.CrashReport;
+@@ -842,6 +844,11 @@ public class ServerPlayer extends Player {
+         }
+ 
+         Entity entity = this.getCamera();
++        //Luminol start - Fix folia spector teleportation
++        if (!io.papermc.paper.util.TickThread.isTickThreadFor(entity) && FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
++            this.setCamera(this);
++        }
++        //Luminol end
+ 
+         if (entity != this) {
+             if (entity.isAlive()) {

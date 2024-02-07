@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Wed, 7 Feb 2024 06:40:44 +0000
+Subject: [PATCH] Add config for offline mode warning
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/OfflineModeWarningConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/OfflineModeWarningConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..502b93c7bda9e8577a1901a8777b7cf9b9bdc36b
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/misc/OfflineModeWarningConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.misc;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class OfflineModeWarningConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = true;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.MISC;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "warn_on_offline_mode";
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 9c5d4cab2e2ec03f5413cfc9d809f2f148f0ba4d..f88c42852555461ec6a2e868adbce55227da38f0 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -282,7 +282,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
+         String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
+         // Paper end - Add Velocity IP Forwarding Support
+-        if (!this.usesAuthentication()) {
++        if (!this.usesAuthentication() && !me.earthme.luminol.config.modules.misc.OfflineModeWarningConfig.enabled) { //Luminol - Add config for offline mod warning
+             DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+             DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
+             // Spigot start

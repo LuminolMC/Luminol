@@ -1,0 +1,579 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Wed, 7 Feb 2024 08:51:49 +0000
+Subject: [PATCH] Leaves Protocol Core
+
+
+diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionizedServer.java b/src/main/java/io/papermc/paper/threadedregions/RegionizedServer.java
+index fc3d332aa1c1d469cedfe2aaa7102dcd78e25642..bebaa4e7abcbd01dc57fddf2a473b846e887cc7f 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/RegionizedServer.java
++++ b/src/main/java/io/papermc/paper/threadedregions/RegionizedServer.java
+@@ -313,6 +313,8 @@ public final class RegionizedServer {
+ 
+         // player list
+         MinecraftServer.getServer().getPlayerList().tick();
++
++        top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handleTick(); //Leaves
+     }
+ 
+     private void tickPlayerSample() {
+diff --git a/src/main/java/net/minecraft/network/protocol/common/ServerboundCustomPayloadPacket.java b/src/main/java/net/minecraft/network/protocol/common/ServerboundCustomPayloadPacket.java
+index af86f752c33a2990405fea058b7c41c437ba9d46..bada9fae1e7178162429e1f5a1608b9c4a680a6c 100644
+--- a/src/main/java/net/minecraft/network/protocol/common/ServerboundCustomPayloadPacket.java
++++ b/src/main/java/net/minecraft/network/protocol/common/ServerboundCustomPayloadPacket.java
+@@ -20,7 +20,12 @@ public record ServerboundCustomPayloadPacket(CustomPacketPayload payload) implem
+ 
+     private static CustomPacketPayload readPayload(ResourceLocation id, FriendlyByteBuf buf) {
+         FriendlyByteBuf.Reader<? extends CustomPacketPayload> packetdataserializer_a = (FriendlyByteBuf.Reader) ServerboundCustomPayloadPacket.KNOWN_TYPES.get(id);
+-
++        // Leaves start - protocol
++        CustomPacketPayload leavesPayload = top.leavesmc.leaves.protocol.core.LeavesProtocolManager.getPayload(id, buf);
++        if (leavesPayload != null) {
++            return leavesPayload;
++        }
++        // Leaves end - protocol
+         return (CustomPacketPayload) (packetdataserializer_a != null ? (CustomPacketPayload) packetdataserializer_a.apply(buf) : readUnknownPayload(id, buf));
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+index c68910b2a2eb703406fb406a86783cf6ab48651e..f935214ed80fe54038a96a5cd668a072cdf406ec 100644
+--- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+@@ -139,6 +139,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+ 
+     @Override
+     public void handleCustomPayload(ServerboundCustomPayloadPacket packet) {
++        top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handlePayload(player, packet.payload()); // Leaves - protocol
+         // Paper start - Brand support
+         if (packet.payload() instanceof net.minecraft.network.protocol.common.custom.BrandPayload brandPayload) {
+             this.player.clientBrandName = brandPayload.brand();
+@@ -156,6 +157,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+                 String channels = payload.toString(com.google.common.base.Charsets.UTF_8);
+                 for (String channel : channels.split("\0")) {
+                     this.getCraftPlayer().addChannel(channel);
++                    top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handleMinecraftRegister(channel, player); // Leaves - protocol
+                 }
+             } catch (Exception ex) {
+                 ServerGamePacketListenerImpl.LOGGER.error("Couldn\'t register custom payload", ex);
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index d13edeff0de64cb77d7668e5b964cabcf9729388..c8c72cefba44ce8587a9ae22f5a87d3199f8ca5f 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -433,6 +433,8 @@ public abstract class PlayerList {
+             //return; // Folia - region threading - must still allow the player to connect, as we must add to chunk map before handling disconnect
+         }
+ 
++        top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handlePlayerJoin(player); // Leaves - protocol
++
+         final net.kyori.adventure.text.Component jm = playerJoinEvent.joinMessage();
+ 
+         if (jm != null && !jm.equals(net.kyori.adventure.text.Component.empty())) { // Paper - Adventure
+@@ -688,6 +690,7 @@ public abstract class PlayerList {
+         return this.remove(entityplayer, net.kyori.adventure.text.Component.translatable("multiplayer.player.left", net.kyori.adventure.text.format.NamedTextColor.YELLOW, io.papermc.paper.configuration.GlobalConfiguration.get().messages.useDisplayNameInQuitMessage ? entityplayer.getBukkitEntity().displayName() : io.papermc.paper.adventure.PaperAdventure.asAdventure(entityplayer.getDisplayName())));
+     }
+     public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer, net.kyori.adventure.text.Component leaveMessage) {
++        top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handlePlayerLeave(entityplayer); // Leaves - protocol
+         // Paper end - Fix kick event leave message not being sent
+         ServerLevel worldserver = entityplayer.serverLevel();
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 57243238d9363cc68c1022871d62b41c424b8a75..23cd0290f8939aec85b5699feb6ac7f12bde14a7 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -469,6 +469,7 @@ public final class CraftServer implements Server {
+             MapPalette.setMapColorCache(new CraftMapColorCache(this.logger));
+         }
+         datapackManager = new io.papermc.paper.datapack.PaperDatapackManager(console.getPackRepository()); // Paper
++        top.leavesmc.leaves.protocol.core.LeavesProtocolManager.init(); // Leaves - protocol
+     }
+ 
+     public boolean getCommandBlockOverride(String command) {
+@@ -1112,6 +1113,7 @@ public final class CraftServer implements Server {
+         io.papermc.paper.command.PaperCommands.registerCommands(this.console); // Paper
+         this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
+         this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
++        top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handleServerReload(); // Leaves - protocol
+ 
+         int pollCount = 0;
+ 
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocol.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..64a1d25973b032e8cab64bbffa6824a131676773
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocol.java
+@@ -0,0 +1,16 @@
++package top.leavesmc.leaves.protocol.core;
++
++import java.lang.annotation.ElementType;
++import java.lang.annotation.Retention;
++import java.lang.annotation.RetentionPolicy;
++import java.lang.annotation.Target;
++
++@Target(ElementType.TYPE)
++@Retention(RetentionPolicy.RUNTIME)
++public @interface LeavesProtocol {
++
++    String namespace() default "minecraft";
++
++    String[] namespaces() default {};
++
++}
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..055f044ce6cef4377f6f577efdbfad0ec9a2d57b
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java
+@@ -0,0 +1,340 @@
++package top.leavesmc.leaves.protocol.core;
++
++import net.minecraft.network.FriendlyByteBuf;
++import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.level.ServerPlayer;
++import org.apache.commons.lang.ArrayUtils;
++import org.jetbrains.annotations.NotNull;
++
++import java.io.File;
++import java.io.IOException;
++import java.lang.reflect.Constructor;
++import java.lang.reflect.InvocationTargetException;
++import java.lang.reflect.Method;
++import java.lang.reflect.Modifier;
++import java.net.JarURLConnection;
++import java.net.URL;
++import java.net.URLDecoder;
++import java.nio.charset.StandardCharsets;
++import java.util.ArrayList;
++import java.util.Collections;
++import java.util.Enumeration;
++import java.util.HashMap;
++import java.util.HashSet;
++import java.util.LinkedHashSet;
++import java.util.List;
++import java.util.Map;
++import java.util.Set;
++import java.util.jar.JarEntry;
++import java.util.jar.JarFile;
++
++public class LeavesProtocolManager {
++
++    private static final Map<LeavesProtocol, Map<ProtocolHandler.PayloadReceiver, Constructor<? extends CustomPacketPayload>>> KNOWN_TYPES = new HashMap<>();
++    private static final Map<LeavesProtocol, Map<ProtocolHandler.PayloadReceiver, Method>> KNOW_RECEIVERS = new HashMap<>();
++
++    private static final List<Method> TICKERS = new ArrayList<>();
++    private static final List<Method> PLAYER_JOIN = new ArrayList<>();
++    private static final List<Method> PLAYER_LEAVE = new ArrayList<>();
++    private static final List<Method> RELOAD_SERVER = new ArrayList<>();
++    private static final Map<LeavesProtocol, Map<ProtocolHandler.MinecraftRegister, Method>> MINECRAFT_REGISTER = new HashMap<>();
++
++    public static void init() {
++        for (Class<?> clazz : getClasses("top.leavesmc.leaves.protocol")) {
++            final LeavesProtocol protocol = clazz.getAnnotation(LeavesProtocol.class);
++            if (protocol != null) {
++                Set<Method> methods;
++                try {
++                    Method[] publicMethods = clazz.getMethods();
++                    Method[] privateMethods = clazz.getDeclaredMethods();
++                    methods = new HashSet<>(publicMethods.length + privateMethods.length, 1.0f);
++                    Collections.addAll(methods, publicMethods);
++                    Collections.addAll(methods, privateMethods);
++                } catch (NoClassDefFoundError e) {
++                    e.printStackTrace();
++                    return;
++                }
++
++                Map<ProtocolHandler.PayloadReceiver, Constructor<? extends CustomPacketPayload>> map = new HashMap<>();
++                for (final Method method : methods) {
++                    if (method.isBridge() || method.isSynthetic() || !Modifier.isStatic(method.getModifiers())) {
++                        continue;
++                    }
++
++                    method.setAccessible(true);
++
++                    final ProtocolHandler.Init init = method.getAnnotation(ProtocolHandler.Init.class);
++                    if (init != null) {
++                        try {
++                            method.invoke(null);
++                        } catch (InvocationTargetException | IllegalAccessException e) {
++                            e.printStackTrace();
++                        }
++                        continue;
++                    }
++
++                    final ProtocolHandler.PayloadReceiver receiver = method.getAnnotation(ProtocolHandler.PayloadReceiver.class);
++                    if (receiver != null) {
++                        try {
++                            map.put(receiver, receiver.payload().getConstructor(ResourceLocation.class, FriendlyByteBuf.class));
++                        } catch (NoSuchMethodException e) {
++                            e.printStackTrace();
++                            continue;
++                        }
++
++                        if (!KNOW_RECEIVERS.containsKey(protocol)) {
++                            KNOW_RECEIVERS.put(protocol, new HashMap<>());
++                        }
++
++                        KNOW_RECEIVERS.get(protocol).put(receiver, method);
++                        continue;
++                    }
++
++                    final ProtocolHandler.Ticker ticker = method.getAnnotation(ProtocolHandler.Ticker.class);
++                    if (ticker != null) {
++                        TICKERS.add(method);
++                        continue;
++                    }
++
++                    final ProtocolHandler.PlayerJoin playerJoin = method.getAnnotation(ProtocolHandler.PlayerJoin.class);
++                    if (playerJoin != null) {
++                        PLAYER_JOIN.add(method);
++                        continue;
++                    }
++
++                    final ProtocolHandler.PlayerLeave playerLeave = method.getAnnotation(ProtocolHandler.PlayerLeave.class);
++                    if (playerLeave != null) {
++                        PLAYER_LEAVE.add(method);
++                        continue;
++                    }
++
++                    final ProtocolHandler.ReloadServer reloadServer = method.getAnnotation(ProtocolHandler.ReloadServer.class);
++                    if (reloadServer != null) {
++                        RELOAD_SERVER.add(method);
++                        continue;
++                    }
++
++                    final ProtocolHandler.MinecraftRegister minecraftRegister = method.getAnnotation(ProtocolHandler.MinecraftRegister.class);
++                    if (minecraftRegister != null) {
++                        if (!MINECRAFT_REGISTER.containsKey(protocol)) {
++                            MINECRAFT_REGISTER.put(protocol, new HashMap<>());
++                        }
++
++                        MINECRAFT_REGISTER.get(protocol).put(minecraftRegister, method);
++                    }
++                }
++                KNOWN_TYPES.put(protocol, map);
++            }
++        }
++    }
++
++    public static CustomPacketPayload getPayload(ResourceLocation id, FriendlyByteBuf buf) {
++        for (LeavesProtocol protocol : KNOWN_TYPES.keySet()) {
++            if (!protocol.namespace().equals(id.getNamespace()) && !ArrayUtils.contains(protocol.namespaces(), id.getNamespace())) {
++                continue;
++            }
++
++            Map<ProtocolHandler.PayloadReceiver, Constructor<? extends CustomPacketPayload>> map = KNOWN_TYPES.get(protocol);
++            for (ProtocolHandler.PayloadReceiver receiver : map.keySet()) {
++                if (receiver.ignoreId() || receiver.payloadId().equals(id.getPath()) || ArrayUtils.contains(receiver.payloadIds(), id.getPath())) {
++                    try {
++                        return map.get(receiver).newInstance(id, buf);
++                    } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
++                        e.printStackTrace();
++                    }
++                }
++            }
++        }
++        return null;
++    }
++
++    public static void handlePayload(ServerPlayer player, CustomPacketPayload payload) {
++        for (LeavesProtocol protocol : KNOW_RECEIVERS.keySet()) {
++            if (!protocol.namespace().equals(payload.id().getNamespace()) && !ArrayUtils.contains(protocol.namespaces(), payload.id().getNamespace())) {
++                continue;
++            }
++
++            Map<ProtocolHandler.PayloadReceiver, Method> map = KNOW_RECEIVERS.get(protocol);
++            for (ProtocolHandler.PayloadReceiver receiver : map.keySet()) {
++                if (payload.getClass() == receiver.payload()) {
++                    if (receiver.ignoreId() || receiver.payloadId().equals(payload.id().getPath()) ||
++                        ArrayUtils.contains(receiver.payloadIds(), payload.id().getPath())) {
++                        try {
++                            map.get(receiver).invoke(null, player, payload);
++                        } catch (InvocationTargetException | IllegalAccessException e) {
++                            e.printStackTrace();
++                        }
++                    }
++                }
++            }
++        }
++    }
++
++    public static void handleTick() {
++        if (!TICKERS.isEmpty()) {
++            try {
++                for (Method method : TICKERS) {
++                    method.invoke(null);
++                }
++            } catch (InvocationTargetException | IllegalAccessException e) {
++                e.printStackTrace();
++            }
++        }
++    }
++
++    public static void handlePlayerJoin(ServerPlayer player) {
++        if (!PLAYER_JOIN.isEmpty()) {
++            try {
++                for (Method method : PLAYER_JOIN) {
++                    method.invoke(null, player);
++                }
++            } catch (InvocationTargetException | IllegalAccessException e) {
++                e.printStackTrace();
++            }
++        }
++    }
++
++    public static void handlePlayerLeave(ServerPlayer player) {
++        if (!PLAYER_LEAVE.isEmpty()) {
++            try {
++                for (Method method : PLAYER_LEAVE) {
++                    method.invoke(null, player);
++                }
++            } catch (InvocationTargetException | IllegalAccessException e) {
++                e.printStackTrace();
++            }
++        }
++    }
++
++    public static void handleServerReload() {
++        if (!RELOAD_SERVER.isEmpty()) {
++            try {
++                for (Method method : RELOAD_SERVER) {
++                    method.invoke(null);
++                }
++            } catch (InvocationTargetException | IllegalAccessException e) {
++                e.printStackTrace();
++            }
++        }
++    }
++
++    public static void handleMinecraftRegister(String channelId, ServerPlayer player) {
++        for (LeavesProtocol protocol : MINECRAFT_REGISTER.keySet()) {
++            String[] channel = channelId.split(":");
++            if (!protocol.namespace().equals(channel[0]) && !ArrayUtils.contains(protocol.namespaces(), channel[0])) {
++                continue;
++            }
++
++            Map<ProtocolHandler.MinecraftRegister, Method> map = MINECRAFT_REGISTER.get(protocol);
++            for (ProtocolHandler.MinecraftRegister register : map.keySet()) {
++                if (register.ignoreId() || register.channelId().equals(channel[1]) ||
++                    ArrayUtils.contains(register.channelIds(), channel[1])) {
++                    try {
++                        map.get(register).invoke(null, player);
++                    } catch (InvocationTargetException | IllegalAccessException e) {
++                        e.printStackTrace();
++                    }
++                }
++            }
++        }
++    }
++
++    public static Set<Class<?>> getClasses(String pack) {
++        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
++        String packageDirName = pack.replace('.', '/');
++        Enumeration<URL> dirs;
++        try {
++            dirs = Thread.currentThread().getContextClassLoader().getResources(packageDirName);
++            while (dirs.hasMoreElements()) {
++                URL url = dirs.nextElement();
++                String protocol = url.getProtocol();
++                if ("file".equals(protocol)) {
++                    String filePath = URLDecoder.decode(url.getFile(), StandardCharsets.UTF_8);
++                    findClassesInPackageByFile(pack, filePath, classes);
++                } else if ("jar".equals(protocol)) {
++                    JarFile jar;
++                    try {
++                        jar = ((JarURLConnection) url.openConnection()).getJarFile();
++                        Enumeration<JarEntry> entries = jar.entries();
++                        findClassesInPackageByJar(pack, entries, packageDirName, classes);
++                    } catch (IOException e) {
++                        e.printStackTrace();
++                    }
++                }
++            }
++        } catch (IOException e) {
++            e.printStackTrace();
++        }
++        return classes;
++    }
++
++    private static void findClassesInPackageByFile(String packageName, String packagePath, Set<Class<?>> classes) {
++        File dir = new File(packagePath);
++        if (!dir.exists() || !dir.isDirectory()) {
++            return;
++        }
++        File[] dirfiles = dir.listFiles((file) -> file.isDirectory() || file.getName().endsWith(".class"));
++        if (dirfiles != null) {
++            for (File file : dirfiles) {
++                if (file.isDirectory()) {
++                    findClassesInPackageByFile(packageName + "." + file.getName(), file.getAbsolutePath(), classes);
++                } else {
++                    String className = file.getName().substring(0, file.getName().length() - 6);
++                    try {
++                        classes.add(Class.forName(packageName + '.' + className));
++                    } catch (ClassNotFoundException e) {
++                        e.printStackTrace();
++                    }
++                }
++            }
++        }
++    }
++
++    private static void findClassesInPackageByJar(String packageName, Enumeration<JarEntry> entries, String packageDirName, Set<Class<?>> classes) {
++        while (entries.hasMoreElements()) {
++            JarEntry entry = entries.nextElement();
++            String name = entry.getName();
++            if (name.charAt(0) == '/') {
++                name = name.substring(1);
++            }
++            if (name.startsWith(packageDirName)) {
++                int idx = name.lastIndexOf('/');
++                if (idx != -1) {
++                    packageName = name.substring(0, idx).replace('/', '.');
++                }
++                if (name.endsWith(".class") && !entry.isDirectory()) {
++                    String className = name.substring(packageName.length() + 1, name.length() - 6);
++                    try {
++                        classes.add(Class.forName(packageName + '.' + className));
++                    } catch (ClassNotFoundException e) {
++                        e.printStackTrace();
++                    }
++                }
++            }
++        }
++    }
++
++    public record EmptyPayload(ResourceLocation id) implements CustomPacketPayload {
++
++        public EmptyPayload(ResourceLocation location, FriendlyByteBuf buf) {
++            this(location);
++        }
++
++        @Override
++        public void write(@NotNull FriendlyByteBuf buf) {
++        }
++    }
++
++    public record LeavesPayload(FriendlyByteBuf data, ResourceLocation id) implements CustomPacketPayload {
++
++        public LeavesPayload(ResourceLocation location, FriendlyByteBuf buf) {
++            this(new FriendlyByteBuf(buf.readBytes(buf.readableBytes())), location);
++        }
++
++        @Override
++        public void write(FriendlyByteBuf buf) {
++            buf.writeBytes(data);
++        }
++    }
++}
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/core/ProtocolHandler.java b/src/main/java/top/leavesmc/leaves/protocol/core/ProtocolHandler.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..d696f001d2576d1b61cc732c81f22eb52205072b
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/protocol/core/ProtocolHandler.java
+@@ -0,0 +1,65 @@
++package top.leavesmc.leaves.protocol.core;
++
++import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
++
++import java.lang.annotation.ElementType;
++import java.lang.annotation.Retention;
++import java.lang.annotation.RetentionPolicy;
++import java.lang.annotation.Target;
++
++public class ProtocolHandler {
++
++    @Target(ElementType.METHOD)
++    @Retention(RetentionPolicy.RUNTIME)
++    public @interface Init {
++
++    }
++
++    @Target(ElementType.METHOD)
++    @Retention(RetentionPolicy.RUNTIME)
++    public @interface PayloadReceiver {
++
++        Class<? extends CustomPacketPayload> payload();
++
++        String[] payloadIds() default {};
++
++        String payloadId() default "";
++
++        boolean ignoreId() default false;
++    }
++
++    @Target(ElementType.METHOD)
++    @Retention(RetentionPolicy.RUNTIME)
++    public @interface Ticker {
++        int delay() default 0;
++    }
++
++    @Target(ElementType.METHOD)
++    @Retention(RetentionPolicy.RUNTIME)
++    public @interface PlayerJoin {
++
++    }
++
++    @Target(ElementType.METHOD)
++    @Retention(RetentionPolicy.RUNTIME)
++    public @interface PlayerLeave {
++
++    }
++
++    @Target(ElementType.METHOD)
++    @Retention(RetentionPolicy.RUNTIME)
++    public @interface ReloadServer {
++
++    }
++
++    @Target(ElementType.METHOD)
++    @Retention(RetentionPolicy.RUNTIME)
++    public @interface MinecraftRegister {
++
++        String channelId() default "";
++
++        String[] channelIds() default {};
++
++        boolean ignoreId() default false;
++    }
++}
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/core/ProtocolUtils.java b/src/main/java/top/leavesmc/leaves/protocol/core/ProtocolUtils.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..5282c5ad3d26d06ab685ddaaf6fd9a4d49559717
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/protocol/core/ProtocolUtils.java
+@@ -0,0 +1,36 @@
++package top.leavesmc.leaves.protocol.core;
++
++import net.minecraft.network.FriendlyByteBuf;
++import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
++import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.level.ServerPlayer;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.function.Consumer;
++
++public class ProtocolUtils {
++
++    public static void sendEmptyPayloadPacket(ServerPlayer player, ResourceLocation id) {
++        player.connection.send(new ClientboundCustomPayloadPacket(new LeavesProtocolManager.EmptyPayload(id)));
++    }
++
++    public static void sendPayloadPacket(ServerPlayer player, ResourceLocation id, Consumer<FriendlyByteBuf> consumer) {
++        player.connection.send(new ClientboundCustomPayloadPacket(new CustomPacketPayload() {
++            @Override
++            public void write(@NotNull FriendlyByteBuf buf) {
++                consumer.accept(buf);
++            }
++
++            @Override
++            @NotNull
++            public ResourceLocation id() {
++                return id;
++            }
++        }));
++    }
++
++    public static void sendPayloadPacket(ServerPlayer player, CustomPacketPayload payload) {
++        player.connection.send(new ClientboundCustomPayloadPacket(payload));
++    }
++}

@@ -1,0 +1,312 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Wed, 7 Feb 2024 00:45:19 +0000
+Subject: [PATCH] Empty config file base
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index b9c5ef4d15aa97a380419912e3ee09d094ae752e..e837f1f9b444318cbee8719b9dd0eb669478742e 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -19,6 +19,7 @@ dependencies {
+         exclude("io.papermc.paper", "paper-api")
+     }
+     // Folia end
++    implementation("com.electronwill.night-config:toml:3.6.6") //Luminol - Night config
+     // Paper start
+     implementation("org.jline:jline-terminal-jansi:3.21.0")
+     implementation("net.minecrell:terminalconsoleappender:1.3.0")
+diff --git a/src/main/java/me/earthme/luminol/config/ConfigInfo.java b/src/main/java/me/earthme/luminol/config/ConfigInfo.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..01b64c2cf6b437114337626c242e1da3fbdb8ead
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/ConfigInfo.java
+@@ -0,0 +1,11 @@
++package me.earthme.luminol.config;
++
++import java.lang.annotation.Retention;
++import java.lang.annotation.RetentionPolicy;
++
++@Retention(RetentionPolicy.RUNTIME)
++public @interface ConfigInfo {
++    String baseName();
++
++    String comments() default "";
++}
+diff --git a/src/main/java/me/earthme/luminol/config/DoNotLoad.java b/src/main/java/me/earthme/luminol/config/DoNotLoad.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..fffc5eb4be4b78a886f3c340bd60f3a2b0108a7d
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/DoNotLoad.java
+@@ -0,0 +1,8 @@
++package me.earthme.luminol.config;
++
++import java.lang.annotation.Retention;
++import java.lang.annotation.RetentionPolicy;
++
++@Retention(RetentionPolicy.RUNTIME)
++public @interface DoNotLoad {
++}
+diff --git a/src/main/java/me/earthme/luminol/config/EnumConfigCategory.java b/src/main/java/me/earthme/luminol/config/EnumConfigCategory.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..ac2a92fe0ddbebb71ea4dd8c96f461d06ec29a4c
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/EnumConfigCategory.java
+@@ -0,0 +1,18 @@
++package me.earthme.luminol.config;
++
++public enum EnumConfigCategory {
++    OPTIMIZATIONS("optimizations"),
++    FIXES("fixes"),
++    MISC("misc"),
++    GAMEPLAY("gameplay");
++
++    private final String baseKeyName;
++
++    EnumConfigCategory(String baseKeyName) {
++        this.baseKeyName = baseKeyName;
++    }
++
++    public String getBaseKeyName() {
++        return this.baseKeyName;
++    }
++}
+diff --git a/src/main/java/me/earthme/luminol/config/IConfigModule.java b/src/main/java/me/earthme/luminol/config/IConfigModule.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f6896711907ac30fe0c00130207b970007e4bb4
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/IConfigModule.java
+@@ -0,0 +1,22 @@
++package me.earthme.luminol.config;
++
++import com.electronwill.nightconfig.core.file.CommentedFileConfig;
++import org.jetbrains.annotations.NotNull;
++
++public interface IConfigModule {
++
++    EnumConfigCategory getCategory();
++
++    String getBaseName();
++
++    default void onLoaded(CommentedFileConfig configInstance) {}
++
++    default <T> T get(String keyName, T defaultValue, @NotNull CommentedFileConfig config){
++        if (!config.contains(keyName)){
++            config.set(keyName,defaultValue);
++            return defaultValue;
++        }
++
++        return config.get(keyName);
++    }
++}
+diff --git a/src/main/java/me/earthme/luminol/config/LuminolConfig.java b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..caeb3249c2d99cc920f7a3e6380a263a52b3b8a6
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
+@@ -0,0 +1,184 @@
++package me.earthme.luminol.config;
++
++import com.electronwill.nightconfig.core.file.CommentedFileConfig;
++import org.jetbrains.annotations.NotNull;
++
++import java.io.File;
++import java.io.IOException;
++import java.lang.reflect.Field;
++import java.lang.reflect.InvocationTargetException;
++import java.lang.reflect.Modifier;
++import java.net.JarURLConnection;
++import java.net.URL;
++import java.net.URLDecoder;
++import java.nio.charset.StandardCharsets;
++import java.util.*;
++import java.util.jar.JarEntry;
++import java.util.jar.JarFile;
++
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
++public class LuminolConfig {
++    public static final Logger logger = LogManager.getLogger();
++    private static final File baseConfigFolder = new File("luminol_config");
++    private static final File baseConfigFile = new File(baseConfigFolder,"luminol_global_config.toml");
++    private static final Set<IConfigModule> allInstanced = new HashSet<>();
++    private static CommentedFileConfig configFileInstance;
++    
++    public static void loadConfig() throws IOException {
++        baseConfigFolder.mkdirs();
++
++        if (!baseConfigFile.exists()){
++            baseConfigFile.createNewFile();
++        }
++
++        configFileInstance = CommentedFileConfig.ofConcurrent(baseConfigFile);
++
++        configFileInstance.load();
++
++        try {
++            instanceAllModule();
++            loadAllModules();
++            System.out.println(allInstanced.size());
++        }catch (Exception e){
++            e.printStackTrace();
++        }
++
++        configFileInstance.save();
++    }
++
++    private static void loadAllModules() throws IllegalAccessException {
++        for (IConfigModule instanced : allInstanced){
++            loadForSingle(instanced);
++        }
++    }
++
++    private static void instanceAllModule() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
++        for (Class<?> clazz  : getClasses("me.earthme.luminol.config.modules")){
++            if (IConfigModule.class.isAssignableFrom(clazz)){
++                allInstanced.add((IConfigModule) clazz.getConstructor().newInstance());
++            }
++        }
++    }
++
++    private static void loadForSingle(@NotNull IConfigModule singleConfigModule) throws IllegalAccessException {
++        final EnumConfigCategory category = singleConfigModule.getCategory();
++
++        Field[] fields = singleConfigModule.getClass().getDeclaredFields();
++
++        for (Field field : fields) {
++            int modifiers = field.getModifiers();
++            if (Modifier.isStatic(modifiers) && !Modifier.isFinal(modifiers)) {
++                boolean skipLoad = field.getAnnotation(DoNotLoad.class) != null;
++                ConfigInfo configInfo = field.getAnnotation(ConfigInfo.class);
++
++                if (skipLoad || configInfo == null){
++                    continue;
++                }
++
++                final String fullConfigKeyName = category.getBaseKeyName() + "." + singleConfigModule.getBaseName() + "." + configInfo.baseName();
++
++                field.setAccessible(true);
++                final Object currentValue = field.get(null);
++
++                if (!configFileInstance.contains(fullConfigKeyName)){
++                    if (currentValue == null){
++                        throw new UnsupportedOperationException("Config " + singleConfigModule.getBaseName() + "tried to add an null default value!");
++                    }
++
++                    final String comments = configInfo.comments();
++
++                    if (!comments.isBlank()){
++                        configFileInstance.setComment(fullConfigKeyName,comments);
++                    }
++
++                    configFileInstance.add(fullConfigKeyName,currentValue);
++                    continue;
++                }
++
++                final Object actuallyValue = configFileInstance.get(fullConfigKeyName);
++                field.set(null,actuallyValue);
++
++
++            }
++        }
++
++        singleConfigModule.onLoaded(configFileInstance);
++    }
++
++    public static Set<Class<?>> getClasses(String pack) {
++        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
++        String packageDirName = pack.replace('.', '/');
++        Enumeration<URL> dirs;
++        try {
++            dirs = Thread.currentThread().getContextClassLoader().getResources(packageDirName);
++            while (dirs.hasMoreElements()) {
++                URL url = dirs.nextElement();
++                String protocol = url.getProtocol();
++                if ("file".equals(protocol)) {
++                    String filePath = URLDecoder.decode(url.getFile(), StandardCharsets.UTF_8);
++                    findClassesInPackageByFile(pack, filePath, classes);
++                } else if ("jar".equals(protocol)) {
++                    JarFile jar;
++                    try {
++                        jar = ((JarURLConnection) url.openConnection()).getJarFile();
++                        Enumeration<JarEntry> entries = jar.entries();
++                        findClassesInPackageByJar(pack, entries, packageDirName, classes);
++                    } catch (IOException e) {
++                        e.printStackTrace();
++                    }
++                }
++            }
++        } catch (IOException e) {
++            e.printStackTrace();
++        }
++        return classes;
++    }
++
++    private static void findClassesInPackageByFile(String packageName, String packagePath, Set<Class<?>> classes) {
++        File dir = new File(packagePath);
++        if (!dir.exists() || !dir.isDirectory()) {
++            return;
++        }
++        File[] dirfiles = dir.listFiles((file) -> file.isDirectory() || file.getName().endsWith(".class"));
++        if (dirfiles != null) {
++            for (File file : dirfiles) {
++                if (file.isDirectory()) {
++                    findClassesInPackageByFile(packageName + "." + file.getName(), file.getAbsolutePath(), classes);
++                } else {
++                    String className = file.getName().substring(0, file.getName().length() - 6);
++                    try {
++                        classes.add(Class.forName(packageName + '.' + className));
++                    } catch (ClassNotFoundException e) {
++                        e.printStackTrace();
++                    }
++                }
++            }
++        }
++    }
++
++    private static void findClassesInPackageByJar(String packageName, Enumeration<JarEntry> entries, String packageDirName, Set<Class<?>> classes) {
++        while (entries.hasMoreElements()) {
++            JarEntry entry = entries.nextElement();
++            String name = entry.getName();
++            if (name.charAt(0) == '/') {
++                name = name.substring(1);
++            }
++            if (name.startsWith(packageDirName)) {
++                int idx = name.lastIndexOf('/');
++                if (idx != -1) {
++                    packageName = name.substring(0, idx).replace('/', '.');
++                }
++                if (name.endsWith(".class") && !entry.isDirectory()) {
++                    String className = name.substring(packageName.length() + 1, name.length() - 6);
++                    try {
++                        classes.add(Class.forName(packageName + '.' + className));
++                    } catch (ClassNotFoundException e) {
++                        e.printStackTrace();
++                    }
++                }
++            }
++        }
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 0f8c868fce0a054a0ba356350baf4c3824c2c958..d99e0acf0000c566fdb1bffb149ec13a55d7c8dd 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -19,6 +19,8 @@ import java.util.Locale;
+ import java.util.Optional;
+ import java.util.function.BooleanSupplier;
+ import javax.annotation.Nullable;
++
++import me.earthme.luminol.config.LuminolConfig;
+ import net.minecraft.DefaultUncaughtExceptionHandler;
+ import net.minecraft.DefaultUncaughtExceptionHandlerWithName;
+ import net.minecraft.SharedConstants;
+@@ -209,6 +211,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         this.paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
+         this.paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
+         // Paper end - initialize global and world-defaults configuration
++        LuminolConfig.loadConfig(); //Luminol - load config file
+         // Paper start - fix converting txt to json file; convert old users earlier after PlayerList creation but before file load/save
+         if (this.convertOldUsers()) {
+             this.getProfileCache().save(false); // Paper

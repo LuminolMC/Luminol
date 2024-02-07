@@ -1,48 +1,45 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Tue, 6 Feb 2024 01:56:30 +0000
+Date: Wed, 7 Feb 2024 01:05:57 +0000
 Subject: [PATCH] Add config for incorrect tripwire updating fixing
 
 
-diff --git a/src/main/java/me/earthme/luminol/LuminolConfig.java b/src/main/java/me/earthme/luminol/LuminolConfig.java
-index dffa9db569fcef2feec75072fe86c9a6ded80aa4..a49da370c91211d4e2274f72d62c911a1912296a 100644
---- a/src/main/java/me/earthme/luminol/LuminolConfig.java
-+++ b/src/main/java/me/earthme/luminol/LuminolConfig.java
-@@ -17,6 +17,7 @@ public class LuminolConfig {
-     public static boolean safeTeleportation = true;
-     public static boolean enableSandDuping = false;
-     public static boolean enableVoidTrading = false;
-+    public static boolean allowIncorrectTripwireUpdating = false;
- 
-     public static void init() throws IOException {
-         PARENT_FOLDER.mkdir();
-@@ -39,6 +40,7 @@ public class LuminolConfig {
-         safeTeleportation = get("fixes.enable_safe_teleportation",safeTeleportation,"If this enabled,the end portals will not teleport removed entities.");
-         enableSandDuping = get("fixes.enable_sand_duping",enableSandDuping,"If this enabled,The value of safe teleportation will always be false and sand duping will be enabled");
-         enableVoidTrading = get("fixes.enable_void_trading",enableVoidTrading);
-+        allowIncorrectTripwireUpdating = get("fixes.allow_incorrect_trip_wire_updaing",allowIncorrectTripwireUpdating);
-     }
- 
-     public static <T> T get(String key,T def){
+diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/IncorrectTripwireFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/IncorrectTripwireFixConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..8779c9fba1990c62e010387e32d1923410a043ed
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/fixes/IncorrectTripwireFixConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.fixes;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class IncorrectTripwireFixConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.FIXES;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "update_incorrect_trip_wire";
++    }
++}
 diff --git a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
-index 7f2dcf6a9e69779e6f898284b58fb1e32902000c..c9177a8c94cb47ac8082404bbe86cbc121a9e064 100644
+index 7f2dcf6a9e69779e6f898284b58fb1e32902000c..e1a7208b76e4dc7f388923d72edeceb6daefa774 100644
 --- a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
-@@ -4,6 +4,8 @@ import com.google.common.base.MoreObjects;
- import com.mojang.serialization.MapCodec;
- import java.util.Optional;
- import javax.annotation.Nullable;
-+
-+import me.earthme.luminol.LuminolConfig;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.server.level.ServerLevel;
-@@ -162,7 +164,7 @@ public class TripWireHookBlock extends Block {
+@@ -162,7 +162,7 @@ public class TripWireHookBlock extends Block {
                      boolean flag7 = (Boolean) iblockdata2.getValue(TripWireBlock.POWERED);
  
                      flag5 |= flag6 && flag7;
 -                    if (k != i || !tripWireBeingRemoved || !flag6) // Paper - fix tripwire state inconsistency; don't update the tripwire again if being removed and not disarmed
-+                    if (k != i || !tripWireBeingRemoved || !flag6 || LuminolConfig.allowIncorrectTripwireUpdating) // Paper - don't update the tripwire again if being removed and not disarmed //Luminol - Add config for incorrect tripwire updating fixing
++                    if (k != i || !tripWireBeingRemoved || !flag6 || me.earthme.luminol.config.modules.fixes.IncorrectTripwireFixConfig.enabled) // Paper - don't update the tripwire again if being removed and not disarmed //Luminol - Add config for incorrect tripwire updating fixing
                      aiblockdata[k] = iblockdata2;
                      if (k == i) {
                          world.scheduleTick(pos, block, 10);

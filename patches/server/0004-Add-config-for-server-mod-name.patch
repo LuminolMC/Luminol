@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Wed, 7 Feb 2024 00:49:38 +0000
+Subject: [PATCH] Add config for server mod name
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/network/PaperServerListPingEventImpl.java b/src/main/java/com/destroystokyo/paper/network/PaperServerListPingEventImpl.java
+index 6ed2114f577ce12d2d493985e798609c7d83f15e..7a5dcf3b7108794b9a224004730eb396a96cce8f 100644
+--- a/src/main/java/com/destroystokyo/paper/network/PaperServerListPingEventImpl.java
++++ b/src/main/java/com/destroystokyo/paper/network/PaperServerListPingEventImpl.java
+@@ -14,7 +14,7 @@ class PaperServerListPingEventImpl extends PaperServerListPingEvent {
+ 
+     PaperServerListPingEventImpl(MinecraftServer server, StatusClient client, int protocolVersion, @Nullable CachedServerIcon icon) {
+         super(client, server.motd(), server.getPlayerCount(), server.getMaxPlayers(),
+-                server.getServerModName() + ' ' + server.getServerVersion(), protocolVersion, icon);
++                me.earthme.luminol.config.modules.misc.ServerModNameConfig.fakeVanilla ? server.getServerVersion() : server.getServerModName() + ' ' + server.getServerVersion(), protocolVersion, icon);//Luminol - Fake vanilla mode
+         this.server = server;
+     }
+ 
+diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/ServerModNameConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/ServerModNameConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..94e7c8910e3623163528a844fd7a08b3ffe5826b
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/misc/ServerModNameConfig.java
+@@ -0,0 +1,23 @@
++package me.earthme.luminol.config.modules.misc;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class ServerModNameConfig implements IConfigModule {
++    @ConfigInfo(baseName = "name")
++    public static String serverModName = "Luminol";
++
++    @ConfigInfo(baseName = "vanilla_spoof")
++    public static boolean fakeVanilla = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.MISC;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "server_mod_name";
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 22aff010859dded150b6e3dd0644fe3c38dbaea9..4468e6fdbbe527111f4410188f2f2df7f592f81e 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1954,7 +1954,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+ 
+     @DontObfuscate
+     public String getServerModName() {
+-        return "Luminol"; // Paper // Folia - Folia //Luminol - Luminol
++        return me.earthme.luminol.config.modules.misc.ServerModNameConfig.fakeVanilla ? "vanilla" : me.earthme.luminol.config.modules.misc.ServerModNameConfig.serverModName; // Paper // Folia - Folia //Luminol - Luminol //Luminol - Add config for this
+     }
+ 
+     public SystemReport fillSystemReport(SystemReport details) {
