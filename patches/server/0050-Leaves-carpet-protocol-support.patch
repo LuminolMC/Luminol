@@ -1,0 +1,150 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Thu, 8 Feb 2024 11:57:18 +0000
+Subject: [PATCH] Leaves carpet protocol support
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesProtocolSupportConfig.java b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesProtocolSupportConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..80d57d6262510cf7c6446e46cdd16d05461e9484
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesProtocolSupportConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.gameplay;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class LeavesProtocolSupportConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.GAMEPLAY;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "leaves_carpet_protocol";
++    }
++}
+diff --git a/src/main/java/top/leavesmc/leaves/protocol/CarpetServerProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/CarpetServerProtocol.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..2af49a86bf2a8bb65073c8ce088e875224916fd8
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/protocol/CarpetServerProtocol.java
+@@ -0,0 +1,112 @@
++package top.leavesmc.leaves.protocol;
++
++import net.minecraft.nbt.CompoundTag;
++import net.minecraft.network.FriendlyByteBuf;
++import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerPlayer;
++import org.jetbrains.annotations.Contract;
++import org.jetbrains.annotations.NotNull;
++import top.leavesmc.leaves.protocol.core.LeavesProtocol;
++import top.leavesmc.leaves.protocol.core.ProtocolHandler;
++import top.leavesmc.leaves.protocol.core.ProtocolUtils;
++
++import java.util.HashMap;
++import java.util.Locale;
++import java.util.Map;
++
++@LeavesProtocol(namespace = "carpet")
++public class CarpetServerProtocol {
++
++    public static final String PROTOCOL_ID = "carpet";
++    public static final String VERSION = "leaves-carpet-1.0.0";
++
++    private static final ResourceLocation HELLO_ID = CarpetServerProtocol.id("hello");
++
++    private static final String HI = "69";
++    private static final String HELLO = "420";
++
++    @Contract("_ -> new")
++    public static @NotNull ResourceLocation id(String path) {
++        return new ResourceLocation(PROTOCOL_ID, path);
++    }
++
++    @ProtocolHandler.PlayerJoin
++    public static void onPlayerJoin(ServerPlayer player) {
++        if (me.earthme.luminol.config.modules.gameplay.LeavesProtocolSupportConfig.enabled) {
++            CompoundTag data = new CompoundTag();
++            data.putString(HI, VERSION);
++            ProtocolUtils.sendPayloadPacket(player, new CarpetPayload(data));
++        }
++    }
++
++    @ProtocolHandler.PayloadReceiver(payload = CarpetPayload.class, payloadId = "hello")
++    private static void handleHello(@NotNull ServerPlayer player, @NotNull CarpetServerProtocol.CarpetPayload payload) {
++        if (me.earthme.luminol.config.modules.gameplay.LeavesProtocolSupportConfig.enabled) {
++            if (payload.nbt.contains(HELLO)) {
++                MinecraftServer.LOGGER.info("Player " + player.getScoreboardName() + " joined with carpet " + payload.nbt.getString(HELLO));
++                CompoundTag data = new CompoundTag();
++                CarpetRules.write(data);
++                ProtocolUtils.sendPayloadPacket(player, new CarpetPayload(data));
++            }
++        }
++    }
++
++    public static class CarpetRules {
++
++        private static final Map<String, CarpetRule> rules = new HashMap<>();
++
++        public static void write(@NotNull CompoundTag tag) {
++            CompoundTag rulesNbt = new CompoundTag();
++            rules.values().forEach(rule -> rule.writeNBT(rulesNbt));
++
++            tag.put("Rules", rulesNbt);
++        }
++
++        public static void register(CarpetRule rule) {
++            rules.put(rule.name, rule);
++        }
++    }
++
++    public record CarpetRule(String identifier, String name, String value) {
++
++        @NotNull
++        @Contract("_, _, _ -> new")
++        public static CarpetRule of(String identifier, String name, Enum<?> value) {
++            return new CarpetRule(identifier, name, value.name().toLowerCase(Locale.ROOT));
++        }
++
++        @NotNull
++        @Contract("_, _, _ -> new")
++        public static CarpetRule of(String identifier, String name, boolean value) {
++            return new CarpetRule(identifier, name, Boolean.toString(value));
++        }
++
++        public void writeNBT(@NotNull CompoundTag rules) {
++            CompoundTag rule = new CompoundTag();
++            rule.putString("Value", value);
++            rule.putString("Manager", identifier);
++            rule.putString("Rule", name);
++            rules.put(name, rule);
++        }
++    }
++
++    public record CarpetPayload(CompoundTag nbt) implements CustomPacketPayload {
++
++        public CarpetPayload(ResourceLocation location, FriendlyByteBuf buf) {
++            this(buf.readNbt());
++        }
++
++        @Override
++        public void write(FriendlyByteBuf buf) {
++            buf.writeNbt(nbt);
++        }
++
++        @Override
++        @NotNull
++        public ResourceLocation id() {
++            return HELLO_ID;
++        }
++    }
++}
