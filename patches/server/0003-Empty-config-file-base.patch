@@ -101,10 +101,10 @@ index 0000000000000000000000000000000000000000..9f6896711907ac30fe0c00130207b970
 +}
 diff --git a/src/main/java/me/earthme/luminol/config/LuminolConfig.java b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..caeb3249c2d99cc920f7a3e6380a263a52b3b8a6
+index 0000000000000000000000000000000000000000..7dc4b97c396aab1128ad4761b3f3ac6ee9d07205
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
-@@ -0,0 +1,184 @@
+@@ -0,0 +1,183 @@
 +package me.earthme.luminol.config;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
@@ -147,7 +147,6 @@ index 0000000000000000000000000000000000000000..caeb3249c2d99cc920f7a3e6380a263a
 +        try {
 +            instanceAllModule();
 +            loadAllModules();
-+            System.out.println(allInstanced.size());
 +        }catch (Exception e){
 +            e.printStackTrace();
 +        }
