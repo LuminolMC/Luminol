@@ -48,9 +48,11 @@ For maven
 
 QQ Group: 368632360
 
-## About Issue
-When you meet any problems, just ask us, we will do our best to solve it, but remember to state your problem clear and provide enough logs etc.
+## Notice
+**This project is not related to Leaves.Do not report any bugs about protocol support to leaves because the protocol supports are already refactored**
 
+## About Issue
+When you meet any problems, just ask us, we will do our best to solve it, but remember to state your problem clear and provide enough logs etc.</br>
 
 ## BStats
 ![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")
