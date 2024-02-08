@@ -6,7 +6,7 @@ Subject: [PATCH] Add config for vanilla random
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/VanillaRandomSourceConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/VanillaRandomSourceConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8ba66e737d36157b3797c308cb9fca804e396915
+index 0000000000000000000000000000000000000000..ee247014c9a2ec1bbb7f25ef41da110a270154d6
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/VanillaRandomSourceConfig.java
 @@ -0,0 +1,20 @@
@@ -27,7 +27,7 @@ index 0000000000000000000000000000000000000000..8ba66e737d36157b3797c308cb9fca80
 +
 +    @Override
 +    public String getBaseName() {
-+        return "vanilla_random_source";
++        return "use_vanilla_random_source";
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java

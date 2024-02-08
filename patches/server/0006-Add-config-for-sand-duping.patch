@@ -6,7 +6,7 @@ Subject: [PATCH] Add config for sand duping
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/SandDupingFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/SandDupingFixConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..cacb1f51a28eaa260aedba8d5b541475605e36ea
+index 0000000000000000000000000000000000000000..7561dfd23724fc3f2cc580b2b53fa1469e3d098e
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/SandDupingFixConfig.java
 @@ -0,0 +1,20 @@
@@ -27,7 +27,7 @@ index 0000000000000000000000000000000000000000..cacb1f51a28eaa260aedba8d5b541475
 +
 +    @Override
 +    public String getBaseName() {
-+        return "sand_duping";
++        return "allow_sand_duping";
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java

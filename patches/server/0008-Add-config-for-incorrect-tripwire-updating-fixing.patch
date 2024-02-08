@@ -6,7 +6,7 @@ Subject: [PATCH] Add config for incorrect tripwire updating fixing
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/IncorrectTripwireFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/IncorrectTripwireFixConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8779c9fba1990c62e010387e32d1923410a043ed
+index 0000000000000000000000000000000000000000..79ce93a1e97f176c7b0e5b00d7f0880f0d157d03
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/IncorrectTripwireFixConfig.java
 @@ -0,0 +1,20 @@
@@ -27,7 +27,7 @@ index 0000000000000000000000000000000000000000..8779c9fba1990c62e010387e32d19234
 +
 +    @Override
 +    public String getBaseName() {
-+        return "update_incorrect_trip_wire";
++        return "allow_update_incorrect_trip_wire";
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java

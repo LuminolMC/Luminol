@@ -6,7 +6,7 @@ Subject: [PATCH] Add config for unsafe teleportation
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/UnsafeTeleportationConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/UnsafeTeleportationConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ea10d8d38ecdb791b7b2a748496791c04eff5997
+index 0000000000000000000000000000000000000000..cb2fef0d808e2fc2950eded5b39651c66fff9103
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/UnsafeTeleportationConfig.java
 @@ -0,0 +1,20 @@
@@ -27,7 +27,7 @@ index 0000000000000000000000000000000000000000..ea10d8d38ecdb791b7b2a748496791c0
 +
 +    @Override
 +    public String getBaseName() {
-+        return "unsafe_teleportation";
++        return "allow_unsafe_teleportation";
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
