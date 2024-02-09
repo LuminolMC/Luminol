@@ -1,0 +1,78 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Fri, 9 Feb 2024 03:28:48 +0000
+Subject: [PATCH] Threaded region remove and create event
+
+
+diff --git a/src/main/java/me/earthme/luminol/api/events/TickRegionCreateEvent.java b/src/main/java/me/earthme/luminol/api/events/TickRegionCreateEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f842aeb33e658f3db540b6195f848d2a56ce14f
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/api/events/TickRegionCreateEvent.java
+@@ -0,0 +1,32 @@
++package me.earthme.luminol.api.events;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++import org.jetbrains.annotations.NotNull;
++
++/**
++ * This event was called when a new threaded region was created.When the event called,it means this region was already added to the region list
++ * Notice: It may be called when splitting or merging regions
++ */
++public class TickRegionCreateEvent extends Event {
++    private static final HandlerList handlers = new HandlerList();
++
++    private final long id;
++
++    public TickRegionCreateEvent(long id) {
++        this.id = id;
++    }
++
++    /**
++     * Get the id of the threaded region which was created
++     * @return The id of the threaded region
++     */
++    public long getId() {
++        return this.id;
++    }
++
++    @Override
++    public @NotNull HandlerList getHandlers() {
++        return handlers;
++    }
++}
+diff --git a/src/main/java/me/earthme/luminol/api/events/TickRegionRemoveEvent.java b/src/main/java/me/earthme/luminol/api/events/TickRegionRemoveEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..aa3d3868f9d0c3353380960db36ee60a6b4aeb03
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/api/events/TickRegionRemoveEvent.java
+@@ -0,0 +1,28 @@
++package me.earthme.luminol.api.events;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++import org.jetbrains.annotations.NotNull;
++
++/**
++ * This event was called when a new threaded region was removed.When the event called,it means this region was already removed from the region list
++ * Notice: It may be called when splitting or merging regions
++ */
++public class TickRegionRemoveEvent extends Event {
++    private static final HandlerList handlers = new HandlerList();
++
++    private final long id;
++
++    public TickRegionRemoveEvent(long id) {
++        this.id = id;
++    }
++
++    public long getId() {
++        return this.id;
++    }
++
++    @Override
++    public @NotNull HandlerList getHandlers() {
++        return handlers;
++    }
++}

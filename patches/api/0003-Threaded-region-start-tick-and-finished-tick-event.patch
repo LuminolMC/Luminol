@@ -1,0 +1,101 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Fri, 9 Feb 2024 03:32:05 +0000
+Subject: [PATCH] Threaded region start tick and finished tick event
+
+
+diff --git a/src/main/java/me/earthme/luminol/api/events/TickRegionFinishedTickEvent.java b/src/main/java/me/earthme/luminol/api/events/TickRegionFinishedTickEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..29b98728d3ca4a439c6b3333cd123c0e0b8a2846
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/api/events/TickRegionFinishedTickEvent.java
+@@ -0,0 +1,42 @@
++package me.earthme.luminol.api.events;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++import org.jetbrains.annotations.NotNull;
++
++/**
++ * Called when a region finished its tick task.
++ */
++public class TickRegionFinishedTickEvent extends Event {
++    private static final HandlerList handlers = new HandlerList();
++
++    private final long currTime;
++    private final long regionId;
++
++    public TickRegionFinishedTickEvent(long currTime, long regionId) {
++        this.currTime = currTime;
++        this.regionId = regionId;
++    }
++
++    /**
++     * Get the time of tick end
++     * @return The time of tick end in nanoseconds
++     */
++    public long getFinishedTime() {
++        return this.currTime;
++    }
++
++    /**
++     * Get the id of current region
++     * Notice: The id of global region is -1 in this event
++     * @return The id of current region
++     */
++    public long getRegionId() {
++        return this.regionId;
++    }
++
++    @Override
++    public @NotNull HandlerList getHandlers() {
++        return handlers;
++    }
++}
+diff --git a/src/main/java/me/earthme/luminol/api/events/TickRegionStartTickEvent.java b/src/main/java/me/earthme/luminol/api/events/TickRegionStartTickEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..1f3cba43ebd873965c24b96ca116abfb149ab4e6
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/api/events/TickRegionStartTickEvent.java
+@@ -0,0 +1,41 @@
++package me.earthme.luminol.api.events;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++import org.jetbrains.annotations.NotNull;
++
++/**
++ * Called when a tick was started.
++ */
++public class TickRegionStartTickEvent extends Event {
++    private static final HandlerList handlers = new HandlerList();
++    private final long currTime;
++    private final long regionId;
++
++    public TickRegionStartTickEvent(long currTime, long regionId) {
++        this.currTime = currTime;
++        this.regionId = regionId;
++    }
++
++    /**
++     * Get the id of current region
++     * Notice: The id of global region is -1 in this event
++     * @return The id of current region
++     */
++    public long getRegionId() {
++        return this.regionId;
++    }
++
++    /**
++     * Get the time of tick start
++     * @return The time of tick start in nanoseconds
++     */
++    public long getStartTime(){
++        return this.currTime;
++    }
++
++    @Override
++    public @NotNull HandlerList getHandlers() {
++        return handlers;
++    }
++}

@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Fri, 9 Feb 2024 03:28:48 +0000
+Subject: [PATCH] Threaded region remove and create event
+
+
+diff --git a/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java b/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java
+index 531aa50f2c84e13358e8918bb0c15ea3cd036cb5..26183f979e24de369fd8f5e72a26a6a9ba44f601 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java
++++ b/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java
+@@ -805,6 +805,7 @@ public final class ThreadedRegionizer<R extends ThreadedRegionizer.ThreadedRegio
+         private void onCreate() {
+             this.regioniser.onRegionCreate(this);
+             this.regioniser.callbacks.onRegionCreate(this);
++            new me.earthme.luminol.api.events.TickRegionCreateEvent(this.id).callEvent(); //Luminol - Threaded regions API
+         }
+ 
+         private void onRemove(final boolean wasActive) {
+@@ -813,6 +814,7 @@ public final class ThreadedRegionizer<R extends ThreadedRegionizer.ThreadedRegio
+             }
+             this.regioniser.callbacks.onRegionDestroy(this);
+             this.regioniser.onRegionDestroy(this);
++            new me.earthme.luminol.api.events.TickRegionRemoveEvent(this.id).callEvent(); //Luminol - Threaded regions API
+         }
+ 
+         private final boolean hasNoAliveSections() {
