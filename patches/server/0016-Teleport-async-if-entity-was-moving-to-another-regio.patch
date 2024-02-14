@@ -33,7 +33,7 @@ index 0000000000000000000000000000000000000000..9ccd6a3a07abfce54dccf9b6e01d0050
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 865804a16fce714497b2c025a869f972787442e3..7ba9c8677a09d43107ab0d178f4141c44a1d25bc 100644
+index e6252c2cb76d96929c69c651b6570b586ee7e7e3..53c4ac14ce95f21ef87a148dddb349f18d6320b1 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
@@ -53,7 +53,7 @@ index 865804a16fce714497b2c025a869f972787442e3..7ba9c8677a09d43107ab0d178f4141c4
  import net.minecraft.BlockUtil;
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
-@@ -1071,10 +1074,40 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -1070,10 +1073,40 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
      // Paper end - detailed watchdog information
  

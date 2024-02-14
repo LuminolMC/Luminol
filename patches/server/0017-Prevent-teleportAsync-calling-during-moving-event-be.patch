@@ -33,7 +33,7 @@ index 0000000000000000000000000000000000000000..b8aceab54bb60000e7c5681014027102
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 59f3ea98d0346d5b92053e13fa20048e3a946203..4799627301db90734dd891c099ffe5000c8873a0 100644
+index 9cbf17436b4cf52aae374767aafe79ea4f60c3ce..f2068e7608ed765e35759eb981db6c95b07a06d8 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -332,6 +332,10 @@ public class ServerPlayer extends Player {
@@ -48,7 +48,7 @@ index 59f3ea98d0346d5b92053e13fa20048e3a946203..4799627301db90734dd891c099ffe500
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 095134bb3c07ad8daeaf4b28076d60b96b481458..7d6ac979135c62e35187cb2aed4c25d9137f9c45 100644
+index bcd5d0a274960ccd02a18f754c7ccfdaea698ecc..3ab8e0b0744eaa94cab1f81bc561e420cb151adf 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -675,7 +675,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -72,7 +72,7 @@ index 095134bb3c07ad8daeaf4b28076d60b96b481458..7d6ac979135c62e35187cb2aed4c25d9
                                      // If the event is cancelled we move the player back to their old location.
                                      if (event.isCancelled()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 7ba9c8677a09d43107ab0d178f4141c44a1d25bc..55c42fa5fb60858af08c98940a2e786038f2ca4e 100644
+index 53c4ac14ce95f21ef87a148dddb349f18d6320b1..a0915438503e385153ec7bc7584860466f65b461 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -27,6 +27,7 @@ import java.util.stream.Stream;
@@ -99,7 +99,7 @@ index 7ba9c8677a09d43107ab0d178f4141c44a1d25bc..55c42fa5fb60858af08c98940a2e7860
  import org.bukkit.block.BlockFace;
  import org.bukkit.command.CommandSender;
  import org.bukkit.craftbukkit.event.CraftPortalEvent;
-@@ -3967,6 +3966,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -3970,6 +3969,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
                                         java.util.function.Consumer<Entity> teleportComplete) {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot teleport entity async");
  

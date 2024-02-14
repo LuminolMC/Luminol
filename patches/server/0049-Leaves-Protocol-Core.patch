@@ -77,10 +77,10 @@ index d13edeff0de64cb77d7668e5b964cabcf9729388..c8c72cefba44ce8587a9ae22f5a87d31
          ServerLevel worldserver = entityplayer.serverLevel();
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 57243238d9363cc68c1022871d62b41c424b8a75..23cd0290f8939aec85b5699feb6ac7f12bde14a7 100644
+index b9b1bcd165fb8864dda924a29d128d810b2ee7ab..e5e0f469b0fe98c18d87f3fc4fdecf6f26e33149 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -469,6 +469,7 @@ public final class CraftServer implements Server {
+@@ -471,6 +471,7 @@ public final class CraftServer implements Server {
              MapPalette.setMapColorCache(new CraftMapColorCache(this.logger));
          }
          datapackManager = new io.papermc.paper.datapack.PaperDatapackManager(console.getPackRepository()); // Paper
@@ -88,7 +88,7 @@ index 57243238d9363cc68c1022871d62b41c424b8a75..23cd0290f8939aec85b5699feb6ac7f1
      }
  
      public boolean getCommandBlockOverride(String command) {
-@@ -1112,6 +1113,7 @@ public final class CraftServer implements Server {
+@@ -1129,6 +1130,7 @@ public final class CraftServer implements Server {
          io.papermc.paper.command.PaperCommands.registerCommands(this.console); // Paper
          this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
          this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");

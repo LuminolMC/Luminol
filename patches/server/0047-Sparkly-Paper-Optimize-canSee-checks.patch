@@ -18,10 +18,10 @@ index c212030a24174115a975604b91d03cf8ad4043de..2fc86eb396ed600154840dd6cd43b929
                  }
                  // CraftBukkit end
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index f4b7f2f223964df7533577342d8af158af35363b..93e022f9b30da70d86638b9ac9105d1b97a53e12 100644
+index 830616f7a3d1c3e25133229a74e08cbb9d412179..80e0bb615ee8283b5618566c8011f06b1c84a0a8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -181,7 +181,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -187,7 +187,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      private boolean hasPlayedBefore = false;
      private final ConversationTracker conversationTracker = new ConversationTracker();
      private final Set<String> channels = new HashSet<String>();
@@ -30,7 +30,7 @@ index f4b7f2f223964df7533577342d8af158af35363b..93e022f9b30da70d86638b9ac9105d1b
      private final Set<UUID> unlistedEntities = new HashSet<>(); // Paper - Add Listing API for Player
      private static final WeakHashMap<Plugin, WeakReference<Plugin>> pluginWeakReferences = new WeakHashMap<>();
      private int hash = 0;
-@@ -2116,9 +2116,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2146,9 +2146,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
  
      @Override
      public boolean canSee(org.bukkit.entity.Entity entity) {

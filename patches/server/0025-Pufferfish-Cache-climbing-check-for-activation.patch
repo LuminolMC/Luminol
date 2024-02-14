@@ -5,7 +5,7 @@ Subject: [PATCH] Pufferfish Cache climbing check for activation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 93936213c0ddd3fc1435be15eae09a2cdb1a099e..9c80582a02123364eea527bd59ff3cb0e4aad98f 100644
+index 24c05e40c9eeeb4a181d2f9994b0e786393046b9..a899f33c8c6033ad99d8187f29d6e9ebd99ded09 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -310,7 +310,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
@@ -18,10 +18,10 @@ index 93936213c0ddd3fc1435be15eae09a2cdb1a099e..9c80582a02123364eea527bd59ff3cb0
      private Vec3 deltaMovement;
      private float yRot;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 28da90b59f60d3f7618a42e149467a3a55c91682..dd50c93283dfce2ed33d3eece48e1829b9cdc9d0 100644
+index b640d877f924094bcabbf9618bbd9aa0a70bf94a..d38918b973f76e4b3eec5e16ea4f2473e92ae858 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -141,7 +141,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
+@@ -142,7 +142,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
  import org.bukkit.event.player.PlayerItemConsumeEvent;
  // CraftBukkit end
  
@@ -29,7 +29,7 @@ index 28da90b59f60d3f7618a42e149467a3a55c91682..dd50c93283dfce2ed33d3eece48e1829
  
  public abstract class LivingEntity extends Entity implements Attackable {
  
-@@ -2014,6 +2013,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2027,6 +2026,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return this.lastClimbablePos;
      }
  
