@@ -35,9 +35,9 @@ Luminol 使用和 Folia 一样的补丁系统，并为了针对不同部分的�
 
 1. 将你的仓库 clone 到本地；
 2. 在你的 IDE 或 终端 内执行 Gradle 的 `applyPatches` 任务，如果是在终端内，你可以执行 `./gradlew applyPatches`；
-3. 进入 `luminol-api` 或 `luminol-server` 文件夹进行修改。
+3. 进入 `luminol-api` 文件夹进行修改。
 
-顺便一提，`luminol-api` 和 `luminol-server` 并不是正常的 git 仓库：
+顺便一提，`luminol-api` 并不是正常的 git 仓库：
 
 - 在应用补丁前，基点将会指向未被更改的源码
 - 在基点后的每一个提交都是一个补丁
@@ -47,7 +47,7 @@ Luminol 使用和 Folia 一样的补丁系统，并为了针对不同部分的�
 
 按照以下步骤增加一个补丁是非常简单的：
 
-1. 对 `luminol-api` 或者 / 和 `luminol-server` 进行修改；
+1. 对 `luminol-api` 进行修改；
 2. 使用 git 添加你的修改，比如 `git add .`；
 3. 使用 `git commit -m <提交信息>` 进行提交；
 4. 运行 Gradle 任务 `rebuildPatches` 将你的提交转化为一个补丁；
