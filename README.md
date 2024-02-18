@@ -31,7 +31,7 @@ To build a paperclip jar, you need to run the following command. You can find th
 For gradle:
 ```kotlin
 dependencies {
-    compileOnly("me.earthme.luminol:luminol-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("me.earthme.luminol:luminol-api:1.20.4-R0.1-SNAPSHOT")
 }
  ```
 For maven
@@ -39,7 +39,7 @@ For maven
 <dependency>
   <groupId>me.earthme.luminol</groupId>
   <artifactId>luminol-api</artifactId>
-  <version>1.20.2-R0.1-SNAPSHOT</version>
+  <version>1.20.4-R0.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -47,6 +47,7 @@ For maven
 > If you are interested in this project or have any issue, feel free to ask us.
 
 QQ Group: 368632360
+QQ Channel:[Click](https://pd.qq.com/s/eq9krf9j)
 
 ## Notice
 **This project is not related to Leaves.Do not report any bugs about protocol support to leaves because the protocol supports are already refactored**
