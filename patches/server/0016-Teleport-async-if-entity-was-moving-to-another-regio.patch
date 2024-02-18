@@ -19,7 +19,7 @@ index 0000000000000000000000000000000000000000..9ccd6a3a07abfce54dccf9b6e01d0050
 +public class FoliaEntityMovingFixConfig implements IConfigModule {
 +    @ConfigInfo(baseName = "enabled")
 +    public static boolean enabled = false;
-+    @ConfigInfo(baseName = "warnOnDetected")
++    @ConfigInfo(baseName = "warn_on_detected")
 +    public static boolean warnOnDetected = true;
 +
 +    @Override
