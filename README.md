@@ -20,7 +20,7 @@
  - More API support for plugin development (W.I.P)
 
 ## Download
-Any versions are available in the [release](https://github.com/LuminolMC/Luminol/releases), also you can build it by yourself through [the following steps](./README.md#Build).
+Any versions are available in the [release](https://github.com/LuminolMC/Luminol/releases), also you can build it by yourself through [the following steps](https://github.com/LuminolMC/Luminol#build).
 
 ## Build
 To build a paperclip jar, you need to run the following command. You can find the jar in build/libs(Note: JDK17 is needed)
