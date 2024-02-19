@@ -64,4 +64,10 @@ QQ群：`368632360` | QQ频道：[点击加入](https://pd.qq.com/s/eq9krf9j)
 ## 请给我们一个 ⭐Star！
 > 你的每一个免费的 ⭐Star 就是我们每一个前进的动力。
 
-[![Star历史表](https://api.star-history.com/svg?repos=LuminolMC/Luminol,LuminolMC/LightingLuminol&type=Date)](https://star-history.com/#LuminolMC/Luminol&LuminolMC/LightingLuminol&Date)
+<a href="https://star-history.com/#LuminolMC/Luminol&LuminolMC/LightingLuminol&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date" />
+    <img alt="Star历史表" src="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date" />
+  </picture>
+</a>

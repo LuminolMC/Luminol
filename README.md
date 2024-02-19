@@ -65,4 +65,10 @@ See [Contributing](./docs/CONTRIBUTING.md)
 ![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")
 
 ## Please ⭐star us!
-[![Star History Chart](https://api.star-history.com/svg?repos=LuminolMC/Luminol,LuminolMC/LightingLuminol&type=Date)](https://star-history.com/#LuminolMC/Luminol&LuminolMC/LightingLuminol&Date)
+<a href="https://star-history.com/#LuminolMC/Luminol&LuminolMC/LightingLuminol&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date" />
+  </picture>
+</a>
