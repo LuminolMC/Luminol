@@ -101,10 +101,10 @@ index 0000000000000000000000000000000000000000..9f6896711907ac30fe0c00130207b970
 +}
 diff --git a/src/main/java/me/earthme/luminol/config/LuminolConfig.java b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7dc4b97c396aab1128ad4761b3f3ac6ee9d07205
+index 0000000000000000000000000000000000000000..63d1de1cebe2700010191560ea8b80dfdac2f9bc
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
-@@ -0,0 +1,183 @@
+@@ -0,0 +1,185 @@
 +package me.earthme.luminol.config;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
@@ -148,7 +148,7 @@ index 0000000000000000000000000000000000000000..7dc4b97c396aab1128ad4761b3f3ac6e
 +            instanceAllModule();
 +            loadAllModules();
 +        }catch (Exception e){
-+            e.printStackTrace();
++            logger.error("Failed to load config modules!",e);
 +        }
 +
 +        configFileInstance.save();
@@ -205,18 +205,17 @@ index 0000000000000000000000000000000000000000..7dc4b97c396aab1128ad4761b3f3ac6e
 +
 +                final Object actuallyValue = configFileInstance.get(fullConfigKeyName);
 +                field.set(null,actuallyValue);
-+
-+
 +            }
 +        }
 +
 +        singleConfigModule.onLoaded(configFileInstance);
 +    }
 +
-+    public static Set<Class<?>> getClasses(String pack) {
-+        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
++    public static @NotNull Set<Class<?>> getClasses(String pack) {
++        Set<Class<?>> classes = new LinkedHashSet<>();
 +        String packageDirName = pack.replace('.', '/');
 +        Enumeration<URL> dirs;
++
 +        try {
 +            dirs = Thread.currentThread().getContextClassLoader().getResources(packageDirName);
 +            while (dirs.hasMoreElements()) {
@@ -232,21 +231,24 @@ index 0000000000000000000000000000000000000000..7dc4b97c396aab1128ad4761b3f3ac6e
 +                        Enumeration<JarEntry> entries = jar.entries();
 +                        findClassesInPackageByJar(pack, entries, packageDirName, classes);
 +                    } catch (IOException e) {
-+                        e.printStackTrace();
++                        throw new RuntimeException(e);
 +                    }
 +                }
 +            }
 +        } catch (IOException e) {
-+            e.printStackTrace();
++            throw new RuntimeException(e);
 +        }
++
 +        return classes;
 +    }
 +
 +    private static void findClassesInPackageByFile(String packageName, String packagePath, Set<Class<?>> classes) {
 +        File dir = new File(packagePath);
++
 +        if (!dir.exists() || !dir.isDirectory()) {
 +            return;
 +        }
++
 +        File[] dirfiles = dir.listFiles((file) -> file.isDirectory() || file.getName().endsWith(".class"));
 +        if (dirfiles != null) {
 +            for (File file : dirfiles) {
@@ -257,7 +259,7 @@ index 0000000000000000000000000000000000000000..7dc4b97c396aab1128ad4761b3f3ac6e
 +                    try {
 +                        classes.add(Class.forName(packageName + '.' + className));
 +                    } catch (ClassNotFoundException e) {
-+                        e.printStackTrace();
++                        throw new RuntimeException(e);
 +                    }
 +                }
 +            }
@@ -281,7 +283,7 @@ index 0000000000000000000000000000000000000000..7dc4b97c396aab1128ad4761b3f3ac6e
 +                    try {
 +                        classes.add(Class.forName(packageName + '.' + className));
 +                    } catch (ClassNotFoundException e) {
-+                        e.printStackTrace();
++                        throw new RuntimeException(e);
 +                    }
 +                }
 +            }
@@ -289,7 +291,7 @@ index 0000000000000000000000000000000000000000..7dc4b97c396aab1128ad4761b3f3ac6e
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 0f8c868fce0a054a0ba356350baf4c3824c2c958..d99e0acf0000c566fdb1bffb149ec13a55d7c8dd 100644
+index 6b3242117d62175de462d04e4d178b49ae2521e9..d6b480565340f5edbf81d7b57c3199292b020615 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -19,6 +19,8 @@ import java.util.Locale;
