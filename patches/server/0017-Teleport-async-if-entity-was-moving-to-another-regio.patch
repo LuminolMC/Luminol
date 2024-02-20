@@ -6,7 +6,7 @@ Subject: [PATCH] Teleport async if entity was moving to another region at once
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaEntityMovingFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaEntityMovingFixConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..9ccd6a3a07abfce54dccf9b6e01d0050d03279b2
+index 0000000000000000000000000000000000000000..73d99a105a18231901e691922b0c283adae0cc79
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaEntityMovingFixConfig.java
 @@ -0,0 +1,22 @@

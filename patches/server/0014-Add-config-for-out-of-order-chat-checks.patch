@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Tue, 20 Feb 2024 13:10:07 +0000
+Subject: [PATCH] Add config for out-of-order chat checks
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/InorderChatConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/InorderChatConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..83176a8a7e993b51a0663b0f76161884abbf4951
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/misc/InorderChatConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.misc;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class InorderChatConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = true;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.MISC;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "mojang_out_of_order_chat_check";
++    }
++}
+diff --git a/src/main/java/net/minecraft/network/chat/SignedMessageChain.java b/src/main/java/net/minecraft/network/chat/SignedMessageChain.java
+index ba12919c3f9aec34a9e64993b143ae92be5eb172..ba983d557ae16b3fbb7d0ea6ff67666a809d2e99 100644
+--- a/src/main/java/net/minecraft/network/chat/SignedMessageChain.java
++++ b/src/main/java/net/minecraft/network/chat/SignedMessageChain.java
+@@ -38,7 +38,7 @@ public class SignedMessageChain {
+                 throw new SignedMessageChain.DecodeException(Component.translatable("chat.disabled.chain_broken"), false); // Paper - diff on change (if disconnects, need a new kick event cause)
+             } else if (playerPublicKey.data().hasExpired()) {
+                 throw new SignedMessageChain.DecodeException(Component.translatable("chat.disabled.expiredProfileKey"), false, org.bukkit.event.player.PlayerKickEvent.Cause.EXPIRED_PROFILE_PUBLIC_KEY); // Paper - kick event causes
+-            } else if (body.timeStamp().isBefore(this.lastTimeStamp)) {
++            } else if (me.earthme.luminol.config.modules.misc.InorderChatConfig.enabled && body.timeStamp().isBefore(this.lastTimeStamp)) { // Luminol - Add config for out-of-order chat checks
+                 throw new SignedMessageChain.DecodeException(Component.translatable("multiplayer.disconnect.out_of_order_chat"), true, org.bukkit.event.player.PlayerKickEvent.Cause.OUT_OF_ORDER_CHAT); // Paper - kick event causes
+             } else {
+                 this.lastTimeStamp = body.timeStamp();

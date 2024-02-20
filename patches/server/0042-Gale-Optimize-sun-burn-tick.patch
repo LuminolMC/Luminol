@@ -37,10 +37,10 @@ index bc655e3db34630a419be883b0dcc1ba4d5bbeb90..bf530eb5e039f37b9bea37d2a61ee31f
          this.absMoveTo(x, y, z);
          this.setYRot(yaw % 360.0F);
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 50a144b0122c970856ef3faa3f899ee72e2a6300..128cba0cf37fc9b06111f80d63a2cf857e23edb1 100644
+index 7378c9cb5eeddc7cefc409638179dfb8602ed0d0..d83a6adc34c64652f1070651f5c96579a5c45e67 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1747,13 +1747,29 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -1749,13 +1749,29 @@ public abstract class Mob extends LivingEntity implements Targeting {
  
      }
  

@@ -83,7 +83,7 @@ index c0f8f72d1677d4ef6a15f487262953c5df3b03c0..33154e89457e3d7331c6d17785544d08
                      if (false && this.shouldDiscardEntity(entity)) { // CraftBukkit - We prevent spawning in general, so this butchering is not needed
                          entity.discard();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 03a6633edd34a34f7c5cfb1a58f4d132e6bd1c12..f61ac02037ce13bb80b0db0814145fd9ff39bc37 100644
+index f120f977e3535847a1e3a009a25eb0137fce6ab0..d62734c0365af706c136274faf3e135f6ea099ee 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -482,6 +482,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
@@ -111,7 +111,7 @@ index 8deae3e95a26f4b42b2c2134e22f9649bd7a5391..c09357c1ef84a29d972119cb496b0ae9
      private String descriptionId;
      @Nullable
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 8e2da025ff13abd7f021099b66dc04d1ead64390..2f592612ddc39723b76ddc6de3b20681ece5829d 100644
+index 9636f69fab9f34f3b3f4590f151248cd5b2da089..50a144b0122c970856ef3faa3f899ee72e2a6300 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -233,10 +233,10 @@ public abstract class Mob extends LivingEntity implements Targeting {
