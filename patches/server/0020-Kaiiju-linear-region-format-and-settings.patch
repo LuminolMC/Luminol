@@ -697,10 +697,10 @@ index 21ec49acb3c1241d9286959c42a7f8363f637e4f..c212030a24174115a975604b91d03cf8
          regionFile.setStatus(chunkPos.x, chunkPos.z, ChunkSerializer.getStatus(compound));
      }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 9e82dc98ef2d4da39839699f455e0ef20ab4ef65..c0f8f72d1677d4ef6a15f487262953c5df3b03c0 100644
+index 682ca5ec0aee427463d1a9f97292c6ea65ca2da0..c06ddc99a0971be46746c767ad8ce590a8e2ee30 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -447,8 +447,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -446,8 +446,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
      private static final class EntityRegionFileStorage extends net.minecraft.world.level.chunk.storage.RegionFileStorage {
  
@@ -711,7 +711,7 @@ index 9e82dc98ef2d4da39839699f455e0ef20ab4ef65..c0f8f72d1677d4ef6a15f487262953c5
          }
  
          protected void write(ChunkPos pos, net.minecraft.nbt.CompoundTag nbt) throws IOException {
-@@ -809,7 +809,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -808,7 +808,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
          // CraftBukkit end
          boolean flag2 = minecraftserver.forceSynchronousWrites();
          DataFixer datafixer = minecraftserver.getFixerUpper();
