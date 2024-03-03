@@ -4,19 +4,21 @@ Date: Thu, 8 Feb 2024 11:57:18 +0000
 Subject: [PATCH] Leaves carpet protocol support
 
 
-diff --git a/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesProtocolSupportConfig.java b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesProtocolSupportConfig.java
+diff --git a/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesCarpetProtocolSupportConfig.java b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesCarpetProtocolSupportConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..80d57d6262510cf7c6446e46cdd16d05461e9484
+index 0000000000000000000000000000000000000000..0ef77515b213b74bdcf7dac70a02bfaa1c8804f5
 --- /dev/null
-+++ b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesProtocolSupportConfig.java
-@@ -0,0 +1,20 @@
++++ b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesCarpetProtocolSupportConfig.java
+@@ -0,0 +1,22 @@
 +package me.earthme.luminol.config.modules.gameplay;
 +
 +import me.earthme.luminol.config.ConfigInfo;
 +import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.HotReloadUnsupported;
 +import me.earthme.luminol.config.IConfigModule;
 +
-+public class LeavesProtocolSupportConfig implements IConfigModule {
++public class LeavesCarpetProtocolSupportConfig implements IConfigModule {
++    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "enabled")
 +    public static boolean enabled = false;
 +
@@ -32,12 +34,13 @@ index 0000000000000000000000000000000000000000..80d57d6262510cf7c6446e46cdd16d05
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/protocol/CarpetServerProtocol.java b/src/main/java/top/leavesmc/leaves/protocol/CarpetServerProtocol.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2af49a86bf2a8bb65073c8ce088e875224916fd8
+index 0000000000000000000000000000000000000000..0542d66a3dfae2aa3ccb6ca3dced6b34024017ad
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/protocol/CarpetServerProtocol.java
-@@ -0,0 +1,112 @@
+@@ -0,0 +1,113 @@
 +package top.leavesmc.leaves.protocol;
 +
++import me.earthme.luminol.config.modules.gameplay.LeavesCarpetProtocolSupportConfig;
 +import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.network.FriendlyByteBuf;
 +import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -72,7 +75,7 @@ index 0000000000000000000000000000000000000000..2af49a86bf2a8bb65073c8ce088e8752
 +
 +    @ProtocolHandler.PlayerJoin
 +    public static void onPlayerJoin(ServerPlayer player) {
-+        if (me.earthme.luminol.config.modules.gameplay.LeavesProtocolSupportConfig.enabled) {
++        if (LeavesCarpetProtocolSupportConfig.enabled) {
 +            CompoundTag data = new CompoundTag();
 +            data.putString(HI, VERSION);
 +            ProtocolUtils.sendPayloadPacket(player, new CarpetPayload(data));
@@ -81,7 +84,7 @@ index 0000000000000000000000000000000000000000..2af49a86bf2a8bb65073c8ce088e8752
 +
 +    @ProtocolHandler.PayloadReceiver(payload = CarpetPayload.class, payloadId = "hello")
 +    private static void handleHello(@NotNull ServerPlayer player, @NotNull CarpetServerProtocol.CarpetPayload payload) {
-+        if (me.earthme.luminol.config.modules.gameplay.LeavesProtocolSupportConfig.enabled) {
++        if (LeavesCarpetProtocolSupportConfig.enabled) {
 +            if (payload.nbt.contains(HELLO)) {
 +                MinecraftServer.LOGGER.info("Player " + player.getScoreboardName() + " joined with carpet " + payload.nbt.getString(HELLO));
 +                CompoundTag data = new CompoundTag();

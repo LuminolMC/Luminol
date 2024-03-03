@@ -5,7 +5,7 @@ Subject: [PATCH] Kaiiju linear region format and settings
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 3a787b0afa3a34f23f1c18fb5250a5ff4bcd2f96..18326989bfccea2c6d292b0020aab711438031c8 100644
+index 32c93c1349b8dbf6017f4e926e697c1c40627d36..d104fb1b29bc103736fcd19a8f12ca095b6b4960 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -20,6 +20,10 @@ dependencies {
@@ -573,10 +573,10 @@ index 9017907c0ec67a37a506f09b7e4499cef7885279..8b9ffcaab5d71660291d1c0454d2abd9
  
 diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..5219ef799585db502a19e79145b971365a736277
+index 0000000000000000000000000000000000000000..7c034f65bac5aab4c46a8506efa5befe7891bc99
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,58 @@
 +package me.earthme.luminol.config.modules.misc;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
@@ -587,12 +587,16 @@ index 0000000000000000000000000000000000000000..5219ef799585db502a19e79145b97136
 +    @DoNotLoad
 +    public static RegionFileFormat regionFormatName = RegionFileFormat.ANVIL;
 +
++    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "formatName")
 +    private static String formatName = "ANVIL";
++    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "linear_compression_level")
 +    public static int regionFormatLinearCompressionLevel = 1;
++    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "linear_flusher_thread_count")
 +    public static int linearFlushThreads = 1;
++    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "linear_flush_frequency")
 +    public static int linearFlushFrequency = 10;
 +
@@ -608,6 +612,10 @@ index 0000000000000000000000000000000000000000..5219ef799585db502a19e79145b97136
 +
 +    @Override
 +    public void onLoaded(CommentedFileConfig configInstance){
++        if (LuminolConfig.alreadyInited){
++            return;
++        }
++
 +        regionFormatName = RegionFileFormat.fromString(formatName);
 +        if (regionFormatName.equals(RegionFileFormat.INVALID)) {
 +            LuminolConfig.logger.error("Unknown region format in luminol global config: {}", formatName);
@@ -628,7 +636,7 @@ index 0000000000000000000000000000000000000000..5219ef799585db502a19e79145b97136
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4468e6fdbbe527111f4410188f2f2df7f592f81e..13ad20b3d43cc22ad1046220b24272dd274de997 100644
+index dd4fbe5a51e05560343d2ee919d4bc50963e3d70..df7e9b02c24053b02ef05b38474ec1862ddff30c 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -923,7 +923,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -650,7 +658,7 @@ index 4468e6fdbbe527111f4410188f2f2df7f592f81e..13ad20b3d43cc22ad1046220b24272dd
  
          return flag3;
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 21ec49acb3c1241d9286959c42a7f8363f637e4f..c212030a24174115a975604b91d03cf8ad4043de 100644
+index 79e507c1463dbb9039b1fed8bdf41c0ee5f4fec3..8f642259ab8aa94eb5739ecbe72211c248c1114d 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -211,7 +211,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider

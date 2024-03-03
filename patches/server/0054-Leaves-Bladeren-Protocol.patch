@@ -6,21 +6,25 @@ Subject: [PATCH] Leaves Bladeren Protocol
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesBladerenProtocolConfig.java b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesBladerenProtocolConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b882549a3c3bc8c192014fd6e1ac7b4f0feddafc
+index 0000000000000000000000000000000000000000..4950d33288d6bc3c4ce90ae12bbf4797e3989500
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/gameplay/LeavesBladerenProtocolConfig.java
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,28 @@
 +package me.earthme.luminol.config.modules.gameplay;
 +
 +import me.earthme.luminol.config.ConfigInfo;
 +import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.HotReloadUnsupported;
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class LeavesBladerenProtocolConfig implements IConfigModule {
++    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "enable_base_protocol")
 +    public static boolean enableBaseProtocol = false;
++    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "enable_mspt_sync_protocol")
 +    public static boolean msptSyncProtocol = false;
++    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "mspt_sync_interval")
 +    public static int msptSyncTickInterval = 20;
 +

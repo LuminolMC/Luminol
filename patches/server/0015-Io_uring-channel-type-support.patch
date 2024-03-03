@@ -5,7 +5,7 @@ Subject: [PATCH] Io_uring channel type support
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index e837f1f9b444318cbee8719b9dd0eb669478742e..3a787b0afa3a34f23f1c18fb5250a5ff4bcd2f96 100644
+index d4baa7a193eba22be23921029ca4808a73de063d..32c93c1349b8dbf6017f4e926e697c1c40627d36 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -35,6 +35,7 @@ dependencies {
@@ -18,17 +18,19 @@ index e837f1f9b444318cbee8719b9dd0eb669478742e..3a787b0afa3a34f23f1c18fb5250a5ff
      implementation("org.apache.logging.log4j:log4j-iostreams:2.19.0") // Paper - remove exclusion
 diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/IOUringSupportConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/IOUringSupportConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..313c3908ea406119da4f49db2e4fac6572727c80
+index 0000000000000000000000000000000000000000..f3090b6e11d82d02528c7afd358ef4db61707092
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/misc/IOUringSupportConfig.java
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,22 @@
 +package me.earthme.luminol.config.modules.misc;
 +
 +import me.earthme.luminol.config.ConfigInfo;
 +import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.HotReloadUnsupported;
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class IOUringSupportConfig implements IConfigModule {
++    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "enabled")
 +    public static boolean enabled = false;
 +

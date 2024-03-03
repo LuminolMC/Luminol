@@ -5,7 +5,7 @@ Subject: [PATCH] Empty config file base
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index b9c5ef4d15aa97a380419912e3ee09d094ae752e..e837f1f9b444318cbee8719b9dd0eb669478742e 100644
+index 48e9f6ff317bfc7077563e9c651d2a90da6bb37a..d4baa7a193eba22be23921029ca4808a73de063d 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -19,6 +19,7 @@ dependencies {
@@ -71,6 +71,20 @@ index 0000000000000000000000000000000000000000..ac2a92fe0ddbebb71ea4dd8c96f461d0
 +        return this.baseKeyName;
 +    }
 +}
+diff --git a/src/main/java/me/earthme/luminol/config/HotReloadUnsupported.java b/src/main/java/me/earthme/luminol/config/HotReloadUnsupported.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..559c11cb523c7cade34a0abfad15c988f5ad87fe
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/HotReloadUnsupported.java
+@@ -0,0 +1,8 @@
++package me.earthme.luminol.config;
++
++import java.lang.annotation.Retention;
++import java.lang.annotation.RetentionPolicy;
++
++@Retention(RetentionPolicy.RUNTIME)
++public @interface HotReloadUnsupported {
++}
 diff --git a/src/main/java/me/earthme/luminol/config/IConfigModule.java b/src/main/java/me/earthme/luminol/config/IConfigModule.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..9f6896711907ac30fe0c00130207b970007e4bb4
@@ -101,13 +115,14 @@ index 0000000000000000000000000000000000000000..9f6896711907ac30fe0c00130207b970
 +}
 diff --git a/src/main/java/me/earthme/luminol/config/LuminolConfig.java b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..63d1de1cebe2700010191560ea8b80dfdac2f9bc
+index 0000000000000000000000000000000000000000..77cd38452dc2a7a903f471eba3d162ff57b210b3
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
-@@ -0,0 +1,185 @@
+@@ -0,0 +1,206 @@
 +package me.earthme.luminol.config;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
++import io.papermc.paper.threadedregions.RegionizedServer;
 +import org.jetbrains.annotations.NotNull;
 +
 +import java.io.File;
@@ -132,7 +147,27 @@ index 0000000000000000000000000000000000000000..63d1de1cebe2700010191560ea8b80df
 +    private static final File baseConfigFile = new File(baseConfigFolder,"luminol_global_config.toml");
 +    private static final Set<IConfigModule> allInstanced = new HashSet<>();
 +    private static CommentedFileConfig configFileInstance;
-+    
++    public static boolean alreadyInited = false;
++
++    public static void setupLatch(){
++        alreadyInited = true;
++    }
++
++    public static void reload(){
++        RegionizedServer.ensureGlobalTickThread("Reload luminol config off global region thread!");
++
++        dropAllInstanced();
++        try {
++            loadConfig();
++        }catch (Exception e){
++            logger.error(e);
++        }
++    }
++
++    public static void dropAllInstanced(){
++        allInstanced.clear();
++    }
++
 +    public static void loadConfig() throws IOException {
 +        baseConfigFolder.mkdirs();
 +
@@ -176,7 +211,7 @@ index 0000000000000000000000000000000000000000..63d1de1cebe2700010191560ea8b80df
 +        for (Field field : fields) {
 +            int modifiers = field.getModifiers();
 +            if (Modifier.isStatic(modifiers) && !Modifier.isFinal(modifiers)) {
-+                boolean skipLoad = field.getAnnotation(DoNotLoad.class) != null;
++                boolean skipLoad = field.getAnnotation(DoNotLoad.class) != null || (alreadyInited && field.getAnnotation(HotReloadUnsupported.class) != null);
 +                ConfigInfo configInfo = field.getAnnotation(ConfigInfo.class);
 +
 +                if (skipLoad || configInfo == null){
@@ -291,7 +326,7 @@ index 0000000000000000000000000000000000000000..63d1de1cebe2700010191560ea8b80df
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 6b3242117d62175de462d04e4d178b49ae2521e9..d6b480565340f5edbf81d7b57c3199292b020615 100644
+index 6b3242117d62175de462d04e4d178b49ae2521e9..4744ace98d1741db80ac2aea198f332d95c0ba33 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -19,6 +19,8 @@ import java.util.Locale;
@@ -303,11 +338,12 @@ index 6b3242117d62175de462d04e4d178b49ae2521e9..d6b480565340f5edbf81d7b57c319929
  import net.minecraft.DefaultUncaughtExceptionHandler;
  import net.minecraft.DefaultUncaughtExceptionHandlerWithName;
  import net.minecraft.SharedConstants;
-@@ -209,6 +211,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -209,6 +211,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          this.paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
          this.paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
          // Paper end - initialize global and world-defaults configuration
 +        LuminolConfig.loadConfig(); //Luminol - load config file
++        LuminolConfig.setupLatch(); //Luminol - load config file
          // Paper start - fix converting txt to json file; convert old users earlier after PlayerList creation but before file load/save
          if (this.convertOldUsers()) {
              this.getProfileCache().save(false); // Paper

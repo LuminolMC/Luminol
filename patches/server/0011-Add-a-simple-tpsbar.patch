@@ -52,10 +52,10 @@ index 0000000000000000000000000000000000000000..ac8f0e3bf130ba6dfd7202e2f4803522
 +}
 diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b370787c3f525b9b978ad14b3e7056d7c92fcae5
+index 0000000000000000000000000000000000000000..0179a5c8006d2dae3c61303f42f59a685efbd2c4
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java
-@@ -0,0 +1,40 @@
+@@ -0,0 +1,44 @@
 +package me.earthme.luminol.config.modules.misc;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
@@ -63,6 +63,7 @@ index 0000000000000000000000000000000000000000..b370787c3f525b9b978ad14b3e7056d7
 +import me.earthme.luminol.config.ConfigInfo;
 +import me.earthme.luminol.config.EnumConfigCategory;
 +import me.earthme.luminol.config.IConfigModule;
++import me.earthme.luminol.config.LuminolConfig;
 +import me.earthme.luminol.functions.GlobalServerTpsBar;
 +import org.bukkit.Bukkit;
 +
@@ -92,16 +93,19 @@ index 0000000000000000000000000000000000000000..b370787c3f525b9b978ad14b3e7056d7
 +    public void onLoaded(CommentedFileConfig configInstance){
 +        if (tpsbarEnabled){
 +            GlobalServerTpsBar.init();
-+            Bukkit.getCommandMap().register("tpsbar","luminol",new TpsBarCommand("tpsbar"));
++
++            if (LuminolConfig.alreadyInited){
++                Bukkit.getCommandMap().register("tpsbar","luminol",new TpsBarCommand("tpsbar"));
++            }
 +        }
 +    }
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7511bc3f6828ab712f644cf4292a5f831e8c8653
+index 0000000000000000000000000000000000000000..a346af48f5b57ecac2484e799c8bbe525a9c0c05
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
-@@ -0,0 +1,206 @@
+@@ -0,0 +1,210 @@
 +package me.earthme.luminol.functions;
 +
 +import io.papermc.paper.threadedregions.ThreadedRegionizer;
@@ -133,6 +137,10 @@ index 0000000000000000000000000000000000000000..7511bc3f6828ab712f644cf4292a5f83
 +    private static final Logger logger = LogManager.getLogger();
 +
 +    public static void init(){
++        if (tpsbarTask != null && !tpsbarTask.isCancelled()){
++            tpsbarTask.cancel();
++        }
++
 +        Bukkit.getAsyncScheduler().runAtFixedRate(NULL_PLUGIN,c -> {
 +            tpsbarTask = c;
 +            try {
@@ -144,7 +152,7 @@ index 0000000000000000000000000000000000000000..7511bc3f6828ab712f644cf4292a5f83
 +    }
 +
 +    public static void cancelBarUpdateTask(){
-+        if (tpsbarTask == null){
++        if (tpsbarTask == null || tpsbarTask.isCancelled()){
 +            return;
 +        }
 +
@@ -309,10 +317,10 @@ index 0000000000000000000000000000000000000000..7511bc3f6828ab712f644cf4292a5f83
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index d6b480565340f5edbf81d7b57c3199292b020615..ea3b3f8b2318b8a1e8975e89c90cab05c6ab2835 100644
+index 4744ace98d1741db80ac2aea198f332d95c0ba33..550fb11c64e3adb35bb7f78c53f0b5ae5ce9ff58 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -831,6 +831,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -832,6 +832,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
  
      @Override
      public void stopServer() {
