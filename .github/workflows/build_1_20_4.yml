@@ -49,7 +49,7 @@ jobs:
         export GITHUB_USERNAME=LuminolCI
         echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
         export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-        ./gradlew publish
+        ./gradlew :luminol-api:publish
     - name: Rename jar file
       run: mv build/libs/Luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
     - name: Release Artifacts
