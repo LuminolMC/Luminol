@@ -16,6 +16,82 @@ index 48e9f6ff317bfc7077563e9c651d2a90da6bb37a..d4baa7a193eba22be23921029ca4808a
      // Paper start
      implementation("org.jline:jline-terminal-jansi:3.21.0")
      implementation("net.minecrell:terminalconsoleappender:1.3.0")
+diff --git a/src/main/java/me/earthme/luminol/commands/LuminolConfigCommand.java b/src/main/java/me/earthme/luminol/commands/LuminolConfigCommand.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..5c8745dffa80cf47e856d04d283937bda86881f8
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/commands/LuminolConfigCommand.java
+@@ -0,0 +1,70 @@
++package me.earthme.luminol.commands;
++
++import me.earthme.luminol.config.LuminolConfig;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.format.TextColor;
++import org.bukkit.Location;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class LuminolConfigCommand extends Command {
++    public LuminolConfigCommand(){
++        super("luminolconfig");
++        this.setPermission("luminol.commands.luminolconfig");
++        this.setDescription("Manage config file");
++        this.setUsage("/luminolconfig");
++    }
++
++    @Override
++    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args, @Nullable Location location) throws IllegalArgumentException {
++        final List<String> result = new ArrayList<>();
++
++        if (args.length == 1){
++            result.add("reload");
++        }
++
++        return result;
++    }
++
++    @Override
++    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
++        if (!this.testPermission(sender)){
++            sender.sendMessage(Component
++                    .text("No permission to execute this command!")
++                    .color(TextColor.color(255,0,0))
++            );
++        }
++
++        if (args.length < 1){
++            sender.sendMessage(
++                    Component
++                            .text("Wrong use!\n")
++                            .color(TextColor.color(255,0,0))
++            );
++            return true;
++        }
++
++        switch (args[0]){
++            case "reload" -> {
++                LuminolConfig.reloadAsync().thenAccept(nullValue -> sender.sendMessage(
++                        Component
++                                .text("Reloaded config file!")
++                                .color(TextColor.color(0,255,0))
++                ));
++            }
++
++            default -> sender.sendMessage(
++                    Component
++                            .text("Unknown action!\n")
++                            .color(TextColor.color(255,0,0))
++            );
++        }
++
++        return true;
++    }
++}
 diff --git a/src/main/java/me/earthme/luminol/config/ConfigInfo.java b/src/main/java/me/earthme/luminol/config/ConfigInfo.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..01b64c2cf6b437114337626c242e1da3fbdb8ead
@@ -115,14 +191,18 @@ index 0000000000000000000000000000000000000000..9f6896711907ac30fe0c00130207b970
 +}
 diff --git a/src/main/java/me/earthme/luminol/config/LuminolConfig.java b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..77cd38452dc2a7a903f471eba3d162ff57b210b3
+index 0000000000000000000000000000000000000000..2b4e64796bf01b0a5fcb306850cd60837ed4d36b
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
-@@ -0,0 +1,206 @@
+@@ -0,0 +1,218 @@
 +package me.earthme.luminol.config;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 +import io.papermc.paper.threadedregions.RegionizedServer;
++import me.earthme.luminol.commands.LuminolConfigCommand;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
++import org.jetbrains.annotations.Contract;
 +import org.jetbrains.annotations.NotNull;
 +
 +import java.io.File;
@@ -135,6 +215,7 @@ index 0000000000000000000000000000000000000000..77cd38452dc2a7a903f471eba3d162ff
 +import java.net.URLDecoder;
 +import java.nio.charset.StandardCharsets;
 +import java.util.*;
++import java.util.concurrent.CompletableFuture;
 +import java.util.jar.JarEntry;
 +import java.util.jar.JarFile;
 +
@@ -148,8 +229,10 @@ index 0000000000000000000000000000000000000000..77cd38452dc2a7a903f471eba3d162ff
 +    private static final Set<IConfigModule> allInstanced = new HashSet<>();
 +    private static CommentedFileConfig configFileInstance;
 +    public static boolean alreadyInited = false;
++    private static MinecraftInternalPlugin NULL_PLUGIN = new MinecraftInternalPlugin();
 +
 +    public static void setupLatch(){
++        Bukkit.getCommandMap().register("luminolconfig","luminol",new LuminolConfigCommand());
 +        alreadyInited = true;
 +    }
 +
@@ -162,6 +245,11 @@ index 0000000000000000000000000000000000000000..77cd38452dc2a7a903f471eba3d162ff
 +        }catch (Exception e){
 +            logger.error(e);
 +        }
++    }
++
++    @Contract(" -> new")
++    public static @NotNull CompletableFuture<Void> reloadAsync(){
++        return CompletableFuture.runAsync(LuminolConfig::reload,task -> Bukkit.getGlobalRegionScheduler().run(NULL_PLUGIN,scheduled -> task.run()));
 +    }
 +
 +    public static void dropAllInstanced(){
