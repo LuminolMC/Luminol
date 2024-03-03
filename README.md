@@ -50,7 +50,7 @@ For maven
 ## Contact
 > If you are interested in this project or have any issue, feel free to ask us.
 
-QQ Group: `368632360` | QQ Channel: [Click To Join](https://pd.qq.com/s/eq9krf9j)
+QQ Group: `368632360` | QQ Channel: [Click To Join](https://pd.qq.com/s/eq9krf9j) | Telegram: [Click To Join](https://t.me/LuminolMC)
 
 ## Notice
 **This project is not related to Leaves.Do not report any bugs about protocol support to leaves because the protocol supports are already refactored.**
