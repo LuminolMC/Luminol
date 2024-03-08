@@ -94,7 +94,7 @@ index 0000000000000000000000000000000000000000..0179a5c8006d2dae3c61303f42f59a68
 +        if (tpsbarEnabled){
 +            GlobalServerTpsBar.init();
 +
-+            if (LuminolConfig.alreadyInited){
++            if (!LuminolConfig.alreadyInited){
 +                Bukkit.getCommandMap().register("tpsbar","luminol",new TpsBarCommand("tpsbar"));
 +            }
 +        }
