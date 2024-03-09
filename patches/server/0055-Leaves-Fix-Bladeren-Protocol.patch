@@ -21,10 +21,10 @@ index 64a1d25973b032e8cab64bbffa6824a131676773..57a563b3f2d01719d490578907411d25
  
  }
 diff --git a/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java
-index 055f044ce6cef4377f6f577efdbfad0ec9a2d57b..18fc0e2c890020bf587f5b1d2e097126d3e19999 100644
+index 8b7813c442733f5d4d3b2a072902099cbe596b37..1f5b37daa5cbb709eeacf3dc7a4f9b4a0dc05274 100644
 --- a/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java
 +++ b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java
-@@ -56,7 +56,7 @@ public class LeavesProtocolManager {
+@@ -60,7 +60,7 @@ public class LeavesProtocolManager {
                      return;
                  }
  
@@ -33,7 +33,7 @@ index 055f044ce6cef4377f6f577efdbfad0ec9a2d57b..18fc0e2c890020bf587f5b1d2e097126
                  for (final Method method : methods) {
                      if (method.isBridge() || method.isSynthetic() || !Modifier.isStatic(method.getModifiers())) {
                          continue;
-@@ -131,13 +131,13 @@ public class LeavesProtocolManager {
+@@ -135,13 +135,13 @@ public class LeavesProtocolManager {
  
      public static CustomPacketPayload getPayload(ResourceLocation id, FriendlyByteBuf buf) {
          for (LeavesProtocol protocol : KNOWN_TYPES.keySet()) {
@@ -49,7 +49,7 @@ index 055f044ce6cef4377f6f577efdbfad0ec9a2d57b..18fc0e2c890020bf587f5b1d2e097126
                      try {
                          return map.get(receiver).newInstance(id, buf);
                      } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-@@ -151,15 +151,14 @@ public class LeavesProtocolManager {
+@@ -155,15 +155,14 @@ public class LeavesProtocolManager {
  
      public static void handlePayload(ServerPlayer player, CustomPacketPayload payload) {
          for (LeavesProtocol protocol : KNOW_RECEIVERS.keySet()) {
@@ -67,7 +67,7 @@ index 055f044ce6cef4377f6f577efdbfad0ec9a2d57b..18fc0e2c890020bf587f5b1d2e097126
                          try {
                              map.get(receiver).invoke(null, player, payload);
                          } catch (InvocationTargetException | IllegalAccessException e) {
-@@ -222,7 +221,7 @@ public class LeavesProtocolManager {
+@@ -226,7 +225,7 @@ public class LeavesProtocolManager {
      public static void handleMinecraftRegister(String channelId, ServerPlayer player) {
          for (LeavesProtocol protocol : MINECRAFT_REGISTER.keySet()) {
              String[] channel = channelId.split(":");

@@ -120,10 +120,10 @@ index 0000000000000000000000000000000000000000..64a1d25973b032e8cab64bbffa6824a1
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..055f044ce6cef4377f6f577efdbfad0ec9a2d57b
+index 0000000000000000000000000000000000000000..8b7813c442733f5d4d3b2a072902099cbe596b37
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java
-@@ -0,0 +1,340 @@
+@@ -0,0 +1,344 @@
 +package top.leavesmc.leaves.protocol.core;
 +
 +import net.minecraft.network.FriendlyByteBuf;
@@ -167,7 +167,11 @@ index 0000000000000000000000000000000000000000..055f044ce6cef4377f6f577efdbfad0e
 +    private static final Map<LeavesProtocol, Map<ProtocolHandler.MinecraftRegister, Method>> MINECRAFT_REGISTER = new HashMap<>();
 +
 +    public static void init() {
-+        for (Class<?> clazz : getClasses("top.leavesmc.leaves.protocol")) {
++        //Luminol start - For the protocol supports of luminol
++        final Set<Class<?>> allClazz = getClasses("org.leavesmc.leaves.protocol");
++        allClazz.addAll(getClasses("me.earthme.luminol.protocols"));
++        //Luminol end
++        for (Class<?> clazz : allClazz) {
 +            final LeavesProtocol protocol = clazz.getAnnotation(LeavesProtocol.class);
 +            if (protocol != null) {
 +                Set<Method> methods;

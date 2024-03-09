@@ -6,14 +6,19 @@ Subject: [PATCH] Add a simple tpsbar
 
 diff --git a/src/main/java/me/earthme/luminol/commands/TpsBarCommand.java b/src/main/java/me/earthme/luminol/commands/TpsBarCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ac8f0e3bf130ba6dfd7202e2f480352218154cdc
+index 0000000000000000000000000000000000000000..01677f210fae53a108bfe194189cb4c233e9fa47
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/commands/TpsBarCommand.java
-@@ -0,0 +1,40 @@
+@@ -0,0 +1,50 @@
 +package me.earthme.luminol.commands;
 +
++import me.earthme.luminol.config.modules.misc.TpsBarConfig;
 +import me.earthme.luminol.functions.GlobalServerTpsBar;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.format.TextColor;
++import net.kyori.adventure.util.RGBLike;
 +import org.bukkit.ChatColor;
++import org.bukkit.Color;
 +import org.bukkit.command.Command;
 +import org.bukkit.command.CommandSender;
 +import org.bukkit.entity.Player;
@@ -33,18 +38,23 @@ index 0000000000000000000000000000000000000000..ac8f0e3bf130ba6dfd7202e2f4803522
 +            return true;
 +        }
 +
++        if (!TpsBarConfig.tpsbarEnabled){
++            sender.sendMessage(Component.text("Tpsbar was already disabled!").color(TextColor.color(255,0,0)));
++            return true;
++        }
++
 +        if (!(sender instanceof Player player)){
-+            sender.sendMessage(ChatColor.RED+"Only player can use this command!");
++            sender.sendMessage(Component.text("Only player can use this command!").color(TextColor.color(255,0,0)));
 +            return true;
 +        }
 +
 +        if (GlobalServerTpsBar.isPlayerVisible(player)) {
-+            player.sendMessage(ChatColor.BLUE + "Disabled tps bar");
++            player.sendMessage(Component.text("Disabled tps bar").color(TextColor.color(0,255,0)));
 +            GlobalServerTpsBar.setVisibilityForPlayer(player,false);
 +            return true;
 +        }
 +
-+        player.sendMessage(ChatColor.GREEN + "Enabled tps bar");
++        player.sendMessage(Component.text("Enabled tps bar").color(TextColor.color(0,255,0)));
 +        GlobalServerTpsBar.setVisibilityForPlayer(player,true);
 +
 +        return true;
@@ -52,18 +62,15 @@ index 0000000000000000000000000000000000000000..ac8f0e3bf130ba6dfd7202e2f4803522
 +}
 diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..0179a5c8006d2dae3c61303f42f59a685efbd2c4
+index 0000000000000000000000000000000000000000..aafb2f5052c7c8e5971a47308253badb3027093c
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,49 @@
 +package me.earthme.luminol.config.modules.misc;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 +import me.earthme.luminol.commands.TpsBarCommand;
-+import me.earthme.luminol.config.ConfigInfo;
-+import me.earthme.luminol.config.EnumConfigCategory;
-+import me.earthme.luminol.config.IConfigModule;
-+import me.earthme.luminol.config.LuminolConfig;
++import me.earthme.luminol.config.*;
 +import me.earthme.luminol.functions.GlobalServerTpsBar;
 +import org.bukkit.Bukkit;
 +
@@ -78,6 +85,11 @@ index 0000000000000000000000000000000000000000..0179a5c8006d2dae3c61303f42f59a68
 +    public static List<String> tpsColors = List.of("GREEN","YELLOW","RED","PURPLE");
 +    @ConfigInfo(baseName = "ping_color_list")
 +    public static List<String> pingColors = List.of("GREEN","YELLOW","RED","PURPLE");
++    @ConfigInfo(baseName = "update_interval_ticks")
++    public static int updateInterval = 15;
++
++    @DoNotLoad
++    private static boolean inited = false;
 +
 +    @Override
 +    public EnumConfigCategory getCategory() {
@@ -93,19 +105,22 @@ index 0000000000000000000000000000000000000000..0179a5c8006d2dae3c61303f42f59a68
 +    public void onLoaded(CommentedFileConfig configInstance){
 +        if (tpsbarEnabled){
 +            GlobalServerTpsBar.init();
++        }else{
++            GlobalServerTpsBar.cancelBarUpdateTask();
++        }
 +
-+            if (!LuminolConfig.alreadyInited){
-+                Bukkit.getCommandMap().register("tpsbar","luminol",new TpsBarCommand("tpsbar"));
-+            }
++        if (!inited){
++            Bukkit.getCommandMap().register("tpsbar","luminol",new TpsBarCommand("tpsbar"));
++            inited = true;
 +        }
 +    }
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..a346af48f5b57ecac2484e799c8bbe525a9c0c05
+index 0000000000000000000000000000000000000000..3f1478dde900d671c4bfa43df80f629519cd602e
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
-@@ -0,0 +1,210 @@
+@@ -0,0 +1,225 @@
 +package me.earthme.luminol.functions;
 +
 +import io.papermc.paper.threadedregions.ThreadedRegionizer;
@@ -137,21 +152,36 @@ index 0000000000000000000000000000000000000000..a346af48f5b57ecac2484e799c8bbe52
 +    private static final Logger logger = LogManager.getLogger();
 +
 +    public static void init(){
-+        if (tpsbarTask != null && !tpsbarTask.isCancelled()){
-+            tpsbarTask.cancel();
-+        }
++        cancelBarUpdateTask();
 +
-+        Bukkit.getAsyncScheduler().runAtFixedRate(NULL_PLUGIN,c -> {
++        Bukkit.getGlobalRegionScheduler().runAtFixedRate(NULL_PLUGIN,c -> {
 +            tpsbarTask = c;
 +            try {
 +                update();
 +            }catch (Exception e){
 +                logger.error(e);
 +            }
-+        },1,1, TimeUnit.SECONDS);
++        },1,TpsBarConfig.updateInterval);
++    }
++
++    public static void removeAllBars(){
++        for (Map.Entry<UUID,BossBar> barEntry : uuid2Bossbars.entrySet()){
++            final UUID playerUUID = barEntry.getKey();
++            final BossBar tpsBar = barEntry.getValue();
++
++            final Player targetPlayer = Bukkit.getPlayer(playerUUID);{
++                if (targetPlayer != null){
++                    targetPlayer.hideBossBar(tpsBar);
++                }
++            }
++        }
++
++        uuid2Bossbars.clear();
 +    }
 +
 +    public static void cancelBarUpdateTask(){
++        removeAllBars();
++
 +        if (tpsbarTask == null || tpsbarTask.isCancelled()){
 +            return;
 +        }
