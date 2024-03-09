@@ -7,7 +7,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "Luminol"
+rootProject.name = "luminol"
 for (name in listOf("Luminol-API", "Luminol-Server")) {
     val projName = name.toLowerCase(Locale.ENGLISH)
     include(projName)
