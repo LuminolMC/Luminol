@@ -36,10 +36,10 @@ index af86f752c33a2990405fea058b7c41c437ba9d46..bada9fae1e7178162429e1f5a1608b9c
      }
  
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index c68910b2a2eb703406fb406a86783cf6ab48651e..f935214ed80fe54038a96a5cd668a072cdf406ec 100644
+index 38564ab781665aeb215734a367bc87271efd3d2a..f8ebb4349004e67d399e44588e159528d31c7be0 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -139,6 +139,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -141,6 +141,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
  
      @Override
      public void handleCustomPayload(ServerboundCustomPayloadPacket packet) {
@@ -47,7 +47,7 @@ index c68910b2a2eb703406fb406a86783cf6ab48651e..f935214ed80fe54038a96a5cd668a072
          // Paper start - Brand support
          if (packet.payload() instanceof net.minecraft.network.protocol.common.custom.BrandPayload brandPayload) {
              this.player.clientBrandName = brandPayload.brand();
-@@ -156,6 +157,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -160,6 +161,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
                  String channels = payload.toString(com.google.common.base.Charsets.UTF_8);
                  for (String channel : channels.split("\0")) {
                      this.getCraftPlayer().addChannel(channel);
@@ -120,10 +120,10 @@ index 0000000000000000000000000000000000000000..64a1d25973b032e8cab64bbffa6824a1
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..055f044ce6cef4377f6f577efdbfad0ec9a2d57b
+index 0000000000000000000000000000000000000000..8b7813c442733f5d4d3b2a072902099cbe596b37
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/protocol/core/LeavesProtocolManager.java
-@@ -0,0 +1,340 @@
+@@ -0,0 +1,344 @@
 +package top.leavesmc.leaves.protocol.core;
 +
 +import net.minecraft.network.FriendlyByteBuf;
@@ -167,7 +167,11 @@ index 0000000000000000000000000000000000000000..055f044ce6cef4377f6f577efdbfad0e
 +    private static final Map<LeavesProtocol, Map<ProtocolHandler.MinecraftRegister, Method>> MINECRAFT_REGISTER = new HashMap<>();
 +
 +    public static void init() {
-+        for (Class<?> clazz : getClasses("top.leavesmc.leaves.protocol")) {
++        //Luminol start - For the protocol supports of luminol
++        final Set<Class<?>> allClazz = getClasses("org.leavesmc.leaves.protocol");
++        allClazz.addAll(getClasses("me.earthme.luminol.protocols"));
++        //Luminol end
++        for (Class<?> clazz : allClazz) {
 +            final LeavesProtocol protocol = clazz.getAnnotation(LeavesProtocol.class);
 +            if (protocol != null) {
 +                Set<Method> methods;
