@@ -51,7 +51,7 @@ jobs:
         export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
         ./gradlew publish -PpublishDevBundle=true
     - name: Rename jar file
-      run: mv build/libs/Luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
+      run: mv build/libs/luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
     - name: Release Artifacts
       uses: svenstaro/upload-release-action@v2
       with:
