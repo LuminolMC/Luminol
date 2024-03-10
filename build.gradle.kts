@@ -63,7 +63,7 @@ tasks.generateDevelopmentBundle {
     libraryRepositories.set(
         listOf(
             "https://repo.maven.apache.org/maven2/",
-            paperMavenPublicUrl,
+            "https://maven.pkg.github.com/LuminolMC/Luminol",
         )
     )
 }
@@ -97,6 +97,15 @@ paperweight {
             outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
         }
     }
+}
+
+tasks.generateDevelopmentBundle {
+    apiCoordinates.set("me.earthme.luminol:luminol-api")
+    mojangApiCoordinates.set("io.papermc.paper:paper-mojangapi")
+    libraryRepositories.addAll(
+        "https://repo.maven.apache.org/maven2/",
+        paperMavenPublicUrl,
+    )
 }
 
 allprojects {
