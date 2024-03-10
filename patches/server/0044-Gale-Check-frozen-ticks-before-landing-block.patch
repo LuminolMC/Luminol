@@ -5,7 +5,7 @@ Subject: [PATCH] Gale Check frozen ticks before landing block
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 39f054b9352376336b543c1ca4e9be9a6dee79b3..7ae3d5a9e44092501271b36e593fe6d7270c472b 100644
+index ea1a603fffc4effd6114eb47361dd35fb03981f0..bd3f1a6447ae59400a18456ea2c2f2fdb24a3f91 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -588,11 +588,10 @@ public abstract class LivingEntity extends Entity implements Attackable {

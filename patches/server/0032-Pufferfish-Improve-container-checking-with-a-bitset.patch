@@ -459,7 +459,7 @@ index 26ff1a3d07c92f7035020d08d35116f7feede600..009263f6aab41608d7e17bebbed6f962
  
      public static void entityInside(Level world, BlockPos pos, BlockState state, Entity entity, HopperBlockEntity blockEntity) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
-index a94300a457b25f0e33a8eeabba6dd5720ca9ab1e..b41635dd0569ff7df909df492d3e850aef7214be 100644
+index f52ccd4f3e062af3c7cc6eaea5b074a3bbd21690..a5cd70b6ada2b44f64db0985483ee5eadc67003f 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
 @@ -94,12 +94,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc

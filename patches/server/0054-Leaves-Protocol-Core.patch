@@ -5,10 +5,10 @@ Subject: [PATCH] Leaves Protocol Core
 
 
 diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionizedServer.java b/src/main/java/io/papermc/paper/threadedregions/RegionizedServer.java
-index fc3d332aa1c1d469cedfe2aaa7102dcd78e25642..bebaa4e7abcbd01dc57fddf2a473b846e887cc7f 100644
+index 1ae61bc6603dd3ac290e3ead20416f9c5b63ff02..168ed2c21aed6a10f3aca259880b1b8bdbf98b78 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/RegionizedServer.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/RegionizedServer.java
-@@ -313,6 +313,8 @@ public final class RegionizedServer {
+@@ -314,6 +314,8 @@ public final class RegionizedServer {
  
          // player list
          MinecraftServer.getServer().getPlayerList().tick();
@@ -36,10 +36,10 @@ index af86f752c33a2990405fea058b7c41c437ba9d46..bada9fae1e7178162429e1f5a1608b9c
      }
  
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index 38564ab781665aeb215734a367bc87271efd3d2a..f8ebb4349004e67d399e44588e159528d31c7be0 100644
+index c68910b2a2eb703406fb406a86783cf6ab48651e..f935214ed80fe54038a96a5cd668a072cdf406ec 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -141,6 +141,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -139,6 +139,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
  
      @Override
      public void handleCustomPayload(ServerboundCustomPayloadPacket packet) {
@@ -47,7 +47,7 @@ index 38564ab781665aeb215734a367bc87271efd3d2a..f8ebb4349004e67d399e44588e159528
          // Paper start - Brand support
          if (packet.payload() instanceof net.minecraft.network.protocol.common.custom.BrandPayload brandPayload) {
              this.player.clientBrandName = brandPayload.brand();
-@@ -160,6 +161,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -156,6 +157,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
                  String channels = payload.toString(com.google.common.base.Charsets.UTF_8);
                  for (String channel : channels.split("\0")) {
                      this.getCraftPlayer().addChannel(channel);

@@ -18,7 +18,7 @@ index 24c05e40c9eeeb4a181d2f9994b0e786393046b9..a899f33c8c6033ad99d8187f29d6e9eb
      private Vec3 deltaMovement;
      private float yRot;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index b640d877f924094bcabbf9618bbd9aa0a70bf94a..d38918b973f76e4b3eec5e16ea4f2473e92ae858 100644
+index 2fa76a711a629e38a95b93e473272b8217783f99..3bde76d51ffe48490360d9ff5d27e2aa91c920ca 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -142,7 +142,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
