@@ -31,7 +31,7 @@ index d175f13ada111bcee977957c6fd9580e032183e9..6de8506b39f73aac7c3a3956251bb54f
  
 +                    // Luminol start - Fix MC-2025
 +                    if (nbt.contains("Luminol.BoundingBox", net.minecraft.nbt.Tag.TAG_LIST)) {
-+                        ListTag boundingBoxList = nbt.getList("Leaf.BoundingBox", net.minecraft.nbt.Tag.TAG_DOUBLE);
++                        ListTag boundingBoxList = nbt.getList("Luminol.BoundingBox", net.minecraft.nbt.Tag.TAG_DOUBLE);
 +                        setBoundingBox(new AABB(boundingBoxList.getDouble(0), boundingBoxList.getDouble(1), boundingBoxList.getDouble(2), boundingBoxList.getDouble(3), boundingBoxList.getDouble(4), boundingBoxList.getDouble(5)));
 +                    }
 +                    // Luminol end
