@@ -1,0 +1,55 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: HaHaWTH <fsjk947@gmail.com>
+Date: Fri, 15 Mar 2024 03:16:22 +0800
+Subject: [PATCH] Fix-MC-172047
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/animal/Wolf.java b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
+index 2d20b2c1f58beb1ad8c9012d8124e476899e6be6..4e06908ed9759abb61a5ef5abf774874d231a83e 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/Wolf.java
++++ b/src/main/java/net/minecraft/world/entity/animal/Wolf.java
+@@ -52,6 +52,7 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+ import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
+ import net.minecraft.world.entity.animal.horse.AbstractHorse;
+ import net.minecraft.world.entity.animal.horse.Llama;
++import net.minecraft.world.entity.decoration.ArmorStand;
+ import net.minecraft.world.entity.monster.AbstractSkeleton;
+ import net.minecraft.world.entity.monster.Creeper;
+ import net.minecraft.world.entity.monster.Ghast;
+@@ -529,13 +530,34 @@ public class Wolf extends TamableAnimal implements NeutralMob {
+ 
+     @Override
+     public boolean wantsToAttack(LivingEntity target, LivingEntity owner) {
+-        if (!(target instanceof Creeper) && !(target instanceof Ghast)) {
++        if (!(target instanceof Creeper) && !(target instanceof Ghast) && !(target instanceof ArmorStand)) { // Luminol - Fix MC-172047
+             if (target instanceof Wolf) {
+                 Wolf entitywolf = (Wolf) target;
+ 
+                 return !entitywolf.isTame() || entitywolf.getOwner() != owner;
+             } else {
+-                return target instanceof Player && owner instanceof Player && !((Player) owner).canHarmPlayer((Player) target) ? false : (target instanceof AbstractHorse && ((AbstractHorse) target).isTamed() ? false : !(target instanceof TamableAnimal) || !((TamableAnimal) target).isTame());
++                // Luminol start
++                if (target instanceof Player) {
++                    Player targetPlayer = (Player) target;
++                    if (owner instanceof Player) {
++                        Player ownerPlayer = (Player) owner;
++                        if (!ownerPlayer.canHarmPlayer(targetPlayer)) {
++                            return false;
++                        }
++                    }
++                }
++                if (target instanceof AbstractHorse) {
++                    AbstractHorse targetHorse = (AbstractHorse) target;
++                    if (targetHorse.isTamed()) {
++                        return false;
++                    }
++                }
++                if (target instanceof TamableAnimal) {
++                    TamableAnimal tamableAnimalTarget = (TamableAnimal) target;
++                    return !tamableAnimalTarget.isTame();
++                }
++                return true;
++                // Luminol end
+             }
+         } else {
+             return false;
