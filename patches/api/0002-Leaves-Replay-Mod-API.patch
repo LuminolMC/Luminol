@@ -1,0 +1,129 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sun, 17 Mar 2024 00:00:45 +0000
+Subject: [PATCH] Leaves Replay Mod API
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index 3fae7b21353d18ff1e8005fbbe83be783de8a953..5045722f76b2d7b9a4842d64d45fd565466a51f1 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -2870,4 +2870,10 @@ public final class Bukkit {
+     public static Server.Spigot spigot() {
+         return server.spigot();
+     }
++
++    // Leaves start - Photographer API
++    public static @NotNull top.leavesmc.leaves.entity.PhotographerManager getPhotographerManager() {
++        return server.getPhotographerManager();
++    }
++    // Leaves end - Photographer API
+ }
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index fe3d89c2c319c4f4b2b3e4a121d6626a898f501b..c787dbef2b2f92c085f27dc19e0352a6f60a86ce 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -2503,4 +2503,8 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+      */
+     public boolean isGlobalTickThread();
+     // Folia end - region threading API
++
++    // Leaves start - Photographer API
++    @NotNull top.leavesmc.leaves.entity.PhotographerManager getPhotographerManager();
++    // Leaves end - Photographer API
+ }
+diff --git a/src/main/java/top/leavesmc/leaves/entity/Photographer.java b/src/main/java/top/leavesmc/leaves/entity/Photographer.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..bfa6fe2a0ca095170aa5e073251402cf83a53ba0
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/entity/Photographer.java
+@@ -0,0 +1,27 @@
++package top.leavesmc.leaves.entity;
++
++import org.bukkit.entity.Player;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++
++import java.io.File;
++
++public interface Photographer extends Player {
++
++    @NotNull
++    public String getId();
++
++    public void setRecordFile(@NotNull File file);
++
++    public void stopRecording();
++
++    public void stopRecording(boolean async);
++
++    public void stopRecording(boolean async, boolean save);
++
++    public void pauseRecording();
++
++    public void resumeRecording();
++
++    public void setFollowPlayer(@Nullable Player player);
++}
+diff --git a/src/main/java/top/leavesmc/leaves/entity/PhotographerManager.java b/src/main/java/top/leavesmc/leaves/entity/PhotographerManager.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..2889a4835edea4254a3d35fc7861983644a1dc4b
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/entity/PhotographerManager.java
+@@ -0,0 +1,32 @@
++package top.leavesmc.leaves.entity;
++
++import org.bukkit.Location;
++import org.bukkit.util.Consumer;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++import top.leavesmc.leaves.replay.BukkitRecorderOption;
++
++import java.util.Collection;
++import java.util.UUID;
++
++public interface PhotographerManager {
++    @Nullable
++    public Photographer getPhotographer(@NotNull UUID uuid);
++
++    @Nullable
++    public Photographer getPhotographer(@NotNull String id);
++
++    @Nullable
++    public Photographer createPhotographer(@NotNull String id, @NotNull Location location);
++
++    @Nullable
++    public Photographer createPhotographer(@NotNull String id, @NotNull Location location, @NotNull BukkitRecorderOption recorderOption);
++
++    public void removePhotographer(@NotNull String id);
++
++    public void removePhotographer(@NotNull UUID uuid);
++
++    public void removeAllPhotographers();
++
++    public Collection<Photographer> getPhotographers();
++}
+diff --git a/src/main/java/top/leavesmc/leaves/replay/BukkitRecorderOption.java b/src/main/java/top/leavesmc/leaves/replay/BukkitRecorderOption.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..3df4a6055b91c28e273d6fb2697b608778f40a9c
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/replay/BukkitRecorderOption.java
+@@ -0,0 +1,18 @@
++package top.leavesmc.leaves.replay;
++
++public class BukkitRecorderOption {
++
++    // public int recordDistance = -1;
++    public String serverName = "Leaves";
++    public BukkitRecordWeather forceWeather = BukkitRecordWeather.NULL;
++    public int forceDayTime = -1;
++    public boolean ignoreChat = false;
++    // public boolean ignoreItem = false;
++
++    public enum BukkitRecordWeather {
++        CLEAR,
++        RAIN,
++        THUNDER,
++        NULL
++    }
++}
