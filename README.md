@@ -1,7 +1,7 @@
 <img src="./public/image/Luminol_5.png" alt="Logo" align="right" width="250">
 
 # Luminol
-<h4>Luminol is a Folia fork with many useful optimizations, configurable vanilla features, and more API supports, and it was designed for survival and anarchy servers</h4>
+<h4>Luminol 是一个基于Folia的分支，具有许多有用的优化、可配置的原版特性和更多的API支持，它专为生存和无政府服务器设计</h4>
 
 [![MIT License](https://img.shields.io/github/license/LuminolMC/Luminol?style=flat-square)](LICENSE)
 [![Issues](https://img.shields.io/github/issues/LuminolMC/Luminol?style=flat-square)](https://github.com/LuminolMC/Luminol/issues)
@@ -9,27 +9,27 @@
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/LuminolMC/Luminol?style=flat-square)
 ![GitHub all releases](https://img.shields.io/github/downloads/LuminolMC/Luminol/total?style=flat-square)
 
-**English** | [中文](./README_CN.md)
+[English](./README_EN) | **中文**
 
-## Features
-- Configurable vanilla features
-- Tpsbar support
-- Linear region file format(from kaiiju)
-- Useful optimizations to improve the performance of single threaded region
-- More API support for plugin development (W.I.P)
+## 特性
+- 可配置的原版特性
+- Tpsbar 支持
+- 线性区域文件格式 (from kaiiju)
+- 对单线程区域性能的优化
+- 更多的插件开发API支持（进行中）
 
-## Download
-Any versions are available in the [release](https://github.com/LuminolMC/Luminol/releases), also you can build it by yourself through [the following steps](https://github.com/LuminolMC/Luminol#build).
+## 下载
+任何版本都可以在 [Release](https://github.com/LuminolMC/Luminol/releases) 中找到，你也可以通过[以下步骤](./README#构建)自己构建。
 
-## Build
-To build a paperclip jar, you need to run the following command. You can find the jar in build/libs(Note: JDK17 is needed)
+## 构建
+要构建一个paperclip jar，你需要运行以下命令。你可以在build/libs中找到jar（注意：需要`JDK17`）
 
  ```shell
  ./gradlew applyPatches && ./gradlew createReobfPaperclipJar
 ```
 
-## Using API
-For gradle:
+## 使用API
+使用 Gradle:
 
 ```kotlin
 dependencies {
@@ -37,7 +37,7 @@ dependencies {
 }
  ```
 
-For maven
+使用 Maven
 
 ```xml
 <dependency>
@@ -47,28 +47,27 @@ For maven
 </dependency>
 ```
 
-## Contact
-> If you are interested in this project or have any issue, feel free to ask us.
+## 联系方式
+> 如果您对这个项目感兴趣或有任何问题，请随时向我们提问。
 
-QQ Group: `368632360` | QQ Channel: [Click To Join](https://pd.qq.com/s/eq9krf9j) | Telegram: [Click To Join](https://t.me/LuminolMC)
+QQ群：`368632360` | QQ频道：[点击加入](https://pd.qq.com/s/eq9krf9j) | Telegram:[点击加入](https://t.me/LuminolMC)
 
-## Notice
-**This project is not related to Leaves.Do not report any bugs about protocol support to leaves because the protocol supports are already refactored.**
+## 关于 Issue
+当您遇到任何问题时，请向我们提问，我们将尽力解决，但请记得清楚地描述您的问题并提供足够的日志等信息。
 
-## About Issue
-When you meet any problems, just ask us, we will do our best to solve it, but remember to state your problem clear and provide enough logs etc.</br>
-
-## Pull Requests
-See [Contributing](./docs/CONTRIBUTING.md)
+## 贡献代码
+可[查看 Contributing](./docs/CONTRIBUTING_cn.md)
 
 ## BStats
 ![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")
 
-## Please ⭐star us!
+## 请给我们一个 ⭐Star！
+> 你的每一个免费的 ⭐Star 就是我们每一个前进的动力。
+
 <a href="https://star-history.com/#LuminolMC/Luminol&LuminolMC/LightingLuminol&Date">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date&theme=dark" />
     <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date" />
+    <img alt="Star历史表" src="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date" />
   </picture>
 </a>
