@@ -99,10 +99,10 @@ public class Main {
 ```
 
 diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
-index cb22cac2b8c4eaf705b76fd4a9d8b82fb8eb0140..f24132f5ab6362829e88559304173bd9a259caa3 100644
+index 49ccb27a17bec1d4ff31bc8d72e4724d65adc20c..34ccd489268c51c0aeecf5918878122b49c8d123 100644
 --- a/src/main/java/io/papermc/paper/util/MCUtil.java
 +++ b/src/main/java/io/papermc/paper/util/MCUtil.java
-@@ -165,13 +165,11 @@ public final class MCUtil {
+@@ -168,13 +168,11 @@ public final class MCUtil {
      }
  
      public static int fastFloor(double x) {
@@ -118,7 +118,7 @@ index cb22cac2b8c4eaf705b76fd4a9d8b82fb8eb0140..f24132f5ab6362829e88559304173bd9
      }
  
      public static float normalizeYaw(float f) {
-@@ -232,11 +230,11 @@ public final class MCUtil {
+@@ -235,11 +233,11 @@ public final class MCUtil {
      }
  
      public static int getChunkCoordinate(final double coordinate) {

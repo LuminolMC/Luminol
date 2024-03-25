@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..acc032f727e605e79b688efb4873ff47
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 50a144b0122c970856ef3faa3f899ee72e2a6300..7378c9cb5eeddc7cefc409638179dfb8602ed0d0 100644
+index 66c581585e6ca58eba0e8b7af0fa1f0c9f924f94..97e099eea537aea8f8ffd031063949c363820701 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -229,11 +229,13 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -230,11 +230,13 @@ public abstract class Mob extends LivingEntity implements Targeting {
          return this.lookControl;
      }
  

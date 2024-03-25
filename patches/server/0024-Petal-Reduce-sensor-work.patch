@@ -33,10 +33,10 @@ index 0000000000000000000000000000000000000000..dd45cf1fde5ee4cf8347064f106c64b8
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index dc94c66404e9f2015119e249a560571355c92c96..9636f69fab9f34f3b3f4590f151248cd5b2da089 100644
+index 67210fc018349ab0a79740dee140fb60c82c431a..b90865dbfb3a4bd83e4cd3ba3b5b965036039f98 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -926,10 +926,11 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -927,10 +927,11 @@ public abstract class Mob extends LivingEntity implements Targeting {
              return;
          }
          // Paper end - Allow nerfed mobs to jump and float

@@ -371,7 +371,7 @@ index cbc89b8898f9243776af88c2b04ad3c2e4e23fb6..318cb1e98a3d73b7893f07c9f0db3ada
      public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances getViewDistances() {
          return this.viewDistances.get();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 8fc071a6249193af5e1795cc19f50996ea22d96f..830616f7a3d1c3e25133229a74e08cbb9d412179 100644
+index d2902fc7f3b7af59f181bd1e12435d946db7ad23..26f70965b45fa3c344781b569a651a4668d0621d 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -2287,6 +2287,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {

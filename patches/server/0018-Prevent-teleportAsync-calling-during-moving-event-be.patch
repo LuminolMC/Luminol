@@ -48,7 +48,7 @@ index 9cbf17436b4cf52aae374767aafe79ea4f60c3ce..f2068e7608ed765e35759eb981db6c95
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 9555ae82d68cf217bc17e3bd9af2462702a2506b..51053d90f1bbad0b6453c13e06010cd7193ae7b7 100644
+index 3b2508dc6cd4f70b09dce3b7e745e6efabaaa74e..b3ff8ed6d0f0414c15b9d2e6a51a0e34c361f92a 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -675,7 +675,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -72,7 +72,7 @@ index 9555ae82d68cf217bc17e3bd9af2462702a2506b..51053d90f1bbad0b6453c13e06010cd7
                                      // If the event is cancelled we move the player back to their old location.
                                      if (event.isCancelled()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 53c4ac14ce95f21ef87a148dddb349f18d6320b1..a0915438503e385153ec7bc7584860466f65b461 100644
+index 02e0a617739ad165b25addc5f3e32fa9aacf0b3b..45fd500c1a41ec4568c9e0e579da3d477feb541a 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -27,6 +27,7 @@ import java.util.stream.Stream;
@@ -99,7 +99,7 @@ index 53c4ac14ce95f21ef87a148dddb349f18d6320b1..a0915438503e385153ec7bc758486046
  import org.bukkit.block.BlockFace;
  import org.bukkit.command.CommandSender;
  import org.bukkit.craftbukkit.event.CraftPortalEvent;
-@@ -3970,6 +3969,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -3986,6 +3985,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
                                         java.util.function.Consumer<Entity> teleportComplete) {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot teleport entity async");
  

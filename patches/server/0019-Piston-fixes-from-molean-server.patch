@@ -5,10 +5,10 @@ Subject: [PATCH] Piston fixes from molean server
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index a0915438503e385153ec7bc7584860466f65b461..13b1bf1d3dea42d0d0d45ebd2c9ccbf6928c395b 100644
+index 45fd500c1a41ec4568c9e0e579da3d477feb541a..d8b06e08e6b59f0e6a50f450d1a682ef459d5b57 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -1447,7 +1447,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -1460,7 +1460,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
          if (movement.lengthSqr() <= 1.0E-7D) {
              return movement;
          } else {

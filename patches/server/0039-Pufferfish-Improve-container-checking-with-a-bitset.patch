@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Sat, 27 Jan 2024 11:55:08 +0000
+Date: Mon, 25 Mar 2024 13:48:33 +0000
 Subject: [PATCH] Pufferfish Improve container checking with a bitset
 
 
@@ -237,10 +237,10 @@ index d6cbe98e67fdbf8db46338a88ab1356dd63b50a3..20dd3a63b2f955b05a75eb240e33ae4c
      int LARGE_MAX_STACK_SIZE = 64;
      int DEFAULT_DISTANCE_LIMIT = 8;
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-index 6d23c39e4eadf23616080d6d08672e13b5d3c37d..e7115f1635821e0aab32e8aeea6914388dc24639 100644
+index 756d0434472921992c9d84597d7c9c824e93614c..38c573d440946ca7ee6016ef92e9c1605031e611 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-@@ -27,7 +27,10 @@ import org.bukkit.inventory.InventoryHolder;
+@@ -28,7 +28,10 @@ import org.bukkit.inventory.InventoryHolder;
  
  public abstract class AbstractMinecartContainer extends AbstractMinecart implements ContainerEntity {
  
@@ -251,7 +251,7 @@ index 6d23c39e4eadf23616080d6d08672e13b5d3c37d..e7115f1635821e0aab32e8aeea691438
      @Nullable
      public ResourceLocation lootTable;
      public long lootTableSeed;
-@@ -89,12 +92,18 @@ public abstract class AbstractMinecartContainer extends AbstractMinecart impleme
+@@ -90,12 +93,18 @@ public abstract class AbstractMinecartContainer extends AbstractMinecart impleme
  
      protected AbstractMinecartContainer(EntityType<?> type, Level world) {
          super(type, world);
@@ -272,7 +272,7 @@ index 6d23c39e4eadf23616080d6d08672e13b5d3c37d..e7115f1635821e0aab32e8aeea691438
      }
  
      @Override
-@@ -156,6 +165,10 @@ public abstract class AbstractMinecartContainer extends AbstractMinecart impleme
+@@ -164,6 +173,10 @@ public abstract class AbstractMinecartContainer extends AbstractMinecart impleme
      protected void readAdditionalSaveData(CompoundTag nbt) {
          super.readAdditionalSaveData(nbt);
          this.lootableData.loadNbt(nbt); // Paper
@@ -362,10 +362,10 @@ index 9b1243d96e0694c62fc9e82e9be540bce0d2b3ad..3514022d898a24052c917ebf55dcef3e
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index 26ff1a3d07c92f7035020d08d35116f7feede600..009263f6aab41608d7e17bebbed6f962fcb55634 100644
+index 4fe1b822b4c280de9d5b46c1dc965045791c83d0..c099b19020d374ad8cdfbb65049ddfcf2f5a10a7 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -47,7 +47,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -48,7 +48,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
      public static final int MOVE_ITEM_SPEED = 8;
      public static final int HOPPER_CONTAINER_SIZE = 5;
@@ -373,10 +373,10 @@ index 26ff1a3d07c92f7035020d08d35116f7feede600..009263f6aab41608d7e17bebbed6f962
      private NonNullList<ItemStack> items;
 +    private gg.airplane.structs.ItemListWithBitset optimizedItems; // Pufferfish
 +    // Pufferfish end
-     private int cooldownTime;
+     public int cooldownTime;
      private long tickedGameTime;
  
-@@ -83,14 +86,37 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -84,14 +87,37 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
      public HopperBlockEntity(BlockPos pos, BlockState state) {
          super(BlockEntityType.HOPPER, pos, state);
@@ -416,7 +416,7 @@ index 26ff1a3d07c92f7035020d08d35116f7feede600..009263f6aab41608d7e17bebbed6f962
          if (!this.tryLoadLootTable(nbt)) {
              ContainerHelper.loadAllItems(nbt, this.items);
          }
-@@ -493,6 +519,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -494,6 +520,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
      }
  
      private static boolean isFullContainer(Container inventory, Direction direction) {
@@ -424,7 +424,7 @@ index 26ff1a3d07c92f7035020d08d35116f7feede600..009263f6aab41608d7e17bebbed6f962
          // Paper start - Perf: Optimize Hoppers
          if (inventory instanceof WorldlyContainer worldlyContainer) {
              for (final int slot : worldlyContainer.getSlotsForFace(direction)) {
-@@ -515,7 +542,11 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -516,7 +543,11 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
      }
  
      private static boolean isEmptyContainer(Container inv, Direction facing) {
@@ -437,7 +437,7 @@ index 26ff1a3d07c92f7035020d08d35116f7feede600..009263f6aab41608d7e17bebbed6f962
      }
  
      public static boolean suckInItems(Level world, Hopper hopper) {
-@@ -716,7 +747,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -717,7 +748,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
          if (HopperBlockEntity.canPlaceItemInContainer(to, stack, slot, side)) {
              boolean flag = false;
@@ -446,7 +446,7 @@ index 26ff1a3d07c92f7035020d08d35116f7feede600..009263f6aab41608d7e17bebbed6f962
  
              if (itemstack1.isEmpty()) {
                  // Spigot start - SPIGOT-6693, InventorySubcontainer#setItem
-@@ -911,7 +942,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -912,7 +943,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
      @Override
      protected void setItems(NonNullList<ItemStack> list) {

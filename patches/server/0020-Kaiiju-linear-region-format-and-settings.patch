@@ -5,7 +5,7 @@ Subject: [PATCH] Kaiiju linear region format and settings
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 32c93c1349b8dbf6017f4e926e697c1c40627d36..d104fb1b29bc103736fcd19a8f12ca095b6b4960 100644
+index 66cb23bce8bf0a96867144874643f771f7440034..57fcd58883effe57051b72a4e9f4af91aacd421a 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -20,6 +20,10 @@ dependencies {
@@ -636,7 +636,7 @@ index 0000000000000000000000000000000000000000..7c034f65bac5aab4c46a8506efa5befe
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4d3ba2b02d19cc43a19bc633b9c5df66b85533f7..b3173889ba86b39bac9d0171a863bf4effbb41b1 100644
+index 59b1da130e519cbe06ed5eedf9e4dc881e45ba36..c924951c3dd7652ee446b40689ff9004546e972a 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -923,7 +923,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -658,7 +658,7 @@ index 4d3ba2b02d19cc43a19bc633b9c5df66b85533f7..b3173889ba86b39bac9d0171a863bf4e
  
          return flag3;
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 79e507c1463dbb9039b1fed8bdf41c0ee5f4fec3..8f642259ab8aa94eb5739ecbe72211c248c1114d 100644
+index 6ab9f83786dcfbd3156d2f2bd6da57baed1399f4..76ad4d8bce1611ead6f1596b2ba78267e3718655 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -211,7 +211,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
@@ -705,7 +705,7 @@ index 79e507c1463dbb9039b1fed8bdf41c0ee5f4fec3..8f642259ab8aa94eb5739ecbe72211c2
          regionFile.setStatus(chunkPos.x, chunkPos.z, ChunkSerializer.getStatus(compound));
      }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 682ca5ec0aee427463d1a9f97292c6ea65ca2da0..c06ddc99a0971be46746c767ad8ce590a8e2ee30 100644
+index 10df17ad79092f3e226df08e58620694b3581758..da6269249a95d78f91e90416a96bf1b776fd9c97 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -446,8 +446,8 @@ public class ServerLevel extends Level implements WorldGenLevel {

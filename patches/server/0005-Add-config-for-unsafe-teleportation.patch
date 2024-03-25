@@ -17,7 +17,7 @@ index 0000000000000000000000000000000000000000..cb2fef0d808e2fc2950eded5b39651c6
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class UnsafeTeleportationConfig implements IConfigModule {
-+    @ConfigInfo(baseName = "enabled")
++    @ConfigInfo(baseName = "enabled",comment = "If you want to use sand duping,please turn on this")
 +    public static boolean enabled = false;
 +
 +    @Override
@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..cb2fef0d808e2fc2950eded5b39651c6
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 0725386d7ef47171012671725ceddfe92b43b203..78ad77dd1368d3743ea5091a81f63339f7921efe 100644
+index edb4ffe78e28755e061c46c6834bbc9b7a23ff16..1cf96090a050e7f7b4a2d12ecf41ce3202a3030b 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4046,6 +4046,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4062,6 +4062,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
  
      protected boolean tryEndPortal() {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
@@ -43,7 +43,7 @@ index 0725386d7ef47171012671725ceddfe92b43b203..78ad77dd1368d3743ea5091a81f63339
          ServerLevel world = this.portalWorld;
          this.portalBlock = null;
 diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
-index a0c1db8cfebaa0344012cc0af18d6231cdcdcbb8..cb174f06f9701cc4f0ff479649f39ee9aa63a97a 100644
+index afc9445941b984cc1122839e4a8a17cf27aa966e..0eb328e2b32179ebeefc90063441a1510e0058b8 100644
 --- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 @@ -61,6 +61,13 @@ public class EndPortalBlock extends BaseEntityBlock {

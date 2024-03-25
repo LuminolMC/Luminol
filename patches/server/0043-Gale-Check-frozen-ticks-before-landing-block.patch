@@ -5,10 +5,10 @@ Subject: [PATCH] Gale Check frozen ticks before landing block
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index ea1a603fffc4effd6114eb47361dd35fb03981f0..bd3f1a6447ae59400a18456ea2c2f2fdb24a3f91 100644
+index 56145117fef32385793ed4ff6b096e87af2f12bf..4f029389dac60e2cc74961a67ec4ac7a2de2f404 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -588,11 +588,10 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -589,11 +589,10 @@ public abstract class LivingEntity extends Entity implements Attackable {
      }
  
      protected void tryAddFrost() {
@@ -21,7 +21,7 @@ index ea1a603fffc4effd6114eb47361dd35fb03981f0..bd3f1a6447ae59400a18456ea2c2f2fd
  
                  if (attributemodifiable == null) {
                      return;
-@@ -602,7 +601,6 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -603,7 +602,6 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
                  attributemodifiable.addTransientModifier(new AttributeModifier(LivingEntity.SPEED_MODIFIER_POWDER_SNOW_UUID, "Powder snow slow", (double) f, AttributeModifier.Operation.ADDITION));
              }

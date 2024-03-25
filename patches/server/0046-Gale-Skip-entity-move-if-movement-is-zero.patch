@@ -5,10 +5,10 @@ Subject: [PATCH] Gale Skip entity move if movement is zero
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index bf530eb5e039f37b9bea37d2a61ee31fdab8c8a9..d175f13ada111bcee977957c6fd9580e032183e9 100644
+index 5a2215f3b3c75457e9b917f388f38a9f49fd1a60..b884c39cee98924f867e02da67372aad56c37ffc 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -318,6 +318,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -319,6 +319,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      public float yRotO;
      public float xRotO;
      private AABB bb;
@@ -16,7 +16,7 @@ index bf530eb5e039f37b9bea37d2a61ee31fdab8c8a9..d175f13ada111bcee977957c6fd9580e
      public boolean onGround;
      public boolean horizontalCollision;
      public boolean verticalCollision;
-@@ -1088,6 +1089,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -1101,6 +1102,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      //Luminol end
  
      public void move(MoverType movementType, Vec3 movement) {
@@ -28,7 +28,7 @@ index bf530eb5e039f37b9bea37d2a61ee31fdab8c8a9..d175f13ada111bcee977957c6fd9580e
          final Vec3 originalMovement = movement; // Paper - Expose pre-collision velocity
          // Paper start - detailed watchdog information
          io.papermc.paper.util.TickThread.ensureTickThread("Cannot move an entity off-main");
-@@ -4938,6 +4944,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4954,6 +4960,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
  
      public final void setBoundingBox(AABB boundingBox) {
