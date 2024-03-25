@@ -6,7 +6,7 @@ Subject: [PATCH] Add config for unsafe teleportation
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/UnsafeTeleportationConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/UnsafeTeleportationConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..cb2fef0d808e2fc2950eded5b39651c66fff9103
+index 0000000000000000000000000000000000000000..1b0de6f0ccab72c409a63dc1904829008e30328e
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/UnsafeTeleportationConfig.java
 @@ -0,0 +1,20 @@
@@ -17,7 +17,7 @@ index 0000000000000000000000000000000000000000..cb2fef0d808e2fc2950eded5b39651c6
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class UnsafeTeleportationConfig implements IConfigModule {
-+    @ConfigInfo(baseName = "enabled",comment = "If you want to use sand duping,please turn on this")
++    @ConfigInfo(baseName = "enabled", comments = "If you want to use sand duping,please turn on this")
 +    public static boolean enabled = false;
 +
 +    @Override
