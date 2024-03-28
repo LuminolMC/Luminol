@@ -19,7 +19,7 @@
 - 更多的插件开发API支持（进行中）
 
 ## 下载
-任何版本都可以在 [Release](https://github.com/LuminolMC/Luminol/releases) 中找到，你也可以通过[以下步骤](./README#构建)自己构建。
+任何版本都可以在 [Release](https://github.com/LuminolMC/Luminol/releases) 中找到，你也可以通过[以下步骤](./README.md#构建)自己构建。
 
 ## 构建
 要构建一个paperclip jar，你需要运行以下命令。你可以在build/libs中找到jar（注意：需要`JDK17`）
@@ -52,11 +52,14 @@ dependencies {
 
 QQ群：`368632360` | QQ频道：[点击加入](https://pd.qq.com/s/eq9krf9j) | Telegram:[点击加入](https://t.me/LuminolMC)
 
+> [!WARNING]
+> **此项目与Leaves无关。不要向Leaves报告任何有关协议支持的错误，因为协议支持已经重构**
+
 ## 关于 Issue
 当您遇到任何问题时，请向我们提问，我们将尽力解决，但请记得清楚地描述您的问题并提供足够的日志等信息。
 
 ## 贡献代码
-可[查看 Contributing](./docs/CONTRIBUTING_cn.md)
+可[查看 Contributing](./docs/CONTRIBUTING.md)
 
 ## BStats
 ![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")

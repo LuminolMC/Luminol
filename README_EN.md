@@ -19,7 +19,7 @@
 - More API support for plugin development (W.I.P)
 
 ## Download
-Any versions are available in the [release](https://github.com/LuminolMC/Luminol/releases), also you can build it by yourself through [the following steps](https://github.com/LuminolMC/Luminol#build).
+Any versions are available in the [release](https://github.com/LuminolMC/Luminol/releases), also you can build it by yourself through [the following steps](./README_EN.md#build).
 
 ## Build
 To build a paperclip jar, you need to run the following command. You can find the jar in build/libs(Note: JDK17 is needed)
@@ -52,14 +52,14 @@ For maven
 
 QQ Group: `368632360` | QQ Channel: [Click To Join](https://pd.qq.com/s/eq9krf9j) | Telegram: [Click To Join](https://t.me/LuminolMC)
 
-## Notice
-**This project is not related to Leaves.Do not report any bugs about protocol support to leaves because the protocol supports are already refactored.**
+> [!WARNING]
+> **This project is not related to Leaves.Do not report any bugs about protocol support to leaves because the protocol supports are already refactored.**
 
 ## About Issue
 When you meet any problems, just ask us, we will do our best to solve it, but remember to state your problem clear and provide enough logs etc.</br>
 
 ## Pull Requests
-See [Contributing](./docs/CONTRIBUTING.md)
+See [Contributing](./docs/CONTRIBUTING_EN.md)
 
 ## BStats
 ![bStats](https://bstats.org/signatures/server-implementation/Luminol.svg "bStats")
