@@ -72,7 +72,7 @@ index 3b2508dc6cd4f70b09dce3b7e745e6efabaaa74e..b3ff8ed6d0f0414c15b9d2e6a51a0e34
                                      // If the event is cancelled we move the player back to their old location.
                                      if (event.isCancelled()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 02e0a617739ad165b25addc5f3e32fa9aacf0b3b..45fd500c1a41ec4568c9e0e579da3d477feb541a 100644
+index dfb1b8c3af93bfcddb976c003c6ac2d52afc41c6..09cdd28dcb2357ba3d7be316b7ca94dc93ac5dd0 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -27,6 +27,7 @@ import java.util.stream.Stream;
@@ -99,7 +99,7 @@ index 02e0a617739ad165b25addc5f3e32fa9aacf0b3b..45fd500c1a41ec4568c9e0e579da3d47
  import org.bukkit.block.BlockFace;
  import org.bukkit.command.CommandSender;
  import org.bukkit.craftbukkit.event.CraftPortalEvent;
-@@ -3986,6 +3985,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -3989,6 +3988,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
                                         java.util.function.Consumer<Entity> teleportComplete) {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot teleport entity async");
  

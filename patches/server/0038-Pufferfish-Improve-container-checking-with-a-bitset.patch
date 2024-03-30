@@ -362,7 +362,7 @@ index 9b1243d96e0694c62fc9e82e9be540bce0d2b3ad..3514022d898a24052c917ebf55dcef3e
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index 4fe1b822b4c280de9d5b46c1dc965045791c83d0..c099b19020d374ad8cdfbb65049ddfcf2f5a10a7 100644
+index 82e7e76fecceb55522b5828a56f036e42ef55201..882e27de852c89c837d7943c5a9ae6fb3c2e896b 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -48,7 +48,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
@@ -374,9 +374,9 @@ index 4fe1b822b4c280de9d5b46c1dc965045791c83d0..c099b19020d374ad8cdfbb65049ddfcf
 +    private gg.airplane.structs.ItemListWithBitset optimizedItems; // Pufferfish
 +    // Pufferfish end
      public int cooldownTime;
-     private long tickedGameTime;
+     private long tickedGameTime = Long.MIN_VALUE; // Folia - region threading
  
-@@ -84,14 +87,37 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -94,14 +97,37 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
      public HopperBlockEntity(BlockPos pos, BlockState state) {
          super(BlockEntityType.HOPPER, pos, state);
@@ -416,7 +416,7 @@ index 4fe1b822b4c280de9d5b46c1dc965045791c83d0..c099b19020d374ad8cdfbb65049ddfcf
          if (!this.tryLoadLootTable(nbt)) {
              ContainerHelper.loadAllItems(nbt, this.items);
          }
-@@ -494,6 +520,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -504,6 +530,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
      }
  
      private static boolean isFullContainer(Container inventory, Direction direction) {
@@ -424,7 +424,7 @@ index 4fe1b822b4c280de9d5b46c1dc965045791c83d0..c099b19020d374ad8cdfbb65049ddfcf
          // Paper start - Perf: Optimize Hoppers
          if (inventory instanceof WorldlyContainer worldlyContainer) {
              for (final int slot : worldlyContainer.getSlotsForFace(direction)) {
-@@ -516,7 +543,11 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -526,7 +553,11 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
      }
  
      private static boolean isEmptyContainer(Container inv, Direction facing) {
@@ -437,7 +437,7 @@ index 4fe1b822b4c280de9d5b46c1dc965045791c83d0..c099b19020d374ad8cdfbb65049ddfcf
      }
  
      public static boolean suckInItems(Level world, Hopper hopper) {
-@@ -717,7 +748,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -727,7 +758,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
          if (HopperBlockEntity.canPlaceItemInContainer(to, stack, slot, side)) {
              boolean flag = false;
@@ -446,7 +446,7 @@ index 4fe1b822b4c280de9d5b46c1dc965045791c83d0..c099b19020d374ad8cdfbb65049ddfcf
  
              if (itemstack1.isEmpty()) {
                  // Spigot start - SPIGOT-6693, InventorySubcontainer#setItem
-@@ -912,7 +943,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -922,7 +953,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
      @Override
      protected void setItems(NonNullList<ItemStack> list) {

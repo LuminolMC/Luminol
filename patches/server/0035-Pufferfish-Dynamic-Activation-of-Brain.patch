@@ -83,7 +83,7 @@ index da6269249a95d78f91e90416a96bf1b776fd9c97..25a2f23618cd02366f71e704638adfba
                      if (false && this.shouldDiscardEntity(entity)) { // CraftBukkit - We prevent spawning in general, so this butchering is not needed
                          entity.discard();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index a5c8e5045f2a3db0fb5bf64665f2650f847ab797..6815b29adede62deb2724a6843985d067389dc26 100644
+index f8a410e9ed04d9a78d1a6a7e63673b1863d715f2..4b3acc0de20b246e20e2cc91ba0eca493a675729 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -483,6 +483,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
