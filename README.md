@@ -50,7 +50,7 @@ dependencies {
 ## 联系方式
 > 如果您对这个项目感兴趣或有任何问题，请随时向我们提问。
 
-QQ群：`368632360` | QQ频道：[点击加入](https://pd.qq.com/s/eq9krf9j) | Telegram:[点击加入](https://t.me/LuminolMC)
+QQ群：`368632360`  |  QQ频道：[点击加入](https://pd.qq.com/s/eq9krf9j)  |  Telegram：[点击加入](https://t.me/LuminolMC)
 
 
 ## 贡献代码
