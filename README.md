@@ -52,11 +52,6 @@ dependencies {
 
 QQ群：`368632360` | QQ频道：[点击加入](https://pd.qq.com/s/eq9krf9j) | Telegram:[点击加入](https://t.me/LuminolMC)
 
-> [!WARNING]
-> **此项目与Leaves无关。不要向Leaves报告任何有关协议支持的错误，因为协议支持已经重构**
-
-## 关于 Issue
-当您遇到任何问题时，请向我们提问，我们将尽力解决，但请记得清楚地描述您的问题并提供足够的日志等信息。
 
 ## 贡献代码
 可[查看 Contributing](./docs/CONTRIBUTING.md)
@@ -74,3 +69,7 @@ QQ群：`368632360` | QQ频道：[点击加入](https://pd.qq.com/s/eq9krf9j) | 
     <img alt="Star历史表" src="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date" />
   </picture>
 </a>
+
+> [!WARNING]
+> **此项目与Leaves无关。不要向Leaves报告任何有关协议支持的错误，因为协议支持已经重构**
+> 
