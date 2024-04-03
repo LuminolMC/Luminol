@@ -6,8 +6,8 @@ prop() {
   grep "${1}" gradle.properties | cut -d'=' -f2 | sed 's/\r//'
 }
 echo "$tag"
-project_id="leaves"
-project_name="leaves"
+project_id="luminol"
+project_name="luminol"
 mcversion=$(prop mcVersion)
 ctime=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 pre=$(prop preVersion)
