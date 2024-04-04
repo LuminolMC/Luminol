@@ -61,10 +61,3 @@ jobs:
        file: "build/libs/luminol-1.20.4-paperclip.jar"
        file_glob: true
        prerelease: true
-    - name: Push to API
-      continue-on-error: true
-      if: "!contains(github.event.commits[0].message, '[release-skip]')"
-      env:
-        secret_v2: ${{ secrets.API_V2_PUSH_TOKEN }}
-        tag: ${{ env.tag }}
-      run: sh scripts/PushToAPI.sh
