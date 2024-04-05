@@ -31,15 +31,21 @@ index 0000000000000000000000000000000000000000..79ce93a1e97f176c7b0e5b00d7f0880f
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
-index 8bf94fcf5c46ffe6d90f8431338b768ef1a2dd61..a286d6cd2c371c135cb708f2bee9c5afa7532a92 100644
+index 8bf94fcf5c46ffe6d90f8431338b768ef1a2dd61..25e069bd660720232737031fe1630765cce9a1b1 100644
 --- a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
-@@ -201,7 +201,7 @@ public class TripWireHookBlock extends Block {
+@@ -201,8 +201,13 @@ public class TripWireHookBlock extends Block {
                      BlockState iblockdata4 = aiblockdata[l];
  
                      if (iblockdata4 != null) {
 -                        if (world.getBlockState(blockposition2).is(Blocks.TRIPWIRE)) { // Paper - Fix tripwire disarming not working as intended
-+                        if (world.getBlockState(blockposition2).is(Blocks.TRIPWIRE) || me.earthme.luminol.config.modules.fixes.IncorrectTripwireFixConfig.enabled) { // Paper - Fix tripwire disarming not working as intended //Luminol - Add config for this
++                        if (me.earthme.luminol.config.modules.fixes.IncorrectTripwireFixConfig.enabled || world.getBlockState(blockposition2).is(Blocks.TRIPWIRE)) { // Paper - Fix tripwire disarming not working as intended //Luminol - Add config for this
                          world.setBlock(blockposition2, (BlockState) iblockdata4.trySetValue(TripWireHookBlock.ATTACHED, flag4), 3);
++                        //Luminol start - Add config for incorrect tripwire updating
++                        if (me.earthme.luminol.config.modules.fixes.IncorrectTripwireFixConfig.enabled){
++                            world.getBlockState(blockposition2).isAir();
++                        }
++                        //Luminol end
                          }
                      }
+                 }
