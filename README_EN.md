@@ -18,6 +18,7 @@
 - Useful optimizations to improve the performance of single threaded region
 - More API support for plugin development (W.I.P)
 
+
 ## Download
 Any versions are available in the [release](https://github.com/LuminolMC/Luminol/releases), also you can build it by yourself through [the following steps](./README_EN.md#build).
 
