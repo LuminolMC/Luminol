@@ -36,7 +36,7 @@ jobs:
           mv build/libs/luminol-bundler-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-bundler.jar
           mv build/libs/luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
       - name: Set ENV
-        run: sh scripts/SetENV.sh
+        run: sh scripts/setenv.sh
       - name: Create Release
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         uses: ncipollo/release-action@v1.12.0
