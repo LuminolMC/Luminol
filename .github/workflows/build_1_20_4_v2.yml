@@ -38,7 +38,7 @@ jobs:
       - name: Set ENV
         run: |
           sh scripts/setenv.sh
-          echo ${{ env.tag }} | ${{ env.mcversion }} | ${{ env.commitid }} | ${{ env.pre }} |${{ env.make_latest }}
+          echo "${{ env.tag }} | ${{ env.mcversion }} | ${{ env.commitid }} | ${{ env.pre }} |${{ env.make_latest }}"
       - name: Create Release
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         uses: ncipollo/release-action@v1.12.0
