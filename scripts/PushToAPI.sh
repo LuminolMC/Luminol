@@ -18,9 +18,10 @@ else
 fi
 git tag
 changes=$(git log -1 --pretty='[{"commit": "%H", "message": "%s", "summary": "%b"}]')
-jar_sha256=`sha256 build/libs/luminol-1.20.4-paperclip.jar`
-echo "$jar_sha256"
+echo $changes
 jar_name="luminol-1.20.4-paperclip.jar"
+jar_sha256=`sha256 $jar_name`
+echo "$jar_sha256"
 ctime=$(date -u +"%s")"000"
 echo "$ctime"
 # v2
