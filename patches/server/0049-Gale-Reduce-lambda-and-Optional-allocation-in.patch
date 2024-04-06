@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sat, 6 Apr 2024 05:14:57 +0000
+Subject: [PATCH] Gale Reduce lambda and Optional allocation in 
+ EntityBasedExplosionDamageCalculator
+
+
+diff --git a/src/main/java/net/minecraft/world/level/EntityBasedExplosionDamageCalculator.java b/src/main/java/net/minecraft/world/level/EntityBasedExplosionDamageCalculator.java
+index 2f9f15d99f8b31e9f13f7f32378b2a9e09bcb5e5..4e4dfb72d5a0b46917999b709c655ccfdae27183 100644
+--- a/src/main/java/net/minecraft/world/level/EntityBasedExplosionDamageCalculator.java
++++ b/src/main/java/net/minecraft/world/level/EntityBasedExplosionDamageCalculator.java
+@@ -15,9 +15,17 @@ public class EntityBasedExplosionDamageCalculator extends ExplosionDamageCalcula
+ 
+     @Override
+     public Optional<Float> getBlockExplosionResistance(Explosion explosion, BlockGetter world, BlockPos pos, BlockState blockState, FluidState fluidState) {
+-        return super.getBlockExplosionResistance(explosion, world, pos, blockState, fluidState).map((max) -> {
+-            return this.source.getBlockExplosionResistance(explosion, world, pos, blockState, fluidState, max);
+-        });
++        // Gale start - Lithium - reduce lambda and Optional allocation in EntityBasedExplosionDamageCalculator
++        Optional<Float> optionalBlastResistance = super.getBlockExplosionResistance(explosion, world, pos, blockState, fluidState);
++        if (optionalBlastResistance.isPresent()) {
++            float blastResistance = optionalBlastResistance.get();
++            float effectiveExplosionResistance = this.source.getBlockExplosionResistance(explosion, world, pos, blockState, fluidState, blastResistance);
++            if (effectiveExplosionResistance != blastResistance) {
++                return Optional.of(effectiveExplosionResistance);
++            }
++        }
++        return optionalBlastResistance;
++        // Gale end - Lithium - reduce lambda and Optional allocation in EntityBasedExplosionDamageCalculator
+     }
+ 
+     @Override
