@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v3
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+    #   - name: Validate Gradle wrapper
+    #     uses: gradle/wrapper-validation-action@v1
+    #   - name: Setup Gradle
+    #     uses: gradle/gradle-build-action@v2
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -51,7 +51,7 @@ jobs:
       - name: Get and Set ENV
         run: sh scripts/GetSetENV.sh
       - name: Create Release
-        if: github.event.commits[0].message != '[release-skip]'
+        if: "!contains(github.event.commits[0].message, '[release-skip]')"
         uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ env.tag }}
@@ -67,7 +67,7 @@ jobs:
           makeLatest: ${{ env.make_latest }}
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Push to Api
-        if: github.event.commits[0].message != '[release-skip]'
+        if: "!contains(github.event.commits[0].message, '[release-skip]')"
         env:
             secret_v2: ${{ secrets.API_V2_PUSH_TOKEN }}
             tag: ${{ env.tag }}
