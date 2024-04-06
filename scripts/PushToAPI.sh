@@ -7,7 +7,7 @@ prop() {
 }
 echo "$tag"
 project_id="luminol"
-project_name="uminol"
+project_name="luminol"
 mcversion=$(prop mcVersion)
 ctime=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 pre=$(prop preVersion)
@@ -18,7 +18,7 @@ else
 fi
 promoted=false
 
-number=$(git log --oneline master ^`git describe --tags --abbrev=0` | wc -l)
+number=$(git log --oneline ver/1.20.4 ^`git describe --tags --abbrev=0` | wc -l)
 changes=$(git log --pretty='%H<<<%s>>>' -"$number" | sed ':a;N;$!ba;s/\n//g')
 jar_name="build/libs/luminol-1.20.4-paperclip.jar"
 jar_sha256=`sha256 $jar_name`

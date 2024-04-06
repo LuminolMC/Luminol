@@ -9,6 +9,8 @@ release_tag="$mcversion-$commitid"
 jarName="build/libs/luminol-1.20.4-paperclip.jar"
 make_latest=$([ $preVersion = "true" ] && echo "false" || echo "true")
 
+echo "commitid=$commitid" >> $GITHUB_ENV
+echo "version=$mcversion" >> $GITHUB_ENV
 echo "tag=$release_tag" >> $GITHUB_ENV
 echo "jar=$jarName" >> $GITHUB_ENV
 echo "pre=$preVersion" >> $GITHUB_ENV
