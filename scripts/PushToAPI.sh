@@ -24,4 +24,4 @@ jar_name="build/libs/luminol-1.20.4-paperclip.jar"
 jar_sha256=`sha256 $jar_name`
 
 # v2
-curl --location --request POST "https://api.luminolmc.com/v2/commit/build" --header "Content-Type: application/json" --header "Authentication: $secret_v2" --data-raw "{\"project_id\":\"$project_id\",\"version\":\"$mcversion\",\"channel\":\"$channel\",\"changes\":\"$changes\",\"jar_name\":\"$jar_name\",\"sha256\":\"$jar_sha256\",\"tag\":\"$tag\"}"
+curl --location --request POST "https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit" --header "Content-Type: application/json" --header "Authentication: $secret_v2" --data-raw "{\"project_id\":\"$project_id\",\"version\":\"$mcversion\",\"channel\":\"$channel\",\"changes\":\"$changes\",\"jar_name\":\"$jar_name\",\"sha256\":\"$jar_sha256\",\"tag\":\"$tag\"}"
