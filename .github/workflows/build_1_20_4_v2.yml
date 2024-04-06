@@ -6,7 +6,7 @@ on:
     pull_request:
       branches: [ "ver/1.20.4" ]
     # workflow_dispatch:
-
+permissions: write-all
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,10 +14,6 @@ jobs:
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v3
-    #   - name: Validate Gradle wrapper
-    #     uses: gradle/wrapper-validation-action@v1
-    #   - name: Setup Gradle
-    #     uses: gradle/gradle-build-action@v2
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -50,34 +46,22 @@ jobs:
           mv build/libs/luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
       - name: Get and Set ENV
         run: sh scripts/GetSetENV.sh
-#      - name: Create Release
-#        if: "!contains(github.event.commits[0].message, '[release-skip]')"
-#        uses: ncipollo/release-action@v1.12.0
-#        with:
-#          tag: ${{ env.tag }}
-#          name: Luminol ${{ steps.get_version.outputs.version }} - ${{ steps.short_sha.outputs.sha_short }}
-#          body: |
-#           📦Version: `${{ steps.get_version.outputs.version }}` | Commit ${{ steps.short_sha.outputs.sha_short }} [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0&style=flat-square)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ steps.get_version.outputs.version }}-${{ steps.short_sha.outputs.sha_short }}/luminol-1.20.4-paperclip.jar)
-#            This release is automatically compiled by GitHub Actions
-#          artifacts: |
-#            build/libs/luminol-1.20.4-bundler.jar
-#            build/libs/luminol-1.20.4-paperclip.jar
-#          generateReleaseNotes: true
-#          prerelease: ${{ env.pre }}
-#          makeLatest: ${{ env.make_latest }}
-#          token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Release Artifacts
-        uses: svenstaro/upload-release-action@v2
+      - name: Create Release
+        if: "!contains(github.event.commits[0].message, '[release-skip]')"
+        uses: ncipollo/release-action@v1.12.0
         with:
-          release_name: "Luminol MC1.20.4 - ${{ github.event.repository.updated_at}}"
           tag: ${{ env.tag }}
-#          body: |
-#            📦Version: `${{ steps.get_version.outputs.version }}` | Commit ${{ steps.short_sha.outputs.sha_short }} [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0&style=flat-square)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ steps.get_version.outputs.version }}-${{ steps.short_sha.outputs.sha_short }}/luminol-1.20.4-paperclip.jar)
-#             This release is automatically compiled by GitHub Actions
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          file: "build/libs/luminol-1.20.4-paperclip.jar"
-          file_glob: true
+          name: Luminol ${{ steps.get_version.outputs.version }} - ${{ steps.short_sha.outputs.sha_short }}
+          body: |
+           📦Version: `${{ steps.get_version.outputs.version }}` | Commit ${{ steps.short_sha.outputs.sha_short }} [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0&style=flat-square)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ steps.get_version.outputs.version }}-${{ steps.short_sha.outputs.sha_short }}/luminol-1.20.4-paperclip.jar)
+            This release is automatically compiled by GitHub Actions
+          artifacts: |
+            build/libs/luminol-1.20.4-bundler.jar
+            build/libs/luminol-1.20.4-paperclip.jar
+          generateReleaseNotes: true
           prerelease: ${{ env.pre }}
+          makeLatest: ${{ env.make_latest }}
+          token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Push to Api
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         env:
