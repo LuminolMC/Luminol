@@ -7,7 +7,7 @@ prop() {
 }
 echo "$tag"
 project_id="luminol"
-mcversion_group=$(prop GroupMCV)
+mcversion_group=$(prop GroupMCV )
 mcversion=$(prop mcVersion)
 echo "$mcversion_group - $mcversion"
 pre=$(prop preVersion)
@@ -16,10 +16,11 @@ if [ $pre = "true" ]; then
 else
   channel="default"
 fi
-number=$(git log --oneline "ver/1.20.4" ^$(git describe --tags --abbrev=0) | wc -l)
+latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+number=$(git log --oneline "ver/1.20.4" ^$latest_tag | wc -l)
 changes=$(git log --pretty='%H<<<%s>>>' -"$number" | sed ':a;N;$!ba;s/\n//g')
 jar_sha256=`sha256 build/libs/luminol-1.20.4-paperclip.jar`
-echo "$har_sha256"
+echo "$jar_sha256"
 jar_name="luminol-1.20.4-paperclip.jar"
 ctime=$(date -u +"%s")"000"
 echo "$ctime"
