@@ -17,9 +17,7 @@ else
   channel="default"
 fi
 git tag
-echo "Latest tag: $(git describe --tags --abbrev=0)"
-number=$(git log --oneline ver/1.20.4 ^$(git describe --tags --abbrev=0) | wc -l)
-changes=$(git log --pretty='%H<<<%s>>>' -"$number" | sed ':a;N;$!ba;s/\n//g')
+changes=$(git log -1 --pretty='[{"commit": "%H", "message": "%s", "summary": "%b"}]')
 jar_sha256=`sha256 build/libs/luminol-1.20.4-paperclip.jar`
 echo "$jar_sha256"
 jar_name="luminol-1.20.4-paperclip.jar"
