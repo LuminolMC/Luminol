@@ -65,7 +65,7 @@ jobs:
           generateReleaseNotes: true
           prerelease: ${{ env.pre }}
           makeLatest: ${{ env.make_latest }}
-          token: "${{ secrets.GITHUB_TOKEN }}"
+          token: "${{ secrets.GHP }}"
       - name: Push to Api
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         env:
