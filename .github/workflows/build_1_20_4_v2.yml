@@ -65,10 +65,10 @@ jobs:
           generateReleaseNotes: true
           prerelease: ${{ env.pre }}
           makeLatest: ${{ env.make_latest }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Push to Api
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         env:
-            secret_v2: ${{ secrets.API_V2_PUSH_TOKEN }}
-            tag: ${{ env.tag }}
+          secret_v2: ${{ secrets.API_V2_PUSH_TOKEN }}
+          tag: ${{ env.tag }}
         run: sh scripts/PushToAPI.sh
