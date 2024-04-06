@@ -5,24 +5,18 @@ sha256() {
 prop() {
   grep "${1}" gradle.properties | cut -d'=' -f2 | sed 's/\r//'
 }
-echo "$tag"
 project_id="luminol"
 mcversion_group=$(prop GroupMCV)
 mcversion=$(prop mcVersion)
-echo "$mcversion_group - $mcversion"
 pre=$(prop preVersion)
 if [ $pre = "true" ]; then
   channel="experimental"
 else
   channel="default"
 fi
-git tag
 changes=$(git log -1 --pretty='[{"commit": "%H", "message": "%s", "summary": "%b"}]')
-echo $changes
+jar_sha256=`sha256 build/libs/luminol-1.20.4-paperclip.jar`
 jar_name="luminol-1.20.4-paperclip.jar"
-jar_sha256=`sha256 $jar_name`
-echo "$jar_sha256"
 ctime=$(date -u +"%s")"000"
-echo "$ctime"
 # v2
 curl --location --request POST "https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit" --header "Content-Type: application/json" --header "Authentication: $secret_v2" --data-raw "{\"version_group\":\"$mcversion_group\",\"channel\":\"$channel\",\"changes\":\"$changes\",\"jar_name\":\"$jar_name\",\"sha256\":\"$jar_sha256\",\"release_tag\":\"$tag\",\"time\":\"$ctime\"}"
