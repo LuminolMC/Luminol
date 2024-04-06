@@ -2,8 +2,8 @@ prop() {
   grep "${1}" gradle.properties | cut -d'=' -f2 | sed 's/\r//'
 }
 
-commitid=$(git log --pretty='%h' -1)
-mcversion=$(prop mcVersion)
+commitid="$(git log --pretty='%h' -1)"
+mcversion="$(prop mcVersion)"
 preVersion=$(prop preVersion)
 release_tag="$mcversion-$commitid"
 jarName="build/libs/luminol-1.20.4-paperclip.jar"
