@@ -27,24 +27,26 @@ jobs:
         run: ./gradlew applyPatches
       - name: Build
         run: ./gradlew createReobfBundlerJar createReobfPaperclipJar
-      - uses: "actions/upload-artifact@v3"
-        with:
-          name: "Luminol CI Artifacts"
-          path: "build/libs/*.jar"
+    #   - uses: "actions/upload-artifact@v3"
+    #     with:
+    #       name: "Luminol CI Artifacts"
+    #       path: "build/libs/*.jar"
       - name: Rename jar file
         run: |
           mv build/libs/luminol-bundler-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-bundler.jar
           mv build/libs/luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
       - name: Set ENV
-        run: sh scripts/setenv.sh
+        run: |
+          sh scripts/setenv.sh
+          echo ${{ env.tag }} | ${{ env.mcversion }} | ${{ env.commitid }} | ${{ env.pre }} |${{ env.make_latest }}
       - name: Create Release
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ env.tag }}
-          name: Luminol ${{ env.version }} - ${{ env.commitid }}
+          name: Luminol ${{ env.mcversion }} - ${{ env.commitid }}
           body: |
-           📦Version: `${{ env.version }}` | Commit ${{ env.commitid }} [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ env.tag }}/luminol-1.20.4-paperclip.jar)
+           📦Version: `${{ env.mcversion }}` | Commit ${{ env.commitid }} [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ env.tag }}/luminol-1.20.4-paperclip.jar)
             This release is automatically compiled by GitHub Actions
           artifacts: |
             build/libs/luminol-1.20.4-bundler.jar
