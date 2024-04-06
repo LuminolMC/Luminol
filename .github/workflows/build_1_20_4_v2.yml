@@ -44,7 +44,7 @@ jobs:
           tag: ${{ env.tag }}
           name: Luminol ${{ env.version }} - ${{ env.commitid }}
           body: |
-           📦Version: `${{ env.version }}` | Commit ${{ env.commitid }}    [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0&style=flat-square)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ env.tag }}/luminol-1.20.4-paperclip.jar)
+           📦Version: `${{ env.version }}` | Commit ${{ env.commitid }} [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ env.tag }}/luminol-1.20.4-paperclip.jar)
             This release is automatically compiled by GitHub Actions
           artifacts: |
             build/libs/luminol-1.20.4-bundler.jar
