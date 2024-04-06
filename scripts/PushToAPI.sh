@@ -7,7 +7,7 @@ prop() {
 }
 echo "$tag"
 project_id="luminol"
-mcversion_group=$(prop mcVersionGroup)
+mcversion_group=$(prop GroupMCV)
 mcversion=$(prop mcVersion)
 echo "$mcversion_group - $mcversion"
 pre=$(prop preVersion)
