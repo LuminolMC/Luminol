@@ -3,11 +3,16 @@ prop() {
 }
 
 commitid=$(git log --pretty='%h' -1)
+echo "$commitid"
 mcversion=$(prop mcVersion)
+echo "$mcversion"
 preVersion=$(prop preVersion)
+echo "$preVersion"
 release_tag="$mcversion-$commitid"
+echo "$release_tag"
 jarName="build/libs/luminol-1.20.4-paperclip.jar"
 make_latest=$([ $preVersion = "true" ] && echo "false" || echo "true")
+echo "$make_latest"
 
 echo "commitid=$commitid" >> $GITHUB_ENV
 echo "mcversion=$mcversion" >> $GITHUB_ENV
