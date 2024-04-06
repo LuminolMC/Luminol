@@ -1,11 +1,11 @@
 name: Luminol CI v2 - Ver/1.20.4
 
 on:
-    # push:
-    #   branches: [ "ver/1.20.4" ]
-    # pull_request:
-    #   branches: [ "ver/1.20.4" ]
-    workflow_dispatch:
+    push:
+      branches: [ "ver/1.20.4" ]
+    pull_request:
+      branches: [ "ver/1.20.4" ]
+    # workflow_dispatch:
 
 jobs:
   build:
