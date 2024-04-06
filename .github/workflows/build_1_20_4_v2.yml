@@ -74,7 +74,7 @@ jobs:
           body: |
             📦Version: `${{ steps.get_version.outputs.version }}` | Commit ${{ steps.short_sha.outputs.sha_short }} [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0&style=flat-square)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ steps.get_version.outputs.version }}-${{ steps.short_sha.outputs.sha_short }}/luminol-1.20.4-paperclip.jar)
              This release is automatically compiled by GitHub Actions
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          repo_token: "${{ secrets.GHP }}"
           file: "build/libs/luminol-1.20.4-paperclip.jar"
           file_glob: true
           prerelease: ${{ env.pre }}
