@@ -1,0 +1,74 @@
+name: Luminol CI v2 - Ver/1.20.4
+
+on:
+    # push:
+    #   branches: [ "ver/1.20.4" ]
+    # pull_request:
+    #   branches: [ "ver/1.20.4" ]
+    workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v3
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Setup Git Config
+        run: |
+          git config --global user.email "ci@luminolmc.com"
+          git config --global user.name "Luminol CI"
+      - name: Apply Patches
+        run: ./gradlew applyPatches
+      - name: Build
+        run: ./gradlew createReobfBundlerJar createReobfPaperclipJar
+      - uses: "actions/upload-artifact@v3"
+        with:
+          name: "Luminol CI Artifacts"
+          path: "build/libs/*.jar"
+      - name: Get version from asset
+        id: get_version
+        run: echo "::set-output name=version::$(echo build/libs/*.jar | grep -oP 'bundler-\K\d+\.\d+\.\d+' | head -1)"
+      - name: Set outputs
+        id: short_sha
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Set env
+        run:  echo "tag=${{ steps.get_version.outputs.version }}-${{ steps.short_sha.outputs.sha_short }}" >> $GITHUB_ENV
+      - name: Rename jar file
+        run: |
+          mv build/libs/luminol-bundler-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-bundler.jar
+          mv build/libs/luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
+      - name: Get Release Info
+        run: sh scripts/Get&SetENV.sh
+      - name: Create Release
+        if: github.event.commits[0].message != '[release-skip]'
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          tag: ${{ env.tag }}
+          name: Luminol ${{ steps.get_version.outputs.version }} - ${{ steps.short_sha.outputs.sha_short }}
+          body: |
+           📦Version: `${{ steps.get_version.outputs.version }}` | Commit ${{ steps.short_sha.outputs.sha_short }} [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0&style=flat-square)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ steps.get_version.outputs.version }}-${{ steps.short_sha.outputs.sha_short }}/luminol-1.20.4-paperclip.jar)
+            This release is automatically compiled by GitHub Actions
+          artifacts: |
+            build/libs/luminol-1.20.4-bundler.jar
+            build/libs/luminol-1.20.4-paperclip.jar
+          generateReleaseNotes: true
+          prerelease: ${{ env.pre }}
+          makeLatest: ${{ env.make_latest }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push to Api
+        if: github.event.commits[0].message != '[release-skip]'
+        env:
+            secret_v2: ${{ secrets.API_V2_PUSH_TOKEN }}
+            tag: ${{ env.tag }}
+        run: sh scripts/PushToAPI.sh
