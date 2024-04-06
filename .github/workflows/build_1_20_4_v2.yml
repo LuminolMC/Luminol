@@ -33,13 +33,11 @@ jobs:
           path: "build/libs/*.jar"
       - name: Get version from asset
         id: get_version
-        run: echo "::set-output name=version::$(echo build/libs/*.jar | grep -oP 'bundler-\K\d+\.\d+\.\d+' | head -1)"
-      - name: Set outputs
-        id: short_sha
         run: |
+          version=$(echo build/libs/*.jar | grep -oP 'bundler-\K\d+\.\d+\.\d+' | head -1)
+          echo "version=${version}" >> $GITHUB_ENV
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-      - name: Set env
-        run:  echo "tag=${{ steps.get_version.outputs.version }}-${{ steps.short_sha.outputs.sha_short }}" >> $GITHUB_ENV
+          echo "tag=${{ env.version }}-${{ env.sha_short }}" >> $GITHUB_ENV
       - name: Rename jar file
         run: |
           mv build/libs/luminol-bundler-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-bundler.jar
@@ -51,9 +49,9 @@ jobs:
         uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ env.tag }}
-          name: Luminol ${{ steps.get_version.outputs.version }} - ${{ steps.short_sha.outputs.sha_short }}
+          name: Luminol ${{ env.version }} - ${{ env.sha_short }}
           body: |
-           📦Version: `${{ steps.get_version.outputs.version }}` | Commit ${{ steps.short_sha.outputs.sha_short }} [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0&style=flat-square)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ steps.get_version.outputs.version }}-${{ steps.short_sha.outputs.sha_short }}/luminol-1.20.4-paperclip.jar)
+           📦Version: `${{ env.version }}` | Commit ${{ env.sha_short }}    [![download](https://img.shields.io/github/downloads/LuminolMC/Luminol/${{ env.tag }}/total?color=0&style=flat-square)](https://github.com/LeavesMC/LuminolMC/Luminol/download/${{ env.tag }}/luminol-1.20.4-paperclip.jar)
             This release is automatically compiled by GitHub Actions
           artifacts: |
             build/libs/luminol-1.20.4-bundler.jar

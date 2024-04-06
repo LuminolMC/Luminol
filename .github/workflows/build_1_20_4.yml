@@ -8,9 +8,9 @@
 name: LuminolCI - Ver/1.20.4
 
 on:
-  push:
+  # push:
     # branches: [ "ver/1.20.4" ]
-  pull_request:
+  # pull_request:
     # branches: [ "ver/1.20.4" ]
 
 permissions: write-all
