@@ -16,6 +16,7 @@ if [ $pre = "true" ]; then
 else
   channel="default"
 fi
+git checkout ver/1.20.4
 echo "Latest tag: $(git describe --tags --abbrev=0)"
 number=$(git log --oneline ver/1.20.4 ^$(git describe --tags --abbrev=0) | wc -l)
 changes=$(git log --pretty='%H<<<%s>>>' -"$number" | sed ':a;N;$!ba;s/\n//g')
