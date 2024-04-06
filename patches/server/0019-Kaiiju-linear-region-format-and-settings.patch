@@ -573,7 +573,7 @@ index 9017907c0ec67a37a506f09b7e4499cef7885279..8b9ffcaab5d71660291d1c0454d2abd9
  
 diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7c034f65bac5aab4c46a8506efa5befe7891bc99
+index 0000000000000000000000000000000000000000..5d594b606178bd26180caad49de17c0e67e89747
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java
 @@ -0,0 +1,58 @@
@@ -591,7 +591,7 @@ index 0000000000000000000000000000000000000000..7c034f65bac5aab4c46a8506efa5befe
 +    @ConfigInfo(baseName = "formatName")
 +    private static String formatName = "ANVIL";
 +    @HotReloadUnsupported
-+    @ConfigInfo(baseName = "linear_compression_level")
++    @ConfigInfo(baseName = "linear_compression_level",comments = "WARNING: DO NOT USE TOO HIGH COMPRESSION LEVEL(Recommended is 1 which is default value if you are using linear) BECAUSE THAT WOULD MAKE YOUR DATA IN DANGER!")
 +    public static int regionFormatLinearCompressionLevel = 1;
 +    @HotReloadUnsupported
 +    @ConfigInfo(baseName = "linear_flusher_thread_count")
