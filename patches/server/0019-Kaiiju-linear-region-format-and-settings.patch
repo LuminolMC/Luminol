@@ -93,10 +93,10 @@ index 0000000000000000000000000000000000000000..dcfbabf54b19a4c29d5c95830242c5c2
 +}
 diff --git a/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e40989889f3821bb7484fc0bae5d94b033013904
+index 0000000000000000000000000000000000000000..dc5a5f42c9ca7a50295c18424722568a3ad33fa5
 --- /dev/null
 +++ b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java
-@@ -0,0 +1,316 @@
+@@ -0,0 +1,324 @@
 +package dev.kaiijumc.kaiiju.region;
 +
 +import com.github.luben.zstd.ZstdInputStream;
@@ -225,7 +225,7 @@ index 0000000000000000000000000000000000000000..e40989889f3821bb7484fc0bae5d94b0
 +    }
 +
 +    public void flush() throws IOException {
-+        if (isMarkedToSave()) flushWrapper(); // sync
++        if (getAndResetSaveMarker()) flushWrapper(); // sync
 +    }
 +
 +    private void markToSave() {
@@ -233,8 +233,16 @@ index 0000000000000000000000000000000000000000..e40989889f3821bb7484fc0bae5d94b0
 +        markedToSave.set(true);
 +    }
 +
-+    public boolean isMarkedToSave() {
++    public boolean getAndResetSaveMarker() {
 +        return markedToSave.getAndSet(false);
++    }
++
++    public boolean isMarkedToSave(){
++        return this.markedToSave.get();
++    }
++
++    public void resetSaveMarker(){
++        this.markedToSave.set(false);
 +    }
 +
 +    public void flushWrapper() {
@@ -415,24 +423,21 @@ index 0000000000000000000000000000000000000000..e40989889f3821bb7484fc0bae5d94b0
 +}
 diff --git a/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f06d7767c79e465f999b2032086cc224de95152a
+index 0000000000000000000000000000000000000000..65435eb666b2e1cabffc145e016faa5e3b373464
 --- /dev/null
 +++ b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,57 @@
 +package dev.kaiijumc.kaiiju.region;
 +
 +import com.google.common.util.concurrent.ThreadFactoryBuilder;
-+import java.util.Queue;
++
++import java.util.Set;
 +import java.util.concurrent.*;
 +import org.bukkit.Bukkit;
 +
 +public class LinearRegionFileFlusher {
-+    private final Queue<LinearRegionFile> savingQueue = new LinkedBlockingQueue<>();
-+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(
-+        new ThreadFactoryBuilder()
-+            .setNameFormat("linear-flush-scheduler")
-+            .build()
-+    );
++    private final Set<LinearRegionFile> pendingSaving = ConcurrentHashMap.newKeySet();
++
 +    private final ExecutorService executor = Executors.newFixedThreadPool(
 +        me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearFlushThreads,
 +        new ThreadFactoryBuilder()
@@ -440,27 +445,43 @@ index 0000000000000000000000000000000000000000..f06d7767c79e465f999b2032086cc224
 +            .build()
 +    );
 +
++    private final Executor delayedFlusher = CompletableFuture.delayedExecutor(
++            me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearFlushFrequency,
++            TimeUnit.SECONDS,
++            executor
++    );
++
 +    public LinearRegionFileFlusher() {
 +        Bukkit.getLogger().info("Using " + me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearFlushThreads + " threads for linear region flushing.");
-+        scheduler.scheduleAtFixedRate(this::pollAndFlush, 0L, me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearFlushFrequency, TimeUnit.SECONDS);
 +    }
 +
 +    public void scheduleSave(LinearRegionFile regionFile) {
-+        if (savingQueue.contains(regionFile)) return;
-+        savingQueue.add(regionFile);
-+    }
-+
-+    private void pollAndFlush() {
-+        while (!savingQueue.isEmpty()) {
-+            LinearRegionFile regionFile = savingQueue.poll();
-+            if (!regionFile.closed && regionFile.isMarkedToSave())
-+                executor.execute(regionFile::flushWrapper);
++        if (this.pendingSaving.contains(regionFile) || !regionFile.isMarkedToSave()){
++            return;
 +        }
++
++        this.pendingSaving.add(regionFile);
++        this.delayedFlusher.execute(()->{
++            try {
++                if (!regionFile.closed && regionFile.isMarkedToSave()){
++                    regionFile.flushWrapper();
++                }
++            }finally {
++                regionFile.resetSaveMarker();
++                this.pendingSaving.remove(regionFile);
++            }
++        });
 +    }
 +
 +    public void shutdown() {
-+        executor.shutdown();
-+        scheduler.shutdown();
++        this.executor.shutdown();
++        for (;;) {
++            try {
++                if (this.executor.awaitTermination(5_00,TimeUnit.MILLISECONDS)) break;
++            } catch (InterruptedException e) {
++                e.printStackTrace();
++            }
++        }
 +    }
 +}
 diff --git a/src/main/java/dev/kaiijumc/kaiiju/region/RegionFileFormat.java b/src/main/java/dev/kaiijumc/kaiiju/region/RegionFileFormat.java
