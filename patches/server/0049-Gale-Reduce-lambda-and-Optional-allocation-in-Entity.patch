@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
 Date: Sat, 6 Apr 2024 05:14:57 +0000
-Subject: [PATCH] Gale Reduce lambda and Optional allocation in 
+Subject: [PATCH] Gale Reduce lambda and Optional allocation in
  EntityBasedExplosionDamageCalculator
 
 
