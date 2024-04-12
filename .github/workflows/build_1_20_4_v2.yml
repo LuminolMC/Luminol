@@ -9,7 +9,7 @@ on:
 permissions: write-all
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout Git Repository
@@ -58,6 +58,6 @@ jobs:
       - name: Push to Api
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         env:
-          secret_v2: ${{ secrets.API_SERECT }}
+          secret_v2: ${{ vars.API_KEY }}
           tag: ${{ env.tag }}
         run: sh scripts/PushToAPI.sh
