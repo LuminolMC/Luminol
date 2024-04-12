@@ -21,7 +21,7 @@ jobs:
           java-version: '17'
       - name: Setup Git Config
         run: |
-          export HOME=/home/klop233
+          export HOME=/root
           git config --global user.email "ci@luminolmc.com"
           git config --global user.name "Luminol CI"
       - name: Apply Patches
