@@ -9,6 +9,7 @@ on:
 permissions: write-all
 jobs:
   build:
+    environment: default
     runs-on: ubuntu-latest
 
     steps:
