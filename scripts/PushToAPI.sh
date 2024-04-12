@@ -9,6 +9,7 @@ project_id="luminol"
 mcversion_group=$(prop GroupMCV)
 mcversion=$(prop mcVersion)
 pre=$(prop preVersion)
+
 if [ $pre = "true" ]; then
   channel="experimental"
 else
