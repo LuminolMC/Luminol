@@ -9,8 +9,8 @@ on:
 permissions: write-all
 jobs:
   build:
-    environment: default
     runs-on: ubuntu-latest
+    environment: default
 
     steps:
       - name: Checkout Git Repository
@@ -59,6 +59,6 @@ jobs:
       - name: Push to Api
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         env:
-          secret_v2: ${{ vars.API_KEY }}
+          secret_v2: ${{ secrets.API_KEY }}
           tag: ${{ env.tag }}
         run: sh scripts/PushToAPI.sh
