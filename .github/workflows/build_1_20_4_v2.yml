@@ -81,6 +81,6 @@ jobs:
       - name: Push to Api
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         env:
-          secret_v2: ${{ secrets.API_V2_PUSH_TOKEN }}
+          secret_v2: ${{ secrets.API_SERECT }}
           tag: ${{ env.tag }}
         run: sh scripts/PushToAPI.sh
