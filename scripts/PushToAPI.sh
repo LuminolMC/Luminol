@@ -22,7 +22,7 @@ ctime=$(date -u +"%s")"000"
 
 # v2
 echo "Authentication: $secret_v2"
-echo {\"version_group\":\"$mcversion_group\",\"channel\":\"$channel\",\"changes\":\"$changes\",\"jar_name\":\"$jar_name\",\"sha256\":\"$jar_sha256\",\"release_tag\":\"$tag\",\"time\":\"$ctime\"} > data.json
+echo "{\"version_group\":\"$mcversion_group\",\"channel\":\"$channel\",\"changes\":\"$changes\",\"jar_name\":\"$jar_name\",\"sha256\":\"$jar_sha256\",\"release_tag\":\"$tag\",\"time\":\"$ctime\"}" > data.json
 json = `cat data.json`
 echo "[DEBUG] $json"
 curl --location --request POST "https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit" -H "Content-Type: application/json" -H "Authorization: $secret_v2" -d @data.json
