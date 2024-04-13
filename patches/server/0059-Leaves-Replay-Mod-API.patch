@@ -209,6 +209,19 @@ index 2e2a7c2cf3081187da817479a9da3eb10f662a6d..ee616fe98c98a345872c1eadf41c7852
                  return !playerList.isOp(player.getGameProfile());
              }).map((player) -> {
                  return player.getGameProfile().getName();
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 0086a1a4611b983eefd0cb7bf8e9cff677246d0f..dcbf18eb7fb9a37fcd7faf3efe023d2503b4091a 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -197,7 +197,7 @@ public class ServerPlayer extends Player {
+     private static final int FLY_STAT_RECORDING_SPEED = 25;
+     public ServerGamePacketListenerImpl connection;
+     public final MinecraftServer server;
+-    public final ServerPlayerGameMode gameMode;
++    public ServerPlayerGameMode gameMode;
+     private final PlayerAdvancements advancements;
+     private final ServerStatsCounter stats;
+     private float lastRecordedHealthAndAbsorption = Float.MIN_VALUE;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 index 4fc9a47745b817d9ee2da4776cab26ff9f3b0025..e0a103ed27f834f62afb3696047c7581aa608f49 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
@@ -1358,7 +1371,7 @@ index 0000000000000000000000000000000000000000..852f2098d93d4437fe79af06e454d849
 +}
 diff --git a/src/main/java/top/leavesmc/leaves/replay/ServerPhotographer.java b/src/main/java/top/leavesmc/leaves/replay/ServerPhotographer.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3941d297587e971c5bbd8f3303dbac755ab77d2c
+index 0000000000000000000000000000000000000000..438651c02b371f9f85cd97fe0fefb14d1858aaa0
 --- /dev/null
 +++ b/src/main/java/top/leavesmc/leaves/replay/ServerPhotographer.java
 @@ -0,0 +1,246 @@
@@ -1405,6 +1418,7 @@ index 0000000000000000000000000000000000000000..3941d297587e971c5bbd8f3303dbac75
 +
 +    private ServerPhotographer(MinecraftServer server, ServerLevel world, GameProfile profile) {
 +        super(server, world, profile, ClientInformation.createDefault());
++        this.gameMode = new ServerPhotographerGameMode(this);
 +        this.followPlayer = null;
 +        this.stats = new NullStatsCounter(server);
 +        this.lastPos = this.position();
@@ -1439,7 +1453,6 @@ index 0000000000000000000000000000000000000000..3941d297587e971c5bbd8f3303dbac75
 +
 +        photographer.recorder.start();
 +        MinecraftServer.getServer().getPlayerList().placeNewPhotographer(photographer.recorder, photographer, world, state.loc);
-+        photographer.setGameMode(GameType.SPECTATOR);
 +        photographer.serverLevel().chunkSource.move(photographer);
 +        photographer.setInvisible(true);
 +        photographers.add(photographer);
@@ -1608,6 +1621,47 @@ index 0000000000000000000000000000000000000000..3941d297587e971c5bbd8f3303dbac75
 +        }
 +    }
 +}
+diff --git a/src/main/java/top/leavesmc/leaves/replay/ServerPhotographerGameMode.java b/src/main/java/top/leavesmc/leaves/replay/ServerPhotographerGameMode.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..f8c4d248c7f9e0b42cd04e252a1281ceb3e3c4ce
+--- /dev/null
++++ b/src/main/java/top/leavesmc/leaves/replay/ServerPhotographerGameMode.java
+@@ -0,0 +1,34 @@
++package top.leavesmc.leaves.replay;
++
++        import net.kyori.adventure.text.Component;
++import net.minecraft.server.level.ServerPlayerGameMode;
++import net.minecraft.world.level.GameType;
++import org.bukkit.event.player.PlayerGameModeChangeEvent;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++
++public class ServerPhotographerGameMode extends ServerPlayerGameMode {
++    public ServerPhotographerGameMode(ServerPhotographer photographer) {
++        super(photographer);
++        super.setGameModeForPlayer(GameType.SPECTATOR, null);
++    }
++
++    @Override
++    public boolean changeGameModeForPlayer(@NotNull GameType gameMode) {
++        return false;
++    }
++
++    @Nullable
++    @Override
++    public PlayerGameModeChangeEvent changeGameModeForPlayer(@NotNull GameType gameMode, PlayerGameModeChangeEvent.@NotNull Cause cause, @Nullable Component cancelMessage) {
++        return null;
++    }
++
++    @Override
++    protected void setGameModeForPlayer(@NotNull GameType gameMode, @Nullable GameType previousGameMode) {
++    }
++
++    @Override
++    public void tick() {
++    }
++}
+\ No newline at end of file
 diff --git a/src/main/java/top/leavesmc/leaves/util/UUIDSerializer.java b/src/main/java/top/leavesmc/leaves/util/UUIDSerializer.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..1329a725a2bd03d3ef6d7131d8bc77f20bf2e566
