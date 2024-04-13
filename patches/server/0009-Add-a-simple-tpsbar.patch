@@ -359,7 +359,7 @@ index 68355b9a0a88c871e18031d04581c9ef53313f48..c626018d786fe231cd74a28c83515715
          //Util.shutdownExecutors(); // Paper - moved into super
          SkullBlockEntity.clear();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index cbc89b8898f9243776af88c2b04ad3c2e4e23fb6..318cb1e98a3d73b7893f07c9f0db3adab801b67e 100644
+index 9d7837f90340a96edbd544826ae2241c61ae72c4..c8701a2a0a3cbd60e263fe5c069b5993b36842a6 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -285,6 +285,7 @@ public class ServerPlayer extends Player {
@@ -371,10 +371,10 @@ index cbc89b8898f9243776af88c2b04ad3c2e4e23fb6..318cb1e98a3d73b7893f07c9f0db3ada
      public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances getViewDistances() {
          return this.viewDistances.get();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index d2902fc7f3b7af59f181bd1e12435d946db7ad23..26f70965b45fa3c344781b569a651a4668d0621d 100644
+index b0a70287ff1fc9b3d5eba322d949aaf510b165d2..74e7fefe0819829f9280cf1602cca841f796e7a3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2287,6 +2287,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2285,6 +2285,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                  handle.expToDrop = data.getInt("expToDrop");
                  handle.keepLevel = data.getBoolean("keepLevel");
              }
@@ -384,7 +384,7 @@ index d2902fc7f3b7af59f181bd1e12435d946db7ad23..26f70965b45fa3c344781b569a651a46
          }
      }
  
-@@ -2308,6 +2311,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2306,6 +2309,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          data.putLong("lastPlayed", System.currentTimeMillis());
          data.putString("lastKnownName", handle.getScoreboardName());
  

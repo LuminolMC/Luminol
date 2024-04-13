@@ -5,7 +5,7 @@ Subject: [PATCH] Io_uring channel type support
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 66c34f883a93dd86fcac8029cce63ffe7340c89b..66cb23bce8bf0a96867144874643f771f7440034 100644
+index 247598b6c73aca3743f4b16b47520f8ba16b2ed0..546c5ad9de8fb8bae23220547c74005f087c6597 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -35,6 +35,7 @@ dependencies {

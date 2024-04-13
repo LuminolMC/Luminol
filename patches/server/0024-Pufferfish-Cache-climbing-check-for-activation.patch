@@ -5,7 +5,7 @@ Subject: [PATCH] Pufferfish Cache climbing check for activation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index d955a555d260d39812b84eb5319db619ec0f8d28..7834646fd6a894ff85973566d9aeda98e5b0c284 100644
+index 31231d7d11925046c9fd9db344acf0ab325a6c56..94ac4ac24f68dd185ec73f040ad3d560a184e0b2 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -311,7 +311,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
@@ -18,7 +18,7 @@ index d955a555d260d39812b84eb5319db619ec0f8d28..7834646fd6a894ff85973566d9aeda98
      private Vec3 deltaMovement;
      private float yRot;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index fdb5ef574c14fafa1af50f4f656763119695f00e..bbfbeddcba884ae1964f7421fcdf179923bd0d2b 100644
+index b9f6e599afd4bdfb97e7f1b1881730cbed781bba..ff7b0d6a22a0858d4e4348d4f3c0c55bcb3f0084 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -143,7 +143,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
@@ -51,10 +51,10 @@ index fdb5ef574c14fafa1af50f4f656763119695f00e..bbfbeddcba884ae1964f7421fcdf1799
          if (this.isSpectator()) {
              return false;
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index f8718d91f4c15c74d6e6dd5f60f7f05f45f63655..50fafff765b2494c075784cc5342d086c8dc97b2 100644
+index 4fc4690d03fd5f39e019f16845954052210c7361..c77beef9651aa2f7333d536e8ff4af3281834619 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
-@@ -305,7 +305,7 @@ public class ActivationRange
+@@ -307,7 +307,7 @@ public class ActivationRange
          if ( entity instanceof LivingEntity )
          {
              LivingEntity living = (LivingEntity) entity;

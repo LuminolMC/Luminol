@@ -5,7 +5,7 @@ Subject: [PATCH] Kaiiju linear region format and settings
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 66cb23bce8bf0a96867144874643f771f7440034..57fcd58883effe57051b72a4e9f4af91aacd421a 100644
+index 546c5ad9de8fb8bae23220547c74005f087c6597..ff14a65d284448f3eea15ee4c38e73ed61004a97 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -20,6 +20,10 @@ dependencies {
@@ -657,7 +657,7 @@ index 0000000000000000000000000000000000000000..5d594b606178bd26180caad49de17c0e
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 59b1da130e519cbe06ed5eedf9e4dc881e45ba36..c924951c3dd7652ee446b40689ff9004546e972a 100644
+index d2e02ccdfbea138f8afe335a8b8c50f0696d7108..0e495628228543d55a101d7840acb9fd16e1937b 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -923,7 +923,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -726,7 +726,7 @@ index 6ab9f83786dcfbd3156d2f2bd6da57baed1399f4..76ad4d8bce1611ead6f1596b2ba78267
          regionFile.setStatus(chunkPos.x, chunkPos.z, ChunkSerializer.getStatus(compound));
      }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 10df17ad79092f3e226df08e58620694b3581758..da6269249a95d78f91e90416a96bf1b776fd9c97 100644
+index 43b8f64d7c14e6dd0975b24a3205806c4433f26f..eefc98c82c9eb7316f195e306cceb5c9bdcbead8 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -446,8 +446,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -1146,10 +1146,10 @@ index 4aac1979cf57300825a999c876fcf24d3170e68e..3b96582f15d0985b670b5b5a1548800d
          this.factory = factory;
          this.fixerUpper = dataFixer;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 379c10e791a961d25d7de571f81ace1ac7d84381..e268ef6a373fa0e144104eb7fcfaf7bc9005c987 100644
+index becb3b07876715d7c39ba4e7289cc5ac85f84412..6763ebef045f856dac9d25113b7824699934ca44 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -575,7 +575,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+@@ -576,7 +576,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
                  world.getChunk(x, z); // make sure we're at ticket level 32 or lower
                  return true;
              }

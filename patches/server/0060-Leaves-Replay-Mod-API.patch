@@ -168,7 +168,7 @@ index 18b8651147dedcf80d9baf04e87fb25cfbf9b89f..e9a49eb00c64d864ebf4b24d6fe84aba
          super.channelActive(channelhandlercontext);
          this.channel = channelhandlercontext.channel();
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index c924951c3dd7652ee446b40689ff9004546e972a..776f5ce5fac57bc7ccdfc4dbab87811bc33de87d 100644
+index 0e495628228543d55a101d7840acb9fd16e1937b..ea4ee9aa6f9cf28c8b06e2c0546a8a92e44e2620 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1727,7 +1727,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -210,7 +210,7 @@ index 2e2a7c2cf3081187da817479a9da3eb10f662a6d..ee616fe98c98a345872c1eadf41c7852
              }).map((player) -> {
                  return player.getGameProfile().getName();
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index b3ff8ed6d0f0414c15b9d2e6a51a0e34c361f92a..b6e078a10adbbf5c2061b4bf448836231818b768 100644
+index 4fc9a47745b817d9ee2da4776cab26ff9f3b0025..e0a103ed27f834f62afb3696047c7581aa608f49 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -297,7 +297,13 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -509,7 +509,7 @@ index dc223b536eadd2da6cf3c758a62d0ed81b5a7b3b..e0f49c7e941830236b92f6705cd2c4b9
 +    // Leaves end - replay mod api
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-index 73316307666674f9f6e7ddb964e2ec2583743c79..d15f24d91255664af4295fca8d5e237dce520201 100644
+index 8c7e01972888df4ccbaccc4eebceeeb5ab357f4c..99956f506d543c2917746d5eb095598135251320 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 @@ -57,6 +57,8 @@ import org.bukkit.util.NumberConversions;
@@ -531,7 +531,7 @@ index 73316307666674f9f6e7ddb964e2ec2583743c79..d15f24d91255664af4295fca8d5e237d
          if (entity instanceof EnderDragonPart complexPart) {
              if (complexPart.parentMob instanceof EnderDragon) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 49f207b7e06a3f939dc6c9b4a078f6db7b779618..aedf5ec139613a4ddf6cdb87cc52ae29eda323b2 100644
+index b76056ce93a1133eb7b50a7855830afea478bf17..a7f953a75ca8b460e3b4790f690e133bef777d89 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -2141,7 +2141,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {

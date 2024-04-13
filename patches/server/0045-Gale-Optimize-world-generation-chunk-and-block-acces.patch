@@ -106,7 +106,7 @@ index 0000000000000000000000000000000000000000..f2f10b651e4fbecdd1ea1bc28ebf40d6
 +
 +}
 diff --git a/src/main/java/net/minecraft/server/level/WorldGenRegion.java b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
-index 33c1ef45ed620f8424c2c83dd30b674892ddffe3..60db67956d8455d02c7b315cbdcb952206d776db 100644
+index 8c455cda45ca2d724fbc140d53ffc7ecba3ca44c..dd63a219caf36acc58b73190e67faf9a504aef20 100644
 --- a/src/main/java/net/minecraft/server/level/WorldGenRegion.java
 +++ b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
 @@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;

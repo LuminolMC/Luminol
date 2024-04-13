@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..ed62d25d6cd6dfcf8c5db20ced36eb3d
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 4b3acc0de20b246e20e2cc91ba0eca493a675729..2d78d28120af075bebee4d97428ed48cf27c9d78 100644
+index 9d987d3d7952edc5211ecc74819f689be496f8ea..650a4f360fd0c4c9b339a4263e5835d84db9a886 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -5460,6 +5460,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
@@ -52,7 +52,7 @@ index 4b3acc0de20b246e20e2cc91ba0eca493a675729..2d78d28120af075bebee4d97428ed48c
          return this.chunkPosition;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index df789b13f57200c66ff4cc59e6b63949a6804e3d..c2d155882c94f875c96c13746ff0c5433ab25ed0 100644
+index 96039cd1c01cf6ea384f63bf5623de75e5def41f..e618ce4e71e4aef0620ac1b178f4df6a35deb87e 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2062,19 +2062,43 @@ public abstract class LivingEntity extends Entity implements Attackable {

@@ -33,7 +33,7 @@ index 0000000000000000000000000000000000000000..73d99a105a18231901e691922b0c283a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 9bbfac91f97331b1b558264c867b7e00185291f2..dfb1b8c3af93bfcddb976c003c6ac2d52afc41c6 100644
+index 64e58d2d69f837b268e6a70b8a795e6fd5b1ed0c..127cefe949d1efe6e3f6893941ee283686adfd1f 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -7,6 +7,7 @@ import com.google.common.collect.Lists;

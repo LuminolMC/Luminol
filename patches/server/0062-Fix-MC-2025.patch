@@ -5,7 +5,7 @@ Subject: [PATCH] Fix-MC-2025
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index d78ad18ac3b69c893a23b6bb9a6837b6a82ebdc2..8f40db062159dea7761a5663edef997a113e828b 100644
+index b4596ac190bb83f0d20b1bc077c430ca2d2c05ac..75b728afe0865bd71f98326e7b4064f575c85871 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -2551,6 +2551,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S

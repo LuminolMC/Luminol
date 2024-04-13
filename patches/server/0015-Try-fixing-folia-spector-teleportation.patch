@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..8487799cdfb776eaca33b57f7c99ae3a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 318cb1e98a3d73b7893f07c9f0db3adab801b67e..9cbf17436b4cf52aae374767aafe79ea4f60c3ce 100644
+index c8701a2a0a3cbd60e263fe5c069b5993b36842a6..4adefbf1bc2187a3806fa23949e9413ff1d8f8c2 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -17,6 +17,8 @@ import java.util.OptionalInt;

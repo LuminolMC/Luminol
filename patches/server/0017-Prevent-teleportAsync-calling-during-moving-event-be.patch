@@ -33,7 +33,7 @@ index 0000000000000000000000000000000000000000..b8aceab54bb60000e7c5681014027102
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 9cbf17436b4cf52aae374767aafe79ea4f60c3ce..f2068e7608ed765e35759eb981db6c95b07a06d8 100644
+index 4adefbf1bc2187a3806fa23949e9413ff1d8f8c2..ef3201d97a44d233c8e2afe3a8469a17b0114f24 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -332,6 +332,10 @@ public class ServerPlayer extends Player {
@@ -48,7 +48,7 @@ index 9cbf17436b4cf52aae374767aafe79ea4f60c3ce..f2068e7608ed765e35759eb981db6c95
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 3b2508dc6cd4f70b09dce3b7e745e6efabaaa74e..b3ff8ed6d0f0414c15b9d2e6a51a0e34c361f92a 100644
+index 954809d8997750959541e6462668f17efd0b0f70..4fc9a47745b817d9ee2da4776cab26ff9f3b0025 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -675,7 +675,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -72,7 +72,7 @@ index 3b2508dc6cd4f70b09dce3b7e745e6efabaaa74e..b3ff8ed6d0f0414c15b9d2e6a51a0e34
                                      // If the event is cancelled we move the player back to their old location.
                                      if (event.isCancelled()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index dfb1b8c3af93bfcddb976c003c6ac2d52afc41c6..09cdd28dcb2357ba3d7be316b7ca94dc93ac5dd0 100644
+index 127cefe949d1efe6e3f6893941ee283686adfd1f..e7ca871e7fab798ed2d729a925ee21e3c3f3c0c3 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -27,6 +27,7 @@ import java.util.stream.Stream;
