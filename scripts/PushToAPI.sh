@@ -36,7 +36,6 @@ echo "[DEBUG] curl --location --request POST \"https://api.luminolmc.com/v2/proj
     --data-urlencode \"release_tag=$tag\" \
     --data-urlencode \"time=$ctime\" \
     --data-urlencode \"changes=$changes\""
-
 curl -L --request POST "https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit" \
     -H "Content-Type: application/x-www-form-urlencoded" \
     -H "Authorization: $secret_v2" \
