@@ -5,21 +5,10 @@ Subject: [PATCH] Pufferfish Only check for spooky season once an hour
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ambient/Bat.java b/src/main/java/net/minecraft/world/entity/ambient/Bat.java
-index 44fa2d4f90389f5526746bd94a2450c03340bd0b..864c3c72b6881a2a8223a9aa5a593f1a65bcc857 100644
+index 44fa2d4f90389f5526746bd94a2450c03340bd0b..3bbeb33eb51b6aea96e926af6715980e207b815e 100644
 --- a/src/main/java/net/minecraft/world/entity/ambient/Bat.java
 +++ b/src/main/java/net/minecraft/world/entity/ambient/Bat.java
-@@ -3,6 +3,10 @@ package net.minecraft.world.entity.ambient;
- import java.time.LocalDate;
- import java.time.temporal.ChronoField;
- import javax.annotation.Nullable;
-+
-+import io.papermc.paper.threadedregions.ThreadedRegionizer;
-+import io.papermc.paper.threadedregions.TickRegionScheduler;
-+import io.papermc.paper.threadedregions.TickRegions;
- import net.minecraft.core.BlockPos;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.syncher.EntityDataAccessor;
-@@ -241,13 +245,25 @@ public class Bat extends AmbientCreature {
+@@ -241,13 +241,25 @@ public class Bat extends AmbientCreature {
          }
      }
  
@@ -28,8 +17,8 @@ index 44fa2d4f90389f5526746bd94a2450c03340bd0b..864c3c72b6881a2a8223a9aa5a593f1a
 +    private static final int ONE_HOUR = 20 * 60 * 60;
 +    private static int lastSpookyCheck = -ONE_HOUR;
      private static boolean isHalloween() {
-+        final ThreadedRegionizer.ThreadedRegion<TickRegions.TickRegionData, TickRegions.TickRegionSectionData> region =
-+                TickRegionScheduler.getCurrentRegion();
++        final io.papermc.paper.threadedregions.ThreadedRegionizer.ThreadedRegion<io.papermc.paper.threadedregions.TickRegions.TickRegionData, io.papermc.paper.threadedregions.TickRegions.TickRegionSectionData> region =
++                io.papermc.paper.threadedregions.TickRegionScheduler.getCurrentRegion();
 +        final long tickCount = region.getData().getCurrentTick();
 +        if (tickCount - lastSpookyCheck > ONE_HOUR) {
          LocalDate localdate = LocalDate.now();

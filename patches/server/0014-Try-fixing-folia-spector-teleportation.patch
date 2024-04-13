@@ -31,24 +31,15 @@ index 0000000000000000000000000000000000000000..8487799cdfb776eaca33b57f7c99ae3a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index c8701a2a0a3cbd60e263fe5c069b5993b36842a6..4adefbf1bc2187a3806fa23949e9413ff1d8f8c2 100644
+index c8701a2a0a3cbd60e263fe5c069b5993b36842a6..46df26bef2f1d4b0bd5a1313e8ee4f86c2fdf355 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -17,6 +17,8 @@ import java.util.OptionalInt;
- import java.util.Set;
- import java.util.stream.Collectors;
- import javax.annotation.Nullable;
-+
-+import me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig;
- import net.minecraft.BlockUtil;
- import net.minecraft.ChatFormatting;
- import net.minecraft.CrashReport;
-@@ -842,6 +844,11 @@ public class ServerPlayer extends Player {
+@@ -842,6 +842,11 @@ public class ServerPlayer extends Player {
          }
  
          Entity entity = this.getCamera();
 +        //Luminol start - Fix folia spector teleportation
-+        if (!io.papermc.paper.util.TickThread.isTickThreadFor(entity) && FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
++        if (!io.papermc.paper.util.TickThread.isTickThreadFor(entity) && me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
 +            this.setCamera(this);
 +        }
 +        //Luminol end

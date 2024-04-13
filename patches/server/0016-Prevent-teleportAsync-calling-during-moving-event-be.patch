@@ -33,10 +33,10 @@ index 0000000000000000000000000000000000000000..b8aceab54bb60000e7c5681014027102
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 4adefbf1bc2187a3806fa23949e9413ff1d8f8c2..ef3201d97a44d233c8e2afe3a8469a17b0114f24 100644
+index 46df26bef2f1d4b0bd5a1313e8ee4f86c2fdf355..0086a1a4611b983eefd0cb7bf8e9cff677246d0f 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -332,6 +332,10 @@ public class ServerPlayer extends Player {
+@@ -330,6 +330,10 @@ public class ServerPlayer extends Player {
      public double lastEntitySpawnRadiusSquared = -1.0;
      // Paper end - optimise chunk tick iteration
  
@@ -72,41 +72,17 @@ index 954809d8997750959541e6462668f17efd0b0f70..4fc9a47745b817d9ee2da4776cab26ff
                                      // If the event is cancelled we move the player back to their old location.
                                      if (event.isCancelled()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 127cefe949d1efe6e3f6893941ee283686adfd1f..e7ca871e7fab798ed2d729a925ee21e3c3f3c0c3 100644
+index 36f0175228f4ab80ebc67082e7c9bbbc2c14e147..ad15df5dfe34e20a6b5dafaf01e8a7306b158109 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -27,6 +27,7 @@ import java.util.stream.Stream;
- import javax.annotation.Nullable;
- 
- import me.earthme.luminol.config.modules.fixes.FoliaEntityMovingFixConfig;
-+import me.earthme.luminol.config.modules.fixes.FoliaTeleportAsyncFixConfig;
- import net.minecraft.BlockUtil;
- import net.minecraft.CrashReport;
- import net.minecraft.CrashReportCategory;
-@@ -59,7 +60,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
- import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.resources.ResourceLocation;
--import io.papermc.paper.util.MCUtil;
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.server.level.ServerPlayer;
-@@ -132,7 +132,6 @@ import org.joml.Vector3f;
- import org.slf4j.Logger;
- import org.bukkit.Bukkit;
- import org.bukkit.Location;
--import org.bukkit.Server;
- import org.bukkit.block.BlockFace;
- import org.bukkit.command.CommandSender;
- import org.bukkit.craftbukkit.event.CraftPortalEvent;
-@@ -3989,6 +3988,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -3986,6 +3986,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
                                         java.util.function.Consumer<Entity> teleportComplete) {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot teleport entity async");
  
 +        //Luminol start - Prevent teleportAsync calling during moving event being handled
-+        if (this instanceof ServerPlayer player && FoliaTeleportAsyncFixConfig.enabled){
++        if (this instanceof ServerPlayer player && import me.earthme.luminol.config.modules.fixes.FoliaTeleportAsyncFixConfig.enabled){
 +            if (player.handlingMoveEvent){
-+                if (FoliaTeleportAsyncFixConfig.throwOnDetected){
++                if (import me.earthme.luminol.config.modules.fixes.FoliaTeleportAsyncFixConfig.throwOnDetected){
 +                    throw new IllegalStateException("Player " + player.getScoreboardName() + " is trying to teleport to " + pos + " during move event handling!");
 +                }
 +                MinecraftServer.LOGGER.warn("Player {} is trying to teleport to {} during move event handling!",player.getScoreboardName(),pos);
@@ -119,33 +95,16 @@ index 127cefe949d1efe6e3f6893941ee283686adfd1f..e7ca871e7fab798ed2d729a925ee21e3
              return false;
          }
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-index d514ec1e4cbdc579c3a61533998437903afdc8b6..c547376967360402d22657d25e1100366dd50c59 100644
+index d514ec1e4cbdc579c3a61533998437903afdc8b6..ed4cbc459bf5f4b7615c6e2ab0d99728d18f2598 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap;
- import com.google.common.collect.Maps;
- import com.google.common.collect.UnmodifiableIterator;
- import com.mojang.datafixers.util.Pair;
-+
-+import java.util.ArrayList;
- import java.util.Iterator;
- import java.util.List;
- import java.util.Map;
-@@ -21,6 +23,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
- import net.minecraft.network.syncher.EntityDataSerializers;
- import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.tags.BlockTags;
- import net.minecraft.util.Mth;
- import net.minecraft.world.entity.Entity;
-@@ -378,7 +381,21 @@ public abstract class AbstractMinecart extends VehicleEntity {
+@@ -378,7 +378,21 @@ public abstract class AbstractMinecart extends VehicleEntity {
              this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
  
              if (!from.equals(to)) {
 +                //Luminol start - Prevent teleportAsync calling during moving event being handled
 +                for (Entity passenger : this.getPassengers()) {
-+                    if (passenger instanceof ServerPlayer player){
++                    if (passenger instanceof net.minecraft.server.level.ServerPlayer player){
 +                        player.handlingMoveEvent = true;
 +                    }
 +                }
@@ -153,7 +112,7 @@ index d514ec1e4cbdc579c3a61533998437903afdc8b6..c547376967360402d22657d25e110036
                  this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleMoveEvent(vehicle, from, to));
 +                //Luminol start - Prevent teleportAsync calling during moving event being handled
 +                for (Entity passenger : this.getPassengers()) {
-+                    if (passenger instanceof ServerPlayer player){
++                    if (passenger instanceof net.minecraft.server.level.ServerPlayer player){
 +                        player.handlingMoveEvent = false;
 +                    }
 +                }
@@ -162,33 +121,16 @@ index d514ec1e4cbdc579c3a61533998437903afdc8b6..c547376967360402d22657d25e110036
              // CraftBukkit end
              if (this.getMinecartType() == AbstractMinecart.Type.RIDEABLE && this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/Boat.java b/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
-index db6aa75d642f4a7258f197933671907faf79c8f2..b7c792f75dda1c62ee3730b8204c347848710a9c 100644
+index db6aa75d642f4a7258f197933671907faf79c8f2..065d4c06e3fd93fb46595b9864b150ea2480f5fc 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
-@@ -2,6 +2,8 @@ package net.minecraft.world.entity.vehicle;
- 
- import com.google.common.collect.Lists;
- import com.google.common.collect.UnmodifiableIterator;
-+
-+import java.util.ArrayList;
- import java.util.Iterator;
- import java.util.List;
- import java.util.function.IntFunction;
-@@ -16,6 +18,7 @@ import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
- import net.minecraft.network.syncher.EntityDataAccessor;
- import net.minecraft.network.syncher.EntityDataSerializers;
- import net.minecraft.network.syncher.SynchedEntityData;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.tags.EntityTypeTags;
-@@ -377,8 +380,22 @@ public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
+@@ -377,8 +377,22 @@ public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
          server.getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
  
          if (this.lastLocation != null && !this.lastLocation.equals(to)) {
 +            //Luminol start - Prevent teleportAsync calling during moving event being handled
 +            for (Entity passenger : this.getPassengers()) {
-+                if (passenger instanceof ServerPlayer player){
++                if (passenger instanceof net.minecraft.server.level.ServerPlayer player){
 +                    player.handlingMoveEvent = true;
 +                }
 +            }
@@ -197,7 +139,7 @@ index db6aa75d642f4a7258f197933671907faf79c8f2..b7c792f75dda1c62ee3730b8204c3478
              server.getPluginManager().callEvent(event);
 +            //Luminol start - Prevent teleportAsync calling during moving event being handled
 +            for (Entity passenger : this.getPassengers()) {
-+                if (passenger instanceof ServerPlayer player){
++                if (passenger instanceof net.minecraft.server.level.ServerPlayer player){
 +                    player.handlingMoveEvent = false;
 +                }
 +            }

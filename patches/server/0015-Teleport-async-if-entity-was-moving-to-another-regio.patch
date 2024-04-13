@@ -33,27 +33,10 @@ index 0000000000000000000000000000000000000000..73d99a105a18231901e691922b0c283a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 64e58d2d69f837b268e6a70b8a795e6fd5b1ed0c..127cefe949d1efe6e3f6893941ee283686adfd1f 100644
+index 64e58d2d69f837b268e6a70b8a795e6fd5b1ed0c..36f0175228f4ab80ebc67082e7c9bbbc2c14e147 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
- import com.google.common.collect.Sets;
- import com.google.common.collect.UnmodifiableIterator;
- import com.mojang.logging.LogUtils;
-+import io.papermc.paper.util.TickThread;
- import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
- import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
- import java.util.Arrays;
-@@ -24,6 +25,8 @@ import java.util.function.BiConsumer;
- import java.util.function.Predicate;
- import java.util.stream.Stream;
- import javax.annotation.Nullable;
-+
-+import me.earthme.luminol.config.modules.fixes.FoliaEntityMovingFixConfig;
- import net.minecraft.BlockUtil;
- import net.minecraft.CrashReport;
- import net.minecraft.CrashReportCategory;
-@@ -1086,10 +1089,40 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -1086,10 +1086,40 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
      }
      // Paper end - detailed watchdog information
  
@@ -66,13 +49,13 @@ index 64e58d2d69f837b268e6a70b8a795e6fd5b1ed0c..127cefe949d1efe6e3f6893941ee2836
          // Paper start - detailed watchdog information
          io.papermc.paper.util.TickThread.ensureTickThread("Cannot move an entity off-main");
 +        //Luminol start - Fix high position moving
-+        if (me.earthme.luminol.config.modules.fixes.FoliaEntityMovingFixConfig.enabled && TickThread.isTickThread()){ //Except the threads because it may be called by the chunk system worker thread
++        if (me.earthme.luminol.config.modules.fixes.FoliaEntityMovingFixConfig.enabled && io.papermc.paper.util.TickThread.isTickThread()){ //Except the threads because it may be called by the chunk system worker thread
 +            if (this.preventMoving){
 +                return;
 +            }
 +
 +            var finalPosition = movement.add(this.position);
-+            if (!TickThread.isTickThreadFor(((ServerLevel) this.level),finalPosition)){
++            if (!io.papermc.paper.util.TickThread.isTickThreadFor(((ServerLevel) this.level),finalPosition)){
 +                this.preventMoving = true;
 +                this.teleportAsync(
 +                        (ServerLevel) this.level(),
@@ -84,7 +67,7 @@ index 64e58d2d69f837b268e6a70b8a795e6fd5b1ed0c..127cefe949d1efe6e3f6893941ee2836
 +                            this.preventMoving = false;
 +                        }
 +                );
-+                if (FoliaEntityMovingFixConfig.warnOnDetected){
++                if (me.earthme.luminol.config.modules.fixes.FoliaEntityMovingFixConfig.warnOnDetected){
 +                    MinecraftServer.LOGGER.warn("Entity {} with entityId {} has tried moving to another region!",this.type.getCategory().getName(),this.getId());
 +                }
 +                return;
