@@ -34,6 +34,7 @@ echo "[DEBUG] curl --location --request POST \"https://api.luminolmc.com/v2/proj
     --data-urlencode \"jar_name=$jar_name\" \
     --data-urlencode \"sha256=$jar_sha256\" \
     --data-urlencode \"tag=$tag\" \
+    --data-urlencode \"time=$ctime\" \
     --data-urlencode \"changes=$changes\""
 response=$(curl -L --request POST "https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit" \
     -H "Content-Type: application/x-www-form-urlencoded" \
