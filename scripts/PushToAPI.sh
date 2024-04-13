@@ -28,11 +28,19 @@ json=$(printf "{\\\"channel\\\":\\\"%s\\\", \\\"jar_name\\\":\\\"%s\\\", \\\"sha
     "$channel" "$jar_name" "$jar_sha256" "$tag" "$ctime" "$changes")
 echo "[DEBUG] $json"
 echo "[DEBUG] curl --location --request POST \"https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit\" \
-    -H \"Content-Type: application/json\" \
+    -H \"Content-Type: application/x-www-form-urlencoded\" \
     -H \"Authorization: $secret_v2\" \
-    -d \"$json\""
-response=$(curl --location --request POST "https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit" \
-    -H "Content-Type: application/json" \
+    --data-urlencode \"channel=$channel\" \
+    --data-urlencode \"jar_name=$jar_name\" \
+    --data-urlencode \"sha256=$jar_sha256\" \
+    --data-urlencode \"tag=$tag\" \
+    --data-urlencode \"changes=$changes\""
+response=$(curl -L --request POST "https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
     -H "Authorization: $secret_v2" \
-    -d "$json")
+    --data-urlencode "channel=$channel" \
+    --data-urlencode "jar_name=$jar_name" \
+    --data-urlencode "sha256=$jar_sha256" \
+    --data-urlencode "release_tag=$tag" \
+    --data-urlencode "changes=$changes")
 echo "[RESPONSE] $response"
