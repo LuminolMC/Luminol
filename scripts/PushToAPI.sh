@@ -5,6 +5,7 @@ sha256() {
 prop() {
   grep "${1}" gradle.properties | cut -d'=' -f2 | sed 's/\r//'
 }
+
 project_id="luminol"
 mcversion_group=$(prop GroupMCV)
 mcversion=$(prop mcVersion)
@@ -23,7 +24,7 @@ ctime=$(date -u +"%s")"000"
 # v2
 echo "Authentication: $secret_v2"
 #echo "{\"version_group\":\"$mcversion_group\",\"channel\":\"$channel\",\"changes\":\"$changes\",\"jar_name\":\"$jar_name\",\"sha256\":\"$jar_sha256\",\"release_tag\":\"$tag\",\"time\":\"$ctime\"}" > data.json
-printf "{\"channel\":\"%s\", \"jar_name\":\"%s\", \"sha256\":\"%s\", \"tag\":\"%s\", \"time\":\"%s\", \"changes\":\"%s\"}" "$channel" "$jar_name" "$jar_sha256" "$tag" "$ctime" "$changes" > ./data.json
-json = `cat ./data.json`
+printf "{\"channel\":\"%s\", \"jar_name\":\"%s\", \"sha256\":\"%s\", \"tag\":\"%s\", \"time\":\"%s\", \"changes\":\"%s\"}" "$channel" "$jar_name" "$jar_sha256" "$tag" "$ctime" "$changes" > data
+json = `cat data`
 echo "[DEBUG] $json"
-curl --location --request POST "https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit" -H "Content-Type: application/json" -H "Authorization: $secret_v2" -d @./data.json
+curl --location --request POST "https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit" -H "Content-Type: application/json" -H "Authorization: $secret_v2" -d @data
