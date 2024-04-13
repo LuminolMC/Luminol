@@ -9,7 +9,7 @@ on:
 permissions: write-all
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: default
 
     steps:
