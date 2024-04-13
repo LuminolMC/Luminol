@@ -27,6 +27,7 @@ echo "Authentication: $secret_v2"
 json=$(printf "{\\\"channel\\\":\\\"%s\\\", \\\"jar_name\\\":\\\"%s\\\", \\\"sha256\\\":\\\"%s\\\", \\\"tag\\\":\\\"%s\\\", \\\"time\\\":\\\"%s\\\", \\\"changes\\\":\\\"%s\\\"}" \
     "$channel" "$jar_name" "$jar_sha256" "$tag" "$ctime" "$changes")
 echo "[DEBUG] $json"
+echo "[DEBUG] $changes"
 echo "[DEBUG] curl --location --request POST \"https://api.luminolmc.com/v2/projects/$project_id/$mcversion/build/commit\" \
     -H \"Content-Type: application/x-www-form-urlencoded\" \
     -H \"Authorization: $secret_v2\" \
