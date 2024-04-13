@@ -5,7 +5,7 @@ Subject: [PATCH] Empty config file base
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 48e9f6ff317bfc7077563e9c651d2a90da6bb37a..d4baa7a193eba22be23921029ca4808a73de063d 100644
+index c0608731dd7a352628a1e31997d0658dfa9f2ea8..66c34f883a93dd86fcac8029cce63ffe7340c89b 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -19,6 +19,7 @@ dependencies {
@@ -414,24 +414,15 @@ index 0000000000000000000000000000000000000000..2b4e64796bf01b0a5fcb306850cd6083
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 6b3242117d62175de462d04e4d178b49ae2521e9..4744ace98d1741db80ac2aea198f332d95c0ba33 100644
+index 6b3242117d62175de462d04e4d178b49ae2521e9..68355b9a0a88c871e18031d04581c9ef53313f48 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -19,6 +19,8 @@ import java.util.Locale;
- import java.util.Optional;
- import java.util.function.BooleanSupplier;
- import javax.annotation.Nullable;
-+
-+import me.earthme.luminol.config.LuminolConfig;
- import net.minecraft.DefaultUncaughtExceptionHandler;
- import net.minecraft.DefaultUncaughtExceptionHandlerWithName;
- import net.minecraft.SharedConstants;
-@@ -209,6 +211,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -209,6 +209,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          this.paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
          this.paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
          // Paper end - initialize global and world-defaults configuration
-+        LuminolConfig.loadConfig(); //Luminol - load config file
-+        LuminolConfig.setupLatch(); //Luminol - load config file
++        me.earthme.luminol.config.LuminolConfig.loadConfig(); //Luminol - load config file
++        me.earthme.luminol.config.LuminolConfig.setupLatch(); //Luminol - load config file
          // Paper start - fix converting txt to json file; convert old users earlier after PlayerList creation but before file load/save
          if (this.convertOldUsers()) {
              this.getProfileCache().save(false); // Paper

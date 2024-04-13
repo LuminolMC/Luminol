@@ -347,10 +347,10 @@ index 0000000000000000000000000000000000000000..3f1478dde900d671c4bfa43df80f6295
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 4744ace98d1741db80ac2aea198f332d95c0ba33..550fb11c64e3adb35bb7f78c53f0b5ae5ce9ff58 100644
+index 68355b9a0a88c871e18031d04581c9ef53313f48..c626018d786fe231cd74a28c83515715d896f214 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -832,6 +832,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -830,6 +830,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
  
      @Override
      public void stopServer() {
