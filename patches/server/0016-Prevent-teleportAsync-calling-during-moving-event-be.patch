@@ -80,9 +80,9 @@ index 36f0175228f4ab80ebc67082e7c9bbbc2c14e147..ad15df5dfe34e20a6b5dafaf01e8a730
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot teleport entity async");
  
 +        //Luminol start - Prevent teleportAsync calling during moving event being handled
-+        if (this instanceof ServerPlayer player && import me.earthme.luminol.config.modules.fixes.FoliaTeleportAsyncFixConfig.enabled){
++        if (this instanceof ServerPlayer player && me.earthme.luminol.config.modules.fixes.FoliaTeleportAsyncFixConfig.enabled){
 +            if (player.handlingMoveEvent){
-+                if (import me.earthme.luminol.config.modules.fixes.FoliaTeleportAsyncFixConfig.throwOnDetected){
++                if (me.earthme.luminol.config.modules.fixes.FoliaTeleportAsyncFixConfig.throwOnDetected){
 +                    throw new IllegalStateException("Player " + player.getScoreboardName() + " is trying to teleport to " + pos + " during move event handling!");
 +                }
 +                MinecraftServer.LOGGER.warn("Player {} is trying to teleport to {} during move event handling!",player.getScoreboardName(),pos);
