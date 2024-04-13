@@ -5,7 +5,7 @@ Subject: [PATCH] Kaiiju linear region format and settings
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 546c5ad9de8fb8bae23220547c74005f087c6597..ff14a65d284448f3eea15ee4c38e73ed61004a97 100644
+index 247598b6c73aca3743f4b16b47520f8ba16b2ed0..dd0a3477d69ab8f59f00ae930e983b57eaf322e2 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -20,6 +20,10 @@ dependencies {
