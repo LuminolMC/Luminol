@@ -1,34 +1,36 @@
-name: Luminol CI v2 - Ver/1.20.4
-
+name: Luminol CI v2 - ver/1.20.4
 on:
     push:
       branches: [ "ver/1.20.4" ]
     pull_request:
       branches: [ "ver/1.20.4" ]
-    # workflow_dispatch:
 permissions: write-all
 jobs:
   build:
     runs-on: ubuntu-latest
     environment: default
-
     steps:
       - name: Checkout Git Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Setup Git Config
-        run: |
-          git config --global user.email "ci@luminolmc.com"
-          git config --global user.name "Luminol CI"
+      - name: Configure Git User Details
+        run: git config --global user.email "ci@luminolmc.com" && git config --global user.name "LuminolMC CI"
       - name: Apply Patches
         run: ./gradlew applyPatches
       - name: Build
+        run: ./gradlew build
+      - name: CreateJar
         run: ./gradlew createReobfBundlerJar createReobfPaperclipJar
-      - uses: "actions/upload-artifact@v3"
+      - run: "ls build/libs"
+      - uses: "actions/upload-artifact@v4"
         with:
           name: "Luminol CI Artifacts"
           path: "build/libs/*.jar"
@@ -36,13 +38,13 @@ jobs:
         run: |
           mv build/libs/luminol-bundler-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-bundler.jar
           mv build/libs/luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
-      - name: setenv
+      - name: SetENV
         run: |
           sh scripts/SetENV.sh
           echo "${{ env.tag }}"
       - name: Create Release
-        if: "!contains(github.event.commits[0].message, '[release-skip]')"
-        uses: ncipollo/release-action@v1.12.0
+        if: "!contains(github.event.commits[0].message, '[release skip]')"
+        uses: ncipollo/release-action@v1.14.0
         with:
           tag: ${{ env.tag }}
           name: Luminol ${{ env.mcversion }} - ${{ env.commitid }}
@@ -56,8 +58,8 @@ jobs:
           prerelease: ${{ env.pre }}
           makeLatest: ${{ env.make_latest }}
           token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Push to Api
-        if: "!contains(github.event.commits[0].message, '[release-skip]')"
+      - name: Push to API
+        if: "!contains(github.event.commits[0].message, '[release skip]')"
         env:
           secret_v2: ${{ secrets.API_KEY }}
           tag: ${{ env.tag }}
