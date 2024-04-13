@@ -42,5 +42,6 @@ response=$(curl -L --request POST "https://api.luminolmc.com/v2/projects/$projec
     --data-urlencode "jar_name=$jar_name" \
     --data-urlencode "sha256=$jar_sha256" \
     --data-urlencode "release_tag=$tag" \
+    --data-urlencode "time=$ctime" \
     --data-urlencode "changes=$changes")
 echo "[RESPONSE] $response"
