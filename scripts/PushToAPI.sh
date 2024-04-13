@@ -16,7 +16,7 @@ if [ $pre = "true" ]; then
 else
   channel="default"
 fi
-changes=$(git log -1 --pretty="[{\\\"commit\\\": \\\"%H\\\", \\\"message\\\": \\\"%s\\\", \\\"summary\\\": \\\"%s\\\"}]")
+changes=$(git log -1 --pretty="[{\"commit\": \"%H\", \"message\": \"%s\", \"summary\": \"%s\"}]")
 jar_sha256=`sha256 build/libs/luminol-1.20.4-paperclip.jar`
 jar_name="luminol-1.20.4-paperclip.jar"
 ctime=$(date -u +"%s")"000"
