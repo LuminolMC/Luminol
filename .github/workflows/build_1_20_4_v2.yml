@@ -51,7 +51,7 @@ jobs:
         uses: ncipollo/release-action@v1.14.0
         with:
           tag: ${{ env.tag }}
-          name: ${{ env.project_id_b }} ${{ env.mcversion }} - ${{ env.commitid }}
+          name: Luminol ${{ env.mcversion }} - ${{ env.commitid }}
           body: |
             ====
            📦Version: `${{ env.mcversion }}` | Commit ${{ env.commit_id }} [![download](https://img.shields.io/github/downloads/LuminolMC/${{ env.project_id }}/${{ env.tag }}/total?color=0)](https://github.com/LuminolMC/${{ env.project_id }}/download/${{ env.tag }}/${{ env.jar }})
