@@ -8,6 +8,7 @@ preVersion=$(prop preVersion)
 release_tag="$mcversion-$commitid"
 jarName="build/libs/luminol-1.20.4-paperclip.jar"
 make_latest=$([ $preVersion = "true" ] && echo "false" || echo "true")
+number=$(git log --oneline master ^`git describe --tags --abbrev=0` | wc -l)
 
 echo "commitid=$commitid" >> $GITHUB_ENV
 echo "mcversion=$mcversion" >> $GITHUB_ENV
