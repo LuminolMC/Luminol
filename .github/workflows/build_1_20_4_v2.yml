@@ -30,7 +30,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           arguments: applyPatches
-        run: ./gradlew applyPatches
       - name: CreateJar
         uses: gradle/actions/setup-gradle@v3
         with:
