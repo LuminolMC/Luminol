@@ -36,7 +36,7 @@ jobs:
         run: |
           mv build/libs/luminol-bundler-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-bundler.jar
           mv build/libs/luminol-paperclip-1.20.4-R0.1-SNAPSHOT-reobf.jar build/libs/luminol-1.20.4-paperclip.jar
-      - name: setenv
+      - name: SetEnvironment
         run: |
           sh scripts/SetENV.sh
           echo "${{ env.tag }}"
@@ -56,7 +56,7 @@ jobs:
           prerelease: ${{ env.pre }}
           makeLatest: ${{ env.make_latest }}
           token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Push to Api
+      - name: Push to API
         if: "!contains(github.event.commits[0].message, '[release-skip]')"
         env:
           secret_v2: ${{ secrets.API_KEY }}
