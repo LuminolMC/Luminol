@@ -13,7 +13,7 @@ release_tag="$mcversion-$commitid"
 jarName="$project_id-$mcversion-paperclip.jar"
 jarName_dir="build/libs/$jarName"
 make_latest=$([ $preVersion = "true" ] && echo "false" || echo "true")
-number=$(git log --oneline master ^`git describe --tags --abbrev=0` | wc -l)
+number=$(git log --oneline ver/1.20.4 ^`git describe --tags --abbrev=0` | wc -l)
 
 mv build/libs/$project_id-paperclip-$grdversion-reobf.jar build/libs/$jarName
 mv build/libs/$project_id-bundler-$grdversion-reobf.jar build/libs/$project_id-$mcversion-bundler.jar
