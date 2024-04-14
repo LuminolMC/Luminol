@@ -37,6 +37,8 @@ jobs:
           arguments: createReobfBundlerJar createReobfPaperclipJar
       - name: SetENV
         run: |
+          echo "project_id=luminol" >> $GITHUB_ENV
+          echo "project_id_b=Luminol" >> $GITHUB_ENV
           sh scripts/SetENV.sh
           echo "${{ env.tag }}"
       - name: Upload Artifact

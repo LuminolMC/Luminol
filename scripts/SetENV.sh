@@ -2,9 +2,6 @@ prop() {
   grep "${1}" gradle.properties | cut -d'=' -f2 | sed 's/\r//'
 }
 
-project_id_b="Luminol"
-project_id="luminol"
-
 commitid=$(git log --pretty='%h' -1)
 mcversion=$(prop mcVersion)
 grdversion=$(prop version)
