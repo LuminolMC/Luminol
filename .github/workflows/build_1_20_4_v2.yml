@@ -62,8 +62,8 @@ jobs:
           token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Push to API
         if: "!contains(github.event.commits[0].message, '[release skip]')"
-        run: sh scripts/PushToAPI.sh
         env:
           secret_v2: ${{ secrets.API_KEY }}
           tag: ${{ env.tag }}
           project_id: ${{ env.project_id }}
+        run: sh scripts/PushToAPI.sh
