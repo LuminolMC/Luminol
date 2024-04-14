@@ -32,15 +32,15 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           arguments: createReobfBundlerJar createReobfPaperclipJar
+      - name: SetENV
+        run: |
+          sh scripts/SetENV.sh
+          echo "${{ env.tag }}"
       - name: Upload Artifact
         uses: "actions/upload-artifact@v4"
         with:
           name: "${{ env.project_id_b }} CI Artifacts"
           path: "build/libs/*.jar"
-      - name: SetENV
-        run: |
-          sh scripts/SetENV.sh
-          echo "${{ env.tag }}"
       - name: Create Release
         if: "!contains(github.event.commits[0].message, '[release skip]')"
         uses: ncipollo/release-action@v1.14.0
