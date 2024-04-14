@@ -2,7 +2,7 @@ sha256() {
   sha256sum $1 | awk '{print $1}'
 }
 prop() {
-  grep "${1}" gradle.properties | cut -d'=' -f2 | sed 's/\r//'
+  grep "^[[:space:]]*${1}" gradle.properties | cut -d'=' -f2 | sed 's/^[[:space:]]*//; s/\r//'
 }
 
 mcversion_group=$(prop GroupMCV)
