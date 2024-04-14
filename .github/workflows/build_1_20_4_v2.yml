@@ -1,10 +1,13 @@
 name: Luminol CI v2 - ver/1.20.4
+
 on:
     push:
       branches: [ "ver/1.20.4" ]
     pull_request:
       branches: [ "ver/1.20.4" ]
+
 permissions: write-all
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,7 +42,7 @@ jobs:
       - name: Upload Artifact
         uses: "actions/upload-artifact@v4"
         with:
-          name: "${{ env.project_ib }} CI Artifacts"
+          name: "${{ env.project_id_b }} CI Artifacts"
           path: "build/libs/*.jar"
       - name: Create Release
         if: "!contains(github.event.commits[0].message, '[release skip]')"
