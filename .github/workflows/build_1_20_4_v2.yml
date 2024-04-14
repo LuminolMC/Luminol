@@ -29,9 +29,9 @@ jobs:
       - name: Configure Git User Details
         run: git config --global user.email "ci@luminolmc.com" && git config --global user.name "LuminolMC CI"
       - name: Apply Patches
-        run: gradle applyPatches
+        run: gradle applyPatches --scan
       - name: CreateJar
-        run: gradle createReobfBundlerJar createReobfPaperclipJar
+        run: gradle createReobfBundlerJar createReobfPaperclipJar --scan
       - name: SetENV
         run: |
           sh scripts/SetENV.sh
