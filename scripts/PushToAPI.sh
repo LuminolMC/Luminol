@@ -22,9 +22,6 @@ jar_name="$pro_id_mcv-paperclip.jar"
 ctime=$(date -u +"%s")"000"
 
 # v2
-# v2
-echo "Authentication: $secret_v2"
-#echo "{\"version_group\":\"$mcversion_group\",\"channel\":\"$channel\",\"changes\":\"$changes\",\"jar_name\":\"$jar_name\",\"sha256\":\"$jar_sha256\",\"release_tag\":\"$tag\",\"time\":\"$ctime\"}" > data.json
 json=$(printf "{\\\"channel\\\":\\\"%s\\\", \\\"jar_name\\\":\\\"%s\\\", \\\"sha256\\\":\\\"%s\\\", \\\"tag\\\":\\\"%s\\\", \\\"time\\\":\\\"%s\\\", \\\"changes\\\":\\\"%s\\\"}" \
     "$channel" "$jar_name" "$jar_sha256" "$tag" "$ctime" "$changes")
 echo "[DEBUG] $json"

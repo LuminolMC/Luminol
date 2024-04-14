@@ -14,6 +14,9 @@ jarName="$project_id-$mcversion-paperclip.jar"
 jarName_dir="build/libs/$jarName"
 make_latest=$([ $preVersion = "true" ] && echo "false" || echo "true")
 
+ls build/libs
+echo "build/libs/$project_id-paperclip-$grdversion-reobf.jar >> build/libs/$jarName"
+echo "build/libs/$project_id-bundler-$grdversion-reobf.jar >> build/libs/$project_id-$mcversion-bundler.jar"
 mv build/libs/$project_id-paperclip-$grdversion-reobf.jar build/libs/$jarName
 mv build/libs/$project_id-bundler-$grdversion-reobf.jar build/libs/$project_id-$mcversion-bundler.jar
 

@@ -19,6 +19,8 @@ jobs:
         uses: gradle/actions/wrapper-validation@v3
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -27,13 +29,9 @@ jobs:
       - name: Configure Git User Details
         run: git config --global user.email "ci@luminolmc.com" && git config --global user.name "LuminolMC CI"
       - name: Apply Patches
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          arguments: applyPatches
+        run: gradle applyPatches
       - name: CreateJar
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          arguments: createReobfBundlerJar createReobfPaperclipJar
+        run: gradle createReobfBundlerJar createReobfPaperclipJar
       - name: SetENV
         run: |
           sh scripts/SetENV.sh
@@ -50,7 +48,6 @@ jobs:
           tag: ${{ env.tag }}
           name: ${{ env.project_id_b }} ${{ env.mcversion }} - ${{ env.commit_id }}
           body: |
-            ====
             📦Version: `${{ env.mcversion }}` | Commit ${{ env.commit_id }} [![download](https://img.shields.io/github/downloads/LuminolMC/${{ env.project_id }}/${{ env.tag }}/total?color=0)](https://github.com/LuminolMC/${{ env.project_id }}/download/${{ env.tag }}/${{ env.jar }})
             This release is automatically compiled by GitHub Actions
             ### Commit Message
