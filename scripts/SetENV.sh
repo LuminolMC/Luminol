@@ -18,7 +18,7 @@ mv build/libs/$project_id-paperclip-$grdversion-reobf.jar build/libs/$jarName
 mv build/libs/$project_id-bundler-$grdversion-reobf.jar build/libs/$project_id-$mcversion-bundler.jar
 
 echo "project_id=$project_id" >> $GITHUB_ENV
-echo "project_id_b=$project_id_b" >> $GITHUB_ENV
+echo "project_ib=$project_id_b" >> $GITHUB_ENV
 echo "commit_id=$commitid" >> $GITHUB_ENV
 echo "commit_msg=$(git log --pretty='> [%h] %s' -$number)" >> $GITHUB_ENV
 echo "$commit_msg"
