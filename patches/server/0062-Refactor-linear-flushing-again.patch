@@ -1,0 +1,148 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sat, 20 Apr 2024 13:24:45 +0000
+Subject: [PATCH] Refactor linear flushing again
+
+
+diff --git a/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java
+index fc614622996cf64204467ef7aa5c4100b159f761..7e551a5fb7db6a0aa4f60b15587be2b716c54000 100644
+--- a/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java
++++ b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java
+@@ -21,6 +21,7 @@ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
+ import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.concurrent.locks.ReentrantLock;
+ 
+ public class LinearRegionFile implements AbstractRegionFile, AutoCloseable {
+@@ -49,6 +50,7 @@ public class LinearRegionFile implements AbstractRegionFile, AutoCloseable {
+     public Path path;
+ 
+     public volatile boolean savingScheduled = true;
++    public final AtomicInteger dirtyChunkCount = new AtomicInteger(0);
+ 
+ 
+     public LinearRegionFile(Path file, int compression) throws IOException {
+@@ -135,10 +137,13 @@ public class LinearRegionFile implements AbstractRegionFile, AutoCloseable {
+     }
+ 
+     private void markToSave() {
+-        linearRegionFileFlusher.scheduleSave(this);
+         markedToSave.set(true);
+     }
+ 
++    private void signalToSave(){
++        linearRegionFileFlusher.scheduleSave(this);
++    }
++
+     public boolean getAndResetSaveMarker() {
+         return markedToSave.getAndSet(false);
+     }
+@@ -156,6 +161,8 @@ public class LinearRegionFile implements AbstractRegionFile, AutoCloseable {
+             save();
+         } catch (IOException e) {
+             LOGGER.error("Failed to flush region file " + path.toAbsolutePath(), e);
++        }finally {
++            this.dirtyChunkCount.set(0); //Reset dirty chunk count
+         }
+     }
+ 
+@@ -239,8 +246,11 @@ public class LinearRegionFile implements AbstractRegionFile, AutoCloseable {
+             this.bufferUncompressedSize[getChunkIndex(pos.x, pos.z)] = uncompressedSize;
+         } catch (IOException e) {
+             LOGGER.error("Chunk write IOException " + e + " " + this.path);
++        }finally {
++            this.dirtyChunkCount.getAndIncrement();
+         }
+         markToSave();
++        signalToSave();
+     }
+ 
+     public DataOutputStream getChunkDataOutputStream(ChunkPos pos) {
+@@ -292,7 +302,9 @@ public class LinearRegionFile implements AbstractRegionFile, AutoCloseable {
+         this.buffer[i] = null;
+         this.bufferUncompressedSize[i] = 0;
+         this.chunkTimestamps[i] = getTimestamp();
++        this.dirtyChunkCount.getAndIncrement();
+         markToSave();
++        signalToSave();
+     }
+ 
+     public boolean hasChunk(ChunkPos pos) {
+diff --git a/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java
+index 3d89bb4f090af86806c1af79de1b2e3598599b85..dea4dffd67ee9881a224acf41367c6845acec832 100644
+--- a/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java
++++ b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java
+@@ -2,12 +2,11 @@ package dev.kaiijumc.kaiiju.region;
+ 
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
+ 
+-import java.util.Set;
+ import java.util.concurrent.*;
+ import org.bukkit.Bukkit;
+ 
+ public class LinearRegionFileFlusher {
+-    private final ExecutorService executor = Executors.newFixedThreadPool(
++    private final ExecutorService ioExecutor = Executors.newFixedThreadPool(
+         me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearFlushThreads,
+         new ThreadFactoryBuilder()
+             .setNameFormat("linear-flusher-%d")
+@@ -17,7 +16,7 @@ public class LinearRegionFileFlusher {
+     private final Executor delayedFlusher = CompletableFuture.delayedExecutor(
+             me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearFlushFrequency,
+             TimeUnit.SECONDS,
+-            executor
++            ioExecutor
+     );
+ 
+     public LinearRegionFileFlusher() {
+@@ -25,12 +24,21 @@ public class LinearRegionFileFlusher {
+     }
+ 
+     public void scheduleSave(LinearRegionFile regionFile) {
++        if (regionFile.dirtyChunkCount.get() > me.earthme.luminol.config.modules.misc.RegionFormatConfig.flushImmediatelyIfDirtyChunkHigherThan){
++            this.scheduleSaveInternal(regionFile,this.ioExecutor);
++            return;
++        }
++
++        this.scheduleSaveInternal(regionFile,this.delayedFlusher);
++    }
++
++    private void scheduleSaveInternal(LinearRegionFile regionFile,Executor scheduler){
+         if (!regionFile.savingScheduled || !regionFile.isMarkedToSave()){
+             return;
+         }
+ 
+         regionFile.savingScheduled = true;
+-        this.delayedFlusher.execute(()->{
++        scheduler.execute(()->{
+             try {
+                 if (!regionFile.closed && regionFile.isMarkedToSave()){
+                     regionFile.flushWrapper();
+@@ -43,10 +51,10 @@ public class LinearRegionFileFlusher {
+     }
+ 
+     public void shutdown() {
+-        this.executor.shutdown();
++        this.ioExecutor.shutdown();
+         for (;;) {
+             try {
+-                if (this.executor.awaitTermination(5_00,TimeUnit.MILLISECONDS)) break;
++                if (this.ioExecutor.awaitTermination(5_00,TimeUnit.MILLISECONDS)) break;
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java
+index 5d594b606178bd26180caad49de17c0e67e89747..ab1c3e0276bbdbb32fd4155f7c596f3172c7f351 100644
+--- a/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java
++++ b/src/main/java/me/earthme/luminol/config/modules/misc/RegionFormatConfig.java
+@@ -20,6 +20,8 @@ public class RegionFormatConfig implements IConfigModule {
+     @HotReloadUnsupported
+     @ConfigInfo(baseName = "linear_flush_frequency")
+     public static int linearFlushFrequency = 10;
++    @ConfigInfo(baseName = "flush_immediately_if_queued_higher_than")
++    public static int flushImmediatelyIfDirtyChunkHigherThan = 5;
+ 
+     @Override
+     public EnumConfigCategory getCategory() {
