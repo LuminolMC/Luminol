@@ -93,10 +93,10 @@ index 0000000000000000000000000000000000000000..dcfbabf54b19a4c29d5c95830242c5c2
 +}
 diff --git a/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..dc5a5f42c9ca7a50295c18424722568a3ad33fa5
+index 0000000000000000000000000000000000000000..fc614622996cf64204467ef7aa5c4100b159f761
 --- /dev/null
 +++ b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFile.java
-@@ -0,0 +1,324 @@
+@@ -0,0 +1,329 @@
 +package dev.kaiijumc.kaiiju.region;
 +
 +import com.github.luben.zstd.ZstdInputStream;
@@ -129,7 +129,7 @@ index 0000000000000000000000000000000000000000..dc5a5f42c9ca7a50295c18424722568a
 +    private static final int FOOTER_SIZE = 8;
 +    private static final Logger LOGGER = LogUtils.getLogger();
 +    private static final List<Byte> SUPPORTED_VERSIONS = Arrays.asList((byte) 1, (byte) 2);
-+    private static final LinearRegionFileFlusher linearRegionFileFlusher = new LinearRegionFileFlusher();
++    public static final LinearRegionFileFlusher linearRegionFileFlusher = new LinearRegionFileFlusher();
 +
 +    private final byte[][] buffer = new byte[1024][];
 +    private final int[] bufferUncompressedSize = new int[1024];
@@ -146,6 +146,8 @@ index 0000000000000000000000000000000000000000..dc5a5f42c9ca7a50295c18424722568a
 +    private AtomicBoolean markedToSave = new AtomicBoolean(false);
 +    public boolean closed = false;
 +    public Path path;
++
++    public volatile boolean savingScheduled = true;
 +
 +
 +    public LinearRegionFile(Path file, int compression) throws IOException {
@@ -225,7 +227,10 @@ index 0000000000000000000000000000000000000000..dc5a5f42c9ca7a50295c18424722568a
 +    }
 +
 +    public void flush() throws IOException {
-+        if (getAndResetSaveMarker()) flushWrapper(); // sync
++        if (getAndResetSaveMarker()) {
++            this.savingScheduled = false; //cancel async saving
++            flushWrapper(); // sync
++        }
 +    }
 +
 +    private void markToSave() {
@@ -423,10 +428,10 @@ index 0000000000000000000000000000000000000000..dc5a5f42c9ca7a50295c18424722568a
 +}
 diff --git a/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..65435eb666b2e1cabffc145e016faa5e3b373464
+index 0000000000000000000000000000000000000000..3d89bb4f090af86806c1af79de1b2e3598599b85
 --- /dev/null
 +++ b/src/main/java/dev/kaiijumc/kaiiju/region/LinearRegionFileFlusher.java
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,55 @@
 +package dev.kaiijumc.kaiiju.region;
 +
 +import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -436,8 +441,6 @@ index 0000000000000000000000000000000000000000..65435eb666b2e1cabffc145e016faa5e
 +import org.bukkit.Bukkit;
 +
 +public class LinearRegionFileFlusher {
-+    private final Set<LinearRegionFile> pendingSaving = ConcurrentHashMap.newKeySet();
-+
 +    private final ExecutorService executor = Executors.newFixedThreadPool(
 +        me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearFlushThreads,
 +        new ThreadFactoryBuilder()
@@ -456,11 +459,11 @@ index 0000000000000000000000000000000000000000..65435eb666b2e1cabffc145e016faa5e
 +    }
 +
 +    public void scheduleSave(LinearRegionFile regionFile) {
-+        if (this.pendingSaving.contains(regionFile) || !regionFile.isMarkedToSave()){
++        if (!regionFile.savingScheduled || !regionFile.isMarkedToSave()){
 +            return;
 +        }
 +
-+        this.pendingSaving.add(regionFile);
++        regionFile.savingScheduled = true;
 +        this.delayedFlusher.execute(()->{
 +            try {
 +                if (!regionFile.closed && regionFile.isMarkedToSave()){
@@ -468,7 +471,7 @@ index 0000000000000000000000000000000000000000..65435eb666b2e1cabffc145e016faa5e
 +                }
 +            }finally {
 +                regionFile.resetSaveMarker();
-+                this.pendingSaving.remove(regionFile);
++                regionFile.savingScheduled = false;
 +            }
 +        });
 +    }
@@ -573,6 +576,18 @@ index 2934f0cf0ef09c84739312b00186c2ef0019a165..b46acbc078f3d3bfb0f3ede3f1cc172f
                  }
              }
          }
+diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java b/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java
+index 3f3fd8b1881106f893ffb677272e50d77cbb6626..338dfc1c87ac82df80b3b87148deb791110ce3cc 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java
++++ b/src/main/java/io/papermc/paper/threadedregions/RegionShutdownThread.java
+@@ -164,6 +164,7 @@ public final class RegionShutdownThread extends TickThread {
+ 
+             this.saveLevelData(world);
+         }
++        dev.kaiijumc.kaiiju.region.LinearRegionFile.linearRegionFileFlusher.shutdown(); //Luminol - Kaiiju linear format fixes
+         // moved from stop part 1
+         // we need this to be after saving level data, as that will complete any teleportations the player is in
+         LOGGER.info("Saving players");
 diff --git a/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java b/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
 index 9017907c0ec67a37a506f09b7e4499cef7885279..8b9ffcaab5d71660291d1c0454d2abd969d8c6ae 100644
 --- a/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
