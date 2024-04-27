@@ -25,7 +25,7 @@
 要构建一个paperclip jar，你需要运行以下命令。你可以在build/libs中找到jar（注意：需要`JDK17`）
 
  ```shell
- ./gradlew applyPatches && ./gradlew createReobfPaperclipJar
+ ./gradlew applyPatches && ./gradlew createMojmapPaperclipJar
 ```
 
 ## 使用API
