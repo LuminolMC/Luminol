@@ -168,7 +168,7 @@ index 18b8651147dedcf80d9baf04e87fb25cfbf9b89f..e9a49eb00c64d864ebf4b24d6fe84aba
          super.channelActive(channelhandlercontext);
          this.channel = channelhandlercontext.channel();
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 0e495628228543d55a101d7840acb9fd16e1937b..ea4ee9aa6f9cf28c8b06e2c0546a8a92e44e2620 100644
+index d2e02ccdfbea138f8afe335a8b8c50f0696d7108..f03f01e6a3a0d0c1e99dde1d102178d57f9c342b 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1727,7 +1727,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa

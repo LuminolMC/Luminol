@@ -5,7 +5,7 @@ Subject: [PATCH] Pufferfish Cache climbing check for activation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 1e1086ea561d8a57a33e57fc310493120530c5cf..165c680dd36d75c3b595004ed9605b4429a7193b 100644
+index b676200cb54afa7aebe23eee4e7aef7c9a6e0712..2fb2df4922a1b5b3acf732e68d8db7bb15ecc789 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -309,7 +309,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
