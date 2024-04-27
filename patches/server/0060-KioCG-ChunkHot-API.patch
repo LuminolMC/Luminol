@@ -6,10 +6,10 @@ Subject: [PATCH] KioCG ChunkHot API
 
 diff --git a/src/main/java/com/kiocg/ChunkHot.java b/src/main/java/com/kiocg/ChunkHot.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..99d6d4e02362fb8a1c82ce288a15800e044c7cc8
+index 0000000000000000000000000000000000000000..53b4397997bc9b9b9d88e48304b37a2590161906
 --- /dev/null
 +++ b/src/main/java/com/kiocg/ChunkHot.java
-@@ -0,0 +1,86 @@
+@@ -0,0 +1,90 @@
 +package com.kiocg;
 +
 +import java.util.Arrays;
@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..99d6d4e02362fb8a1c82ce288a15800e
 +    // 用于每个具体统计的计算
 +    private long nanos;
 +    // 当前统计是否进行中
-+    private boolean started = false;
++    private volatile boolean started = false;
 +
 +    /**
 +     * 更新区间下标
@@ -47,6 +47,10 @@ index 0000000000000000000000000000000000000000..99d6d4e02362fb8a1c82ce288a15800e
 +        started = true;
 +        temp = times[this.index];
 +        times[this.index] = 0L;
++    }
++
++    public boolean isStarted(){
++        return this.started;
 +    }
 +
 +    /**
@@ -97,7 +101,7 @@ index 0000000000000000000000000000000000000000..99d6d4e02362fb8a1c82ce288a15800e
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index f03f01e6a3a0d0c1e99dde1d102178d57f9c342b..94cf62a2bdc9a2cca09f083311de3ec72b0dd0e8 100644
+index f03f01e6a3a0d0c1e99dde1d102178d57f9c342b..1be341252cd0db3b5166eb04f7334b3bb3c814af 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1654,6 +1654,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -118,7 +122,7 @@ index f03f01e6a3a0d0c1e99dde1d102178d57f9c342b..94cf62a2bdc9a2cca09f083311de3ec7
          // Folia - region threading
          if (region == null) this.tickRateManager.tick(); // Folia - region threading
          this.tickChildren(shouldKeepTicking, region); // Folia - region threading
-@@ -1663,6 +1674,16 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1663,6 +1674,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
  
          // Folia - region threading
@@ -127,6 +131,10 @@ index f03f01e6a3a0d0c1e99dde1d102178d57f9c342b..94cf62a2bdc9a2cca09f083311de3ec7
 +            final Iterator<net.minecraft.world.level.chunk.LevelChunk> chunkIterator = region.world.getCurrentWorldData().getChunks().unsafeIterator();
 +            while (chunkIterator.hasNext()){
 +                final net.minecraft.world.level.chunk.LevelChunk targetChunk = chunkIterator.next();
++
++                if (!targetChunk.getChunkHot().isStarted()){
++                    continue;
++                }
 +
 +                targetChunk.getChunkHot().stop();
 +            }
