@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
 Date: Sat, 27 Apr 2024 12:36:55 +0000
-Subject: [PATCH] KioCG ChunkHot API
+Subject: [PATCH] KioCG Chunk API
 
 
 diff --git a/src/main/java/com/kiocg/ChunkHot.java b/src/main/java/com/kiocg/ChunkHot.java
@@ -400,3 +400,67 @@ index 19faa8f5f891c1ffbed0af8391dee8202433c447..a3503375133e5ed14dc7092bd403f226
              // Spigot Start
          } catch (StackOverflowError ex) {
              world.lastPhysicsProblem = new BlockPos(pos);
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+index dca5f25cf331b5550e9be491b4e8a3466531e021..0dee50f136b81f788f84beeb1ad8720007736517 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+@@ -22,13 +22,7 @@ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.LightLayer;
+ import net.minecraft.world.level.biome.Biomes;
+ import net.minecraft.world.level.block.Blocks;
+-import net.minecraft.world.level.chunk.ChunkAccess;
+-import net.minecraft.world.level.chunk.ChunkStatus;
+-import net.minecraft.world.level.chunk.DataLayer;
+-import net.minecraft.world.level.chunk.ImposterProtoChunk;
+-import net.minecraft.world.level.chunk.LevelChunkSection;
+-import net.minecraft.world.level.chunk.PalettedContainer;
+-import net.minecraft.world.level.chunk.PalettedContainerRO;
++import net.minecraft.world.level.chunk.*;
+ import net.minecraft.world.level.chunk.storage.ChunkSerializer;
+ import net.minecraft.world.level.chunk.storage.EntityStorage;
+ import net.minecraft.world.level.entity.PersistentEntitySectionManager;
+@@ -428,4 +422,12 @@ public class CraftChunk implements Chunk {
+     static {
+         Arrays.fill(FULL_LIGHT, (byte) 0xFF);
+     }
++
++    // KioCG start - ChunkHot
++    @Override
++    public long getChunkHotAvg() {
++        final LevelChunk target = this.worldServer.getChunkIfLoaded(this.x,this.z);
++        return target == null ? -1 : target.getChunkHot().getAverage();
++    }
++    // KioCG end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index a7f953a75ca8b460e3b4790f690e133bef777d89..a3f6e02bc4b2a62708efc94b44caf27cb9bf5c62 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -3450,4 +3450,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     public void setSendViewDistance(final int viewDistance) {
+         this.getHandle().setSendViewDistance(viewDistance);
+     }
++
++    // KioCG start - ChunkHot
++    @Override
++    public long getNearbyChunkHot() {
++        return this.getHandle().getNearbyChunkHot();
++    }
++    // KioCG end
+ }
+diff --git a/src/main/java/top/leavesmc/leaves/entity/CraftPhotographer.java b/src/main/java/top/leavesmc/leaves/entity/CraftPhotographer.java
+index 4f58b6623a6b5c726d718ced6ab106af3e665e35..3941f2d37bca6482e5db2d2fbe248f0faa8133ce 100644
+--- a/src/main/java/top/leavesmc/leaves/entity/CraftPhotographer.java
++++ b/src/main/java/top/leavesmc/leaves/entity/CraftPhotographer.java
+@@ -70,4 +70,11 @@ public class CraftPhotographer extends CraftPlayer implements Photographer {
+     public String toString() {
+         return "CraftPhotographer{" + "name=" + getName() + '}';
+     }
++
++    // KioCG start - ChunkHot
++    @Override
++    public long getNearbyChunkHot() {
++        return this.getHandle().getNearbyChunkHot();
++    }
++    // KioCG end
+ }
