@@ -9,7 +9,7 @@
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/LuminolMC/Luminol?style=flat-square)
 ![GitHub all releases](https://img.shields.io/github/downloads/LuminolMC/Luminol/total?style=flat-square)
 
-**English** | [中文](./README)
+**English** | [中文](./README.md)
 
 ## Features
 - Configurable vanilla features
