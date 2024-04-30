@@ -1,0 +1,72 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Tue, 30 Apr 2024 14:02:39 +0000
+Subject: [PATCH] Added chunkhot to tpsbar
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java
+index aafb2f5052c7c8e5971a47308253badb3027093c..9fe7ac7ba83bbcc9a2a851a5cace47641323f4d2 100644
+--- a/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java
++++ b/src/main/java/me/earthme/luminol/config/modules/misc/TpsBarConfig.java
+@@ -12,11 +12,13 @@ public class TpsBarConfig implements IConfigModule {
+     @ConfigInfo(baseName = "enabled")
+     public static boolean tpsbarEnabled = false;
+     @ConfigInfo(baseName = "format")
+-    public static String tpsBarFormat = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms";
++    public static String tpsBarFormat = "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms ChunkHot<yellow>:</yellow> <chunkhot>";
+     @ConfigInfo(baseName = "tps_color_list")
+     public static List<String> tpsColors = List.of("GREEN","YELLOW","RED","PURPLE");
+     @ConfigInfo(baseName = "ping_color_list")
+     public static List<String> pingColors = List.of("GREEN","YELLOW","RED","PURPLE");
++    @ConfigInfo(baseName = "chunkhot_color_list")
++    public static List<String> chunkHotColors = List.of("GREEN","YELLOW","RED","PURPLE");
+     @ConfigInfo(baseName = "update_interval_ticks")
+     public static int updateInterval = 15;
+ 
+diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
+index 3f1478dde900d671c4bfa43df80f629519cd602e..7abde30d420ff66026d1dee017c41bc23df22b26 100644
+--- a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
++++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
+@@ -139,7 +139,8 @@ public class GlobalServerTpsBar {
+                 TpsBarConfig.tpsBarFormat,
+                 Placeholder.component("tps",getTpsComponent(tps)),
+                 Placeholder.component("mspt",getMsptComponent(mspt)),
+-                Placeholder.component("ping",getPingComponent(player.getPing()))
++                Placeholder.component("ping",getPingComponent(player.getPing())),
++                Placeholder.component("chunkhot",getChunkHotComponent(player.getNearbyChunkHot()))
+         ));
+         bar.color(barColorFromTps(tps));
+         bar.progress((float) Math.min((float)1,Math.max(mspt / 50,0)));
+@@ -181,6 +182,32 @@ public class GlobalServerTpsBar {
+         return MiniMessage.miniMessage().deserialize(replaced,Placeholder.parsed("text", String.format("%.2f", mspt)));
+     }
+ 
++    private static @NotNull Component getChunkHotComponent(long chunkHot){
++        final BossBar.Color colorBukkit = barColorFromChunkHot(chunkHot);
++        final String colorString = colorBukkit.name();
++
++        final String content = "<%s><text></%s>";
++        final String replaced = String.format(content,colorString,colorString);
++
++        return MiniMessage.miniMessage().deserialize(replaced,Placeholder.parsed("text", String.valueOf(chunkHot)));
++    }
++
++    private static BossBar.Color barColorFromChunkHot(long chunkHot){
++        if (chunkHot == -1){
++            return BossBar.Color.valueOf(TpsBarConfig.chunkHotColors.get(3));
++        }
++
++        if (chunkHot <= 300000L){
++            return BossBar.Color.valueOf(TpsBarConfig.chunkHotColors.get(0));
++        }
++
++        if (chunkHot <= 500000L){
++            return BossBar.Color.valueOf(TpsBarConfig.chunkHotColors.get(1));
++        }
++
++        return BossBar.Color.valueOf(TpsBarConfig.chunkHotColors.get(2));
++    }
++
+     private static BossBar.Color barColorFromMspt(double mspt){
+         if (mspt == -1){
+             return BossBar.Color.valueOf(TpsBarConfig.tpsColors.get(3));
