@@ -111,7 +111,7 @@ index 8deae3e95a26f4b42b2c2134e22f9649bd7a5391..c09357c1ef84a29d972119cb496b0ae9
      private String descriptionId;
      @Nullable
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index b90865dbfb3a4bd83e4cd3ba3b5b965036039f98..66c581585e6ca58eba0e8b7af0fa1f0c9f924f94 100644
+index 7369d608c26e46e9d3a881ac14efe1d0f075b1cb..7f6b810f175e21dbbc85d17fefbba2a7c638144d 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -234,10 +234,10 @@ public abstract class Mob extends LivingEntity implements Targeting {
@@ -127,7 +127,7 @@ index b90865dbfb3a4bd83e4cd3ba3b5b965036039f98..66c581585e6ca58eba0e8b7af0fa1f0c
              this.targetSelector.tick();
          }
      }
-@@ -935,16 +935,20 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -934,16 +934,20 @@ public abstract class Mob extends LivingEntity implements Targeting {
  
          if (i % 2 != 0 && this.tickCount > 1) {
              this.level().getProfiler().push("targetSelector");
@@ -200,7 +200,7 @@ index b21e180641d17438997a80e5bcb0ec7998d24a2e..33c160994f70f71446d665e748791343
          this.level().getProfiler().pop();
          this.level().getProfiler().push("axolotlActivityUpdate");
 diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-index 580da502c62ec5d669cb09932d99d1c7d711c965..b94d775e366f5cb251e9199ff5022ad53129da76 100644
+index 295769d039f2a1e4f48912a60f9dbe267d8992c1..e88b058c0734e436ef24bab6364b206c13e5a9c2 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
 @@ -159,9 +159,11 @@ public class Frog extends Animal implements VariantHolder<FrogVariant> {
@@ -280,7 +280,7 @@ index a9813da7f2b248f98f22e0ad2e7842915025ec12..83d83e3f84bb6bd58761671c6cd4c868
          this.level().getProfiler().pop();
          PiglinAi.updateActivity(this);
 diff --git a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
-index 7aadd36f0fe986635b495ab8c1426644620400cf..0c947d7509d66647327bce885ad2c6051f41c56f 100644
+index 937f81a859953498abe73bea560c86e6560e1c33..0a151c679b0dc943598180942d6d4b3886211688 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
 @@ -273,11 +273,13 @@ public class Warden extends Monster implements VibrationSystem {

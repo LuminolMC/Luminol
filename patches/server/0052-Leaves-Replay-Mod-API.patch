@@ -242,7 +242,7 @@ index 4fc9a47745b817d9ee2da4776cab26ff9f3b0025..e0a103ed27f834f62afb3696047c7581
          player.connection = this;
          player.getTextFilter().join();
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 0f172512085e9dfc0850451d2c6bbffb18221f8f..291f646febc3b40e91056f268433f09b584f2b29 100644
+index 90be312057221a5a78066d89783c5e22008d797d..185a4788809c0aec69420933944b468cbdbceda5 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -13,15 +13,7 @@ import java.net.SocketAddress;
@@ -412,7 +412,7 @@ index 0f172512085e9dfc0850451d2c6bbffb18221f8f..291f646febc3b40e91056f268433f09b
          this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
          this.playersByUUID.put(player.getUUID(), player);
          // this.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityplayer))); // CraftBukkit - replaced with loop below
-@@ -473,6 +587,12 @@ public abstract class PlayerList {
+@@ -471,6 +585,12 @@ public abstract class PlayerList {
                  continue;
              }
  
@@ -425,7 +425,7 @@ index 0f172512085e9dfc0850451d2c6bbffb18221f8f..291f646febc3b40e91056f268433f09b
              onlinePlayers.add(entityplayer1); // Paper - Use single player info update packet on join
          }
          // Paper start - Use single player info update packet on join
-@@ -693,6 +813,54 @@ public abstract class PlayerList {
+@@ -691,6 +811,54 @@ public abstract class PlayerList {
  
      }
  
@@ -480,7 +480,7 @@ index 0f172512085e9dfc0850451d2c6bbffb18221f8f..291f646febc3b40e91056f268433f09b
      public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer) { // CraftBukkit - return string // Paper - return Component
          // Paper start - Fix kick event leave message not being sent
          return this.remove(entityplayer, net.kyori.adventure.text.Component.translatable("multiplayer.player.left", net.kyori.adventure.text.format.NamedTextColor.YELLOW, io.papermc.paper.configuration.GlobalConfiguration.get().messages.useDisplayNameInQuitMessage ? entityplayer.getBukkitEntity().displayName() : io.papermc.paper.adventure.PaperAdventure.asAdventure(entityplayer.getDisplayName())));
-@@ -761,6 +929,7 @@ public abstract class PlayerList {
+@@ -758,6 +926,7 @@ public abstract class PlayerList {
          // Folia - region threading - move to onDisconnect of common packet listener
          entityplayer.getAdvancements().stopListening();
          this.players.remove(entityplayer);
@@ -489,7 +489,7 @@ index 0f172512085e9dfc0850451d2c6bbffb18221f8f..291f646febc3b40e91056f268433f09b
          this.server.getCustomBossEvents().onPlayerDisconnect(entityplayer);
          UUID uuid = entityplayer.getUUID();
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index dc223b536eadd2da6cf3c758a62d0ed81b5a7b3b..e0f49c7e941830236b92f6705cd2c4b96e943a96 100644
+index c70eb23d9745bdbfcc340bb554cf0bf2db71f5de..469e175dc87e66ce73efcc04a68b19140cb7194f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -308,6 +308,7 @@ public final class CraftServer implements Server {
@@ -509,7 +509,7 @@ index dc223b536eadd2da6cf3c758a62d0ed81b5a7b3b..e0f49c7e941830236b92f6705cd2c4b9
              @Override
              public CraftPlayer apply(ServerPlayer player) {
                  return player.getBukkitEntity();
-@@ -3306,4 +3307,11 @@ public final class CraftServer implements Server {
+@@ -3304,4 +3305,11 @@ public final class CraftServer implements Server {
      }
  
      // Paper end

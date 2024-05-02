@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..acc032f727e605e79b688efb4873ff47
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 66c581585e6ca58eba0e8b7af0fa1f0c9f924f94..97e099eea537aea8f8ffd031063949c363820701 100644
+index 7f6b810f175e21dbbc85d17fefbba2a7c638144d..a892ff1b3bc11df5f46269c5ae8838c4a7f91ea9 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -230,11 +230,13 @@ public abstract class Mob extends LivingEntity implements Targeting {
