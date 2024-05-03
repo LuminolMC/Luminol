@@ -342,7 +342,7 @@ index 90be312057221a5a78066d89783c5e22008d797d..185a4788809c0aec69420933944b468c
 +                return;
 +            }
 +
-+            top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handlePlayerJoin(player); // Leaves - protocol
++            // top.leavesmc.leaves.protocol.core.LeavesProtocolManager.handlePlayerJoin(player); // Leaves - protocol
 +
 +            final List<ServerPlayer> playersCopy = new ArrayList<>(this.players);
 +            final List<ServerPlayer> onlinePlayers = Lists.newArrayListWithExpectedSize(playersCopy.size() - 1);
