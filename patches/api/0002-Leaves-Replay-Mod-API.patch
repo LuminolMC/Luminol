@@ -5,10 +5,10 @@ Subject: [PATCH] Leaves Replay Mod API
 
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index c37904d1aae749030620e1bbdb955e25c91ab1f8..84df970635f25239ba1e67fd3dcb4401d14be862 100644
+index b4327a55c422380ca6b3a1dc47c3adbe76de4655..8645a137c6beb5fe9bbb30159317a35a4cd96a50 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -2892,4 +2892,10 @@ public final class Bukkit {
+@@ -2918,4 +2918,10 @@ public final class Bukkit {
      public static Server.Spigot spigot() {
          return server.spigot();
      }
@@ -20,10 +20,10 @@ index c37904d1aae749030620e1bbdb955e25c91ab1f8..84df970635f25239ba1e67fd3dcb4401
 +    // Leaves end - Photographer API
  }
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 15395ef52505087e7eef3b1a5981e787dcc16508..7c7b350f1bbcd1585d175cf9c6b0a938ae5ad759 100644
+index 2a888d33eff4487f23463c565c9f75c40fba7d94..3a78bcb6f681b44594c4f5f35120b67adbe6aeb5 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -2524,4 +2524,8 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -2546,4 +2546,8 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
       */
      public boolean isGlobalTickThread();
      // Folia end - region threading API

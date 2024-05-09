@@ -31,15 +31,16 @@ index 0000000000000000000000000000000000000000..c7e4724cc4ab8d911bcaf0106c098b26
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index aa4b461bbb2c8c4753f7c9057bab1740de2c0284..1ff6c82925417932df856bf1e5866519327f018e 100644
+index 83b09feec13a00c35e6f8d4f0ccdae1c8da9c0e5..d946a08f7a7532079eab83a7d4affc89e6e6ac1e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -143,7 +143,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
-     @Override
+@@ -171,7 +171,8 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
      public void handleHello(ServerboundHelloPacket packet) {
          Validate.validState(this.state == ServerLoginPacketListenerImpl.State.HELLO, "Unexpected hello packet", new Object[0]);
--        if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() && io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.performUsernameValidation && !this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation) Validate.validState(Player.isValidUsername(packet.name()), "Invalid characters in username", new Object[0]); // Paper - config username validation
-+        if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() && io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.performUsernameValidation && !this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation && me.earthme.luminol.config.modules.misc.UsernameCheckConfig.enabled) Validate.validState(Player.isValidUsername(packet.name()), "Invalid characters in username", new Object[0]); // Paper - config username validation  //Luminol - Add config for username check
-         this.requestedUsername = packet.name();
-         GameProfile gameprofile = this.server.getSingleplayerProfile();
- 
+         // Paper start - Validate usernames
+-        if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode()
++        if (me.earthme.luminol.config.modules.misc.UsernameCheckConfig.enabled //Luminol - Add config for username check
++            && io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode()
+             && io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.performUsernameValidation
+             && !this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation) {
+             Validate.validState(StringUtil.isReasonablePlayerName(packet.name()), "Invalid characters in username", new Object[0]);

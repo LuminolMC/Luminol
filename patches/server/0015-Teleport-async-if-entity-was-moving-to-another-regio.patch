@@ -33,10 +33,10 @@ index 0000000000000000000000000000000000000000..73d99a105a18231901e691922b0c283a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 64e58d2d69f837b268e6a70b8a795e6fd5b1ed0c..36f0175228f4ab80ebc67082e7c9bbbc2c14e147 100644
+index 723ae767d7a34643bba5ed616e3943d3d7633312..f39e8291d2d8b15201835b8c018776ef6eda8d24 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -1086,10 +1086,40 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -1128,10 +1128,40 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      }
      // Paper end - detailed watchdog information
  

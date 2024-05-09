@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..ee247014c9a2ec1bbb7f25ef41da110a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 5e3a5e6b05254481ad413069b249ef554b591f8c..9bbfac91f97331b1b558264c867b7e00185291f2 100644
+index bacc97007f09fca97cd2a9d097f93cf78f4d0166..723ae767d7a34643bba5ed616e3943d3d7633312 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -567,7 +567,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -569,7 +569,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          this.bb = Entity.INITIAL_AABB;
          this.stuckSpeedMultiplier = Vec3.ZERO;
          this.nextStep = 1.0F;

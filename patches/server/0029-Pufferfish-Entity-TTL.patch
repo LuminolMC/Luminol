@@ -49,10 +49,10 @@ index 0000000000000000000000000000000000000000..15697d69659b6e1e776acf5094684b5f
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 9b4a9025f9b30834a07a83cc02e7ee7f665dcbd9..835a6e73a340375e30e4822df45a1c99d36ac009 100644
+index 94bac805d032015587e88b4de3cf7064a534e736..5caa390a167c770f657f142fe3355d127fc95cce 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -812,6 +812,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -856,6 +856,12 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      }
  
      public void tick() {
@@ -66,12 +66,12 @@ index 9b4a9025f9b30834a07a83cc02e7ee7f665dcbd9..835a6e73a340375e30e4822df45a1c99
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/EntityType.java b/src/main/java/net/minecraft/world/entity/EntityType.java
-index f921c159c4f7556daf3c8405241de3607ba251ad..8deae3e95a26f4b42b2c2134e22f9649bd7a5391 100644
+index a2f0fb8b4057bd3a84d18298e49c4d02955240d3..aa2bb97ef305ed234a11b05e665ac1062b571591 100644
 --- a/src/main/java/net/minecraft/world/entity/EntityType.java
 +++ b/src/main/java/net/minecraft/world/entity/EntityType.java
-@@ -313,6 +313,7 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
-     private ResourceLocation lootTable;
+@@ -325,6 +325,7 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
      private final EntityDimensions dimensions;
+     private final float spawnDimensionsScale;
      private final FeatureFlagSet requiredFeatures;
 +    public int ttl = -1; // Pufferfish
  

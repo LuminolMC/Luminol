@@ -22,7 +22,7 @@
 Any versions are available in the [release](https://github.com/LuminolMC/Luminol/releases), also you can build it by yourself through [the following steps](./README_EN.md#build).
 
 ## Build
-To build a paperclip jar, you need to run the following command. You can find the jar in build/libs(Note: JDK17 is needed)
+To build a paperclip jar, you need to run the following command. You can find the jar in build/libs(Note: JDK21 is needed)
 
  ```shell
  ./gradlew applyPatches && ./gradlew createMojmapPaperclipJar
@@ -33,7 +33,7 @@ For gradle:
 
 ```kotlin
 dependencies {
-    compileOnly("me.earthme.luminol:luminol-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("me.earthme.luminol:luminol-api:1.20.6-R0.1-SNAPSHOT")
 }
  ```
 
@@ -43,7 +43,7 @@ For maven
 <dependency>
   <groupId>me.earthme.luminol</groupId>
   <artifactId>luminol-api</artifactId>
-  <version>1.20.4-R0.1-SNAPSHOT</version>
+  <version>1.20.6-R0.1-SNAPSHOT</version>
 </dependency>
 ```
 

@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..8487799cdfb776eaca33b57f7c99ae3a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index c8701a2a0a3cbd60e263fe5c069b5993b36842a6..46df26bef2f1d4b0bd5a1313e8ee4f86c2fdf355 100644
+index 11b5155820d38a42e62f68fe0f70fe4daf80f5d1..90f4cc0bd3722400411e6b1aa2d03205a350ee8a 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -842,6 +842,11 @@ public class ServerPlayer extends Player {
+@@ -892,6 +892,11 @@ public class ServerPlayer extends Player {
          }
  
          Entity entity = this.getCamera();

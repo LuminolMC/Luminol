@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..1b0de6f0ccab72c409a63dc190482900
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 1d77bc6bdb87de1ad6c8740376391dedcaa73089..5e3a5e6b05254481ad413069b249ef554b591f8c 100644
+index d8be7c8dca41b6ad6d9a28590be9e33ef9045bdb..bacc97007f09fca97cd2a9d097f93cf78f4d0166 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4065,6 +4065,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4112,6 +4112,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
  
      protected boolean tryEndPortal() {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
@@ -43,7 +43,7 @@ index 1d77bc6bdb87de1ad6c8740376391dedcaa73089..5e3a5e6b05254481ad413069b249ef55
          ServerLevel world = this.portalWorld;
          this.portalBlock = null;
 diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
-index afc9445941b984cc1122839e4a8a17cf27aa966e..0eb328e2b32179ebeefc90063441a1510e0058b8 100644
+index aeac09f628bd04070fd302842c304a7dfd39b229..dcdb7199ce731b2899ebd847f7c2d66dcd6d62bd 100644
 --- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 @@ -61,6 +61,13 @@ public class EndPortalBlock extends BaseEntityBlock {

@@ -1,10 +1,10 @@
-name: Luminol CI - ver/1.20.4
+name: Luminol CI - ver/1.20.6
 
 on:
     push:
-      branches: [ "ver/1.20.4" ]
+      branches: [ "ver/1.20.6" ]
     pull_request:
-      branches: [ "ver/1.20.4" ]
+      branches: [ "ver/1.20.6" ]
 
 permissions: write-all
 
@@ -20,12 +20,12 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.4
+          gradle-version: 8.7
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: 'zulu'
+          java-version: '21'
       - name: Configure Git User Details
         run: git config --global user.email "ci@luminolmc.com" && git config --global user.name "LuminolMC CI"
       - name: Apply Patches

@@ -27,7 +27,7 @@ index cb60d58d4a7556dd896f31d0cd249f860bb3ef84..b52a805150e95d7d27403d3c18088b33
                  metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                      Map<String, Map<String, Integer>> map = new HashMap<>();
 diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
-index e2f704c115fd6e00960bb56bb0779f1100c89c17..72b9343979de5aa8bb399cbe7cb8a795df9830ab 100644
+index e2f704c115fd6e00960bb56bb0779f1100c89c17..7707908064a75ecf02677a0110207e194c3eefd1 100644
 --- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 +++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 @@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
@@ -51,10 +51,10 @@ index e2f704c115fd6e00960bb56bb0779f1100c89c17..72b9343979de5aa8bb399cbe7cb8a795
  
          return history != null ? TextComponent.ofChildren(updateMessage, Component.newline(), history) : updateMessage;
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index d6a7188227cee9072976db98613324ee2d3dcdc8..8c9a80197247a384dd80747bf23fdd809d08b341 100644
+index 5702ab6f4a3f02ce791a7bdbc2a9487fc318a611..f456ff479ee40fc318efa526dd02a21a2bc131ab 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1963,7 +1963,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -2027,7 +2027,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -64,10 +64,10 @@ index d6a7188227cee9072976db98613324ee2d3dcdc8..8c9a80197247a384dd80747bf23fdd80
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 9dd9e86a5f7f30ce37b906ebfe4bccad0e52577f..c70eb23d9745bdbfcc340bb554cf0bf2db71f5de 100644
+index 57963e9e427e2533ae9cdbd1e98ff3dfadbdebac..dfae16ae414f3f095da0e8088f3755b88fb98592 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -266,7 +266,7 @@ import javax.annotation.Nullable; // Paper
+@@ -268,7 +268,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {

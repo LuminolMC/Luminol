@@ -33,20 +33,21 @@ index 0000000000000000000000000000000000000000..dd45cf1fde5ee4cf8347064f106c64b8
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 54297b9dde40fe853d873d60373cd8c0a3c9466b..7369d608c26e46e9d3a881ac14efe1d0f075b1cb 100644
+index ef5cd008de4d145b67c70e48ae21ea969aedb1f0..8345d8431e1c05639f14919b9bad1029249a5f50 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -926,10 +926,11 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -983,12 +983,12 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
              return;
          }
          // Paper end - Allow nerfed mobs to jump and float
-+        int i = this.tickCount + this.getId(); // Folia - region threading //Luminol - Petal - Move up
-+
-         this.level().getProfiler().push("sensing");
++        int i = this.tickCount + this.getId(); //Luminol - Petal - Move up
+         ProfilerFiller gameprofilerfiller = this.level().getProfiler();
+ 
+         gameprofilerfiller.push("sensing");
 -        this.sensing.tick();
-+        if (i % me.earthme.luminol.config.modules.optimizations.PetalReduceSensorWorkConfig.delayTicks == 0 || !me.earthme.luminol.config.modules.optimizations.PetalReduceSensorWorkConfig.enabled)this.sensing.tick(); //Luminol - Petal - Reduce sensor work
-         this.level().getProfiler().pop();
--        int i = this.tickCount + this.getId(); // Folia - region threading
++        if (i % me.earthme.luminol.config.modules.optimizations.PetalReduceSensorWorkConfig.delayTicks == 0 || !me.earthme.luminol.config.modules.optimizations.PetalReduceSensorWorkConfig.enabled) this.sensing.tick(); // Luminol - Petal - Reduce sensor work
+         gameprofilerfiller.pop();
+-        int i = this.tickCount + this.getId();
  
          if (i % 2 != 0 && this.tickCount > 1) {
-             this.level().getProfiler().push("targetSelector");
+             gameprofilerfiller.push("targetSelector");

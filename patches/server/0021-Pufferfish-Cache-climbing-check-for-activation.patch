@@ -5,10 +5,10 @@ Subject: [PATCH] Pufferfish Cache climbing check for activation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index b676200cb54afa7aebe23eee4e7aef7c9a6e0712..2fb2df4922a1b5b3acf732e68d8db7bb15ecc789 100644
+index 643631e11c88285f33d050bf7b4b1e2f63b5c992..94c9f407f526b2d43cf61725b414b113de03c67d 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -309,7 +309,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -312,7 +312,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      public double yo;
      public double zo;
      private Vec3 position;
@@ -18,10 +18,10 @@ index b676200cb54afa7aebe23eee4e7aef7c9a6e0712..2fb2df4922a1b5b3acf732e68d8db7bb
      private Vec3 deltaMovement;
      private float yRot;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index b9f6e599afd4bdfb97e7f1b1881730cbed781bba..ff7b0d6a22a0858d4e4348d4f3c0c55bcb3f0084 100644
+index ae5c7f39581bf389c5a89ad914d0d7092ad3dcdd..03226f99cbf67a77b4ffcd3accbe23298a0bcecd 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -143,7 +143,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
+@@ -150,7 +150,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
  import org.bukkit.event.player.PlayerItemConsumeEvent;
  // CraftBukkit end
  
@@ -29,7 +29,7 @@ index b9f6e599afd4bdfb97e7f1b1881730cbed781bba..ff7b0d6a22a0858d4e4348d4f3c0c55b
  
  public abstract class LivingEntity extends Entity implements Attackable {
  
-@@ -2043,6 +2042,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2070,6 +2069,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return this.lastClimbablePos;
      }
  

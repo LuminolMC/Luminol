@@ -5,10 +5,10 @@ Subject: [PATCH] Pufferfish Only check for spooky season once an hour
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ambient/Bat.java b/src/main/java/net/minecraft/world/entity/ambient/Bat.java
-index 44fa2d4f90389f5526746bd94a2450c03340bd0b..3bbeb33eb51b6aea96e926af6715980e207b815e 100644
+index dc27ddf5131e7398a5390a5187261d4c7fb6ccaa..39cc49b746b0a775fde5d173dd4f712ab4a84a97 100644
 --- a/src/main/java/net/minecraft/world/entity/ambient/Bat.java
 +++ b/src/main/java/net/minecraft/world/entity/ambient/Bat.java
-@@ -241,13 +241,25 @@ public class Bat extends AmbientCreature {
+@@ -239,13 +239,25 @@ public class Bat extends AmbientCreature {
          }
      }
  
@@ -33,5 +33,5 @@ index 44fa2d4f90389f5526746bd94a2450c03340bd0b..3bbeb33eb51b6aea96e926af6715980e
      }
 +    // Pufferfish end
  
-     @Override
-     protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
+     private void setupAnimationStates() {
+         if (this.isResting()) {

@@ -33,10 +33,10 @@ index 0000000000000000000000000000000000000000..b8aceab54bb60000e7c5681014027102
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 46df26bef2f1d4b0bd5a1313e8ee4f86c2fdf355..0086a1a4611b983eefd0cb7bf8e9cff677246d0f 100644
+index 90f4cc0bd3722400411e6b1aa2d03205a350ee8a..f87c7a77b8d5748c08488470bf60ea84ab95a819 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -330,6 +330,10 @@ public class ServerPlayer extends Player {
+@@ -347,6 +347,10 @@ public class ServerPlayer extends Player {
      public double lastEntitySpawnRadiusSquared = -1.0;
      // Paper end - optimise chunk tick iteration
  
@@ -48,10 +48,10 @@ index 46df26bef2f1d4b0bd5a1313e8ee4f86c2fdf355..0086a1a4611b983eefd0cb7bf8e9cff6
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 954809d8997750959541e6462668f17efd0b0f70..4fc9a47745b817d9ee2da4776cab26ff9f3b0025 100644
+index 2c65527fa7bc2fce769e15f35a45ebae381c6bac..c13e3da32415607b3f0f88b6c34630a28af75128 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -675,7 +675,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -695,7 +695,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
                      Location oldTo = to.clone();
                      PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -61,7 +61,7 @@ index 954809d8997750959541e6462668f17efd0b0f70..4fc9a47745b817d9ee2da4776cab26ff
  
                      // If the event is cancelled we move the player back to their old location.
                      if (event.isCancelled()) {
-@@ -1621,7 +1623,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -1612,7 +1614,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
                                      Location oldTo = to.clone();
                                      PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -72,10 +72,10 @@ index 954809d8997750959541e6462668f17efd0b0f70..4fc9a47745b817d9ee2da4776cab26ff
                                      // If the event is cancelled we move the player back to their old location.
                                      if (event.isCancelled()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 36f0175228f4ab80ebc67082e7c9bbbc2c14e147..ad15df5dfe34e20a6b5dafaf01e8a7306b158109 100644
+index f39e8291d2d8b15201835b8c018776ef6eda8d24..7112c529a652b6ab6a418b3a44fc1f075061cc74 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -3986,6 +3986,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4033,6 +4033,18 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
                                         java.util.function.Consumer<Entity> teleportComplete) {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot teleport entity async");
  
@@ -95,10 +95,10 @@ index 36f0175228f4ab80ebc67082e7c9bbbc2c14e147..ad15df5dfe34e20a6b5dafaf01e8a730
              return false;
          }
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-index d514ec1e4cbdc579c3a61533998437903afdc8b6..ed4cbc459bf5f4b7615c6e2ab0d99728d18f2598 100644
+index 4d7454e5a64fc18e63793a221daa94617f17c666..a1dc46ec6d53389eb7c801a7a14c4169406de580 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -378,7 +378,21 @@ public abstract class AbstractMinecart extends VehicleEntity {
+@@ -375,7 +375,21 @@ public abstract class AbstractMinecart extends VehicleEntity {
              this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
  
              if (!from.equals(to)) {
@@ -121,10 +121,10 @@ index d514ec1e4cbdc579c3a61533998437903afdc8b6..ed4cbc459bf5f4b7615c6e2ab0d99728
              // CraftBukkit end
              if (this.getMinecartType() == AbstractMinecart.Type.RIDEABLE && this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/Boat.java b/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
-index db6aa75d642f4a7258f197933671907faf79c8f2..065d4c06e3fd93fb46595b9864b150ea2480f5fc 100644
+index b068cff9b5aa457d65b679529956e8210296d799..d002519a356072284faa5f879e188f3e3062939f 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
-@@ -377,8 +377,22 @@ public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
+@@ -370,8 +370,22 @@ public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
          server.getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
  
          if (this.lastLocation != null && !this.lastLocation.equals(to)) {

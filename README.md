@@ -22,7 +22,7 @@
 任何版本都可以在 [Release](https://github.com/LuminolMC/Luminol/releases) 中找到，你也可以通过[以下步骤](./README.md#构建)自己构建。
 
 ## 构建
-要构建一个paperclip jar，你需要运行以下命令。你可以在build/libs中找到jar（注意：需要`JDK17`）
+要构建一个paperclip jar，你需要运行以下命令。你可以在build/libs中找到jar（注意：需要`JDK21`）
 
  ```shell
  ./gradlew applyPatches && ./gradlew createMojmapPaperclipJar
@@ -33,7 +33,7 @@
 
 ```kotlin
 dependencies {
-    compileOnly("me.earthme.luminol:luminol-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("me.earthme.luminol:luminol-api:1.20.6-R0.1-SNAPSHOT")
 }
  ```
 
@@ -43,7 +43,7 @@ dependencies {
 <dependency>
   <groupId>me.earthme.luminol</groupId>
   <artifactId>luminol-api</artifactId>
-  <version>1.20.4-R0.1-SNAPSHOT</version>
+  <version>1.20.6-R0.1-SNAPSHOT</version>
 </dependency>
 ```
 

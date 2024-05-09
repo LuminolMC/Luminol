@@ -347,10 +347,10 @@ index 0000000000000000000000000000000000000000..3f1478dde900d671c4bfa43df80f6295
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 68355b9a0a88c871e18031d04581c9ef53313f48..c626018d786fe231cd74a28c83515715d896f214 100644
+index e032f454fe8b274ed70f750ada4b3f375fda33da..af3eedca870fdf01e9ff82e6b6595ef9b3a9a0a8 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -830,6 +830,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -851,6 +851,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
  
      @Override
      public void stopServer() {
@@ -359,10 +359,10 @@ index 68355b9a0a88c871e18031d04581c9ef53313f48..c626018d786fe231cd74a28c83515715
          //Util.shutdownExecutors(); // Paper - moved into super
          SkullBlockEntity.clear();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 9d7837f90340a96edbd544826ae2241c61ae72c4..c8701a2a0a3cbd60e263fe5c069b5993b36842a6 100644
+index da87c4825c67e62ae238877f1fb3220f4c57f553..11b5155820d38a42e62f68fe0f70fe4daf80f5d1 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -285,6 +285,7 @@ public class ServerPlayer extends Player {
+@@ -302,6 +302,7 @@ public class ServerPlayer extends Player {
      // Paper start - replace player chunk loader
      private final java.util.concurrent.atomic.AtomicReference<io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances> viewDistances = new java.util.concurrent.atomic.AtomicReference<>(new io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances(-1, -1, -1));
      public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
@@ -371,10 +371,10 @@ index 9d7837f90340a96edbd544826ae2241c61ae72c4..c8701a2a0a3cbd60e263fe5c069b5993
      public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances getViewDistances() {
          return this.viewDistances.get();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 0ece776a1e281a328e28dc07fb4dc882b19d029c..b57980d4fa445f2aa71e4477459da833eade50e8 100644
+index 92f08b13da2e13cf375d8794e54f7292140545d7..14dca1757d518814890d9866182b50e7e22ebf58 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2287,6 +2287,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2372,6 +2372,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                  handle.expToDrop = data.getInt("expToDrop");
                  handle.keepLevel = data.getBoolean("keepLevel");
              }
@@ -384,7 +384,7 @@ index 0ece776a1e281a328e28dc07fb4dc882b19d029c..b57980d4fa445f2aa71e4477459da833
          }
      }
  
-@@ -2308,6 +2311,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2393,6 +2396,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          data.putLong("lastPlayed", System.currentTimeMillis());
          data.putString("lastKnownName", handle.getScoreboardName());
  

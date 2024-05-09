@@ -5,10 +5,10 @@ Subject: [PATCH] Fix build
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 905262067dabc7cbe5b08639fcefd3a996a937e0..c0608731dd7a352628a1e31997d0658dfa9f2ea8 100644
+index b1d621ed91c74790fd5b66339c044ec444de62ef..fee54ed7abfc93f8fd911aea6831988e3699f762 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -14,7 +14,7 @@ val alsoShade: Configuration by configurations.creating
+@@ -13,7 +13,7 @@ val alsoShade: Configuration by configurations.creating
  
  dependencies {
      // Folia start
@@ -17,7 +17,7 @@ index 905262067dabc7cbe5b08639fcefd3a996a937e0..c0608731dd7a352628a1e31997d0658d
      implementation("io.papermc.paper:paper-mojangapi:${project.version}") {
          exclude("io.papermc.paper", "paper-api")
      }
-@@ -75,7 +75,7 @@ tasks.jar {
+@@ -83,7 +83,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",

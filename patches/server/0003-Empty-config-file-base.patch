@@ -5,10 +5,10 @@ Subject: [PATCH] Empty config file base
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index c0608731dd7a352628a1e31997d0658dfa9f2ea8..66c34f883a93dd86fcac8029cce63ffe7340c89b 100644
+index fee54ed7abfc93f8fd911aea6831988e3699f762..be27f07025d92b1dd6cef08b6959990f9c98ec0d 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -19,6 +19,7 @@ dependencies {
+@@ -18,6 +18,7 @@ dependencies {
          exclude("io.papermc.paper", "paper-api")
      }
      // Folia end
@@ -414,10 +414,10 @@ index 0000000000000000000000000000000000000000..2b4e64796bf01b0a5fcb306850cd6083
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 6b3242117d62175de462d04e4d178b49ae2521e9..68355b9a0a88c871e18031d04581c9ef53313f48 100644
+index 05bc06fcf508e74c717a7f71a2c7ed7c568e846a..e032f454fe8b274ed70f750ada4b3f375fda33da 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -209,6 +209,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -222,6 +222,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          this.paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
          this.paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
          // Paper end - initialize global and world-defaults configuration

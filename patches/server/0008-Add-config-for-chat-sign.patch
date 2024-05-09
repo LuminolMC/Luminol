@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..1e03e51e51f56c38abaad100274e25c9
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java b/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
-index 4abd7babc3aa7268975386e7c2319f7961b0c3aa..d209466866c30b3f15b8c40934ea6470292b8a77 100644
+index 479e6e2aa88a22ef7f8fccb06add6806f5b71d9d..22dae23a0c2fa4c85befd670637b1e592d889b58 100644
 --- a/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
 +++ b/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
-@@ -14,9 +14,17 @@ public record ArgumentSignatures(List<ArgumentSignatures.Entry> entries) {
+@@ -14,9 +14,16 @@ public record ArgumentSignatures(List<ArgumentSignatures.Entry> entries) {
      private static final int MAX_ARGUMENT_NAME_LENGTH = 16;
  
      public ArgumentSignatures(FriendlyByteBuf buf) {
@@ -49,15 +49,14 @@ index 4abd7babc3aa7268975386e7c2319f7961b0c3aa..d209466866c30b3f15b8c40934ea6470
 +    }
 +    //Luminol end
 +
-+
-     @Nullable
-     public MessageSignature get(String argumentName) {
-         for (ArgumentSignatures.Entry entry : this.entries) {
+     public void write(FriendlyByteBuf buf) {
+         buf.writeCollection(this.entries, (buf2, entry) -> entry.write(buf2));
+     }
 diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
-index b863249ff7e13cf4939c8961601f0564c62fd661..6ab73b0568c3f9df8090be992736a14d49e0286c 100644
+index aafeb9c61ddba6a8671f0238eda47b227619f1af..6ba184b38864ac64ec94a8bb326d91495a56c945 100644
 --- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 +++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
-@@ -143,6 +143,16 @@ public class FriendlyByteBuf extends ByteBuf {
+@@ -129,6 +129,16 @@ public class FriendlyByteBuf extends ByteBuf {
          // Paper end - Adventure; add max length parameter
          DataResult<JsonElement> dataresult = codec.encodeStart(JsonOps.INSTANCE, value);
  
@@ -71,6 +70,6 @@ index b863249ff7e13cf4939c8961601f0564c62fd661..6ab73b0568c3f9df8090be992736a14d
 +        }
 +        //Luminol end
 +
-         this.writeUtf(FriendlyByteBuf.GSON.toJson((JsonElement) Util.getOrThrow(dataresult, (s) -> {
-             return new EncoderException("Failed to encode: " + s + " " + value);
+         this.writeUtf(FriendlyByteBuf.GSON.toJson((JsonElement) dataresult.getOrThrow((s) -> {
+             return new EncoderException("Failed to encode: " + s + " " + String.valueOf(value));
          })), maxLength); // Paper - Adventure; add max length parameter

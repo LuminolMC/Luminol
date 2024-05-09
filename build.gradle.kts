@@ -1,8 +1,7 @@
 plugins {
     java
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
-    id("io.papermc.paperweight.patcher") version "1.5.15"
+    id("io.papermc.paperweight.patcher") version "1.6.3"
 }
 
 val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
@@ -26,13 +25,13 @@ subprojects {
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
+            languageVersion.set(JavaLanguageVersion.of(21))
         }
     }
 
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(17)
+        options.release.set(21)
     }
 
     tasks.withType<Javadoc> {
@@ -75,7 +74,7 @@ paperweight {
     decompileRepo.set("https://maven.quiltmc.org/")
 
     useStandardUpstream("folia") {
-        url.set(github("Dreeam-qwq", "Folia"))
+        url.set(github("ColdeZhang", "Folia"))
         ref.set(providers.gradleProperty("foliaCommit"))
 
         withStandardPatcher {
