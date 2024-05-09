@@ -5,7 +5,7 @@ Subject: [PATCH] Gale Optimize sun burn tick
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 31f80438e82da6de1cd1ec35a2f77c45f0127722..6948342ef9fa4af0e13707e85cd788c815e34544 100644
+index 62f997aae20fe392bc271b23b632441ce989c69c..485ca9a13a04ee47b27f1d23c6323583139865a1 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -308,7 +308,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
@@ -37,10 +37,10 @@ index 31f80438e82da6de1cd1ec35a2f77c45f0127722..6948342ef9fa4af0e13707e85cd788c8
          this.absMoveTo(x, y, z);
          this.setYRot(yaw % 360.0F);
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index a892ff1b3bc11df5f46269c5ae8838c4a7f91ea9..aa51819373465c733d0c31ae18ef97afee550767 100644
+index abbbd6b56af8a177cd8ebfc5aa34c3f7282bdc59..b3ab33fb1e77cd1f95e4669fc7c7c2a188e813ca 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1749,13 +1749,29 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -1750,13 +1750,29 @@ public abstract class Mob extends LivingEntity implements Targeting {
  
      }
  

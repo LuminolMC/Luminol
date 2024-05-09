@@ -5,10 +5,10 @@ Subject: [PATCH] Kaiiju Don't pathfind outside region
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java b/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java
-index 1ab77f3518d1df30f66ae44d7d4fa69e5b32d93a..98bf17441da3169d49de55fe89d79ebe250a2b7e 100644
+index 2a7a26ca447cc78f24e61a2bf557411c31eb16b2..28602455d659dfac4653ab5b7bf4139f65c190ad 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java
-@@ -107,7 +107,9 @@ public class MoveToTargetSink extends Behavior<Mob> {
+@@ -120,7 +120,9 @@ public class MoveToTargetSink extends Behavior<Mob> {
  
      private boolean tryComputePath(Mob entity, WalkTarget walkTarget, long time) {
          BlockPos blockPos = walkTarget.getTarget().currentBlockPosition();

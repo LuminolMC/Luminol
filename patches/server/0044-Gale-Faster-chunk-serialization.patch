@@ -214,10 +214,10 @@ index 8bafd5fd7499ba4a04bf706cfd1e156073716e21..f62aab492f231e688b448389b1910e6f
 +    <T> void compact(net.minecraft.world.level.chunk.Palette<T> srcPalette, net.minecraft.world.level.chunk.Palette<T> dstPalette, short[] out); // Gale - Lithium - faster chunk serialization
  }
 diff --git a/src/main/java/net/minecraft/util/SimpleBitStorage.java b/src/main/java/net/minecraft/util/SimpleBitStorage.java
-index 453c1d7e01970fd817d27f59c3b00ffc70e8ca0c..844539798213360831541f49d97f8401d80d030e 100644
+index 8d7d763bf51cac556057645e6169c9447993189b..c1e5f04df9529e9236a5c8a047b02ad560085025 100644
 --- a/src/main/java/net/minecraft/util/SimpleBitStorage.java
 +++ b/src/main/java/net/minecraft/util/SimpleBitStorage.java
-@@ -201,4 +201,45 @@ public class SimpleBitStorage implements BitStorage {
+@@ -389,4 +389,45 @@ public class SimpleBitStorage implements BitStorage {
              super(message);
          }
      }
@@ -264,10 +264,10 @@ index 453c1d7e01970fd817d27f59c3b00ffc70e8ca0c..844539798213360831541f49d97f8401
 +
  }
 diff --git a/src/main/java/net/minecraft/util/ZeroBitStorage.java b/src/main/java/net/minecraft/util/ZeroBitStorage.java
-index f8de91393564b3691c17339ac9196cc0fc1cf748..ecfe47110697378d7f7369640cd06b77f6fa0a87 100644
+index 01f5b946fabbe34f31110e75973dab9f39897346..1cd79ab7635d4a5e55538c1130f487245f45b4b6 100644
 --- a/src/main/java/net/minecraft/util/ZeroBitStorage.java
 +++ b/src/main/java/net/minecraft/util/ZeroBitStorage.java
-@@ -72,4 +72,6 @@ public class ZeroBitStorage implements BitStorage {
+@@ -71,4 +71,6 @@ public class ZeroBitStorage implements BitStorage {
      public BitStorage copy() {
          return this;
      }
@@ -286,7 +286,7 @@ index acae3eb30e0689048937f479dc3070f0688abdad..4b79f0474a9013dd4fdb68c6363ca194
      int onResize(int newBits, T object);
  }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java b/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java
-index 983799520ce052d98c9231f4f7925492d4f7d5c9..6e7b3ea1819780aef6db3ff0b43998de8f1066bf 100644
+index adfbdca12fbdee2602feb0158674166d5256e49e..9990e60f61d678e20cfffe22848eb5cc7c554b8a 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java
 @@ -25,6 +25,22 @@ import net.minecraft.util.ThreadingDetector;
@@ -310,9 +310,9 @@ index 983799520ce052d98c9231f4f7925492d4f7d5c9..6e7b3ea1819780aef6db3ff0b43998de
 +    // Gale end - Lithium - faster chunk serialization
 +
      private static final int MIN_PALETTE_BITS = 0;
-     private final PaletteResize<T> dummyPaletteResize = (newSize, added) -> {
-         return 0;
-@@ -302,30 +318,54 @@ public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainer
+     private final PaletteResize<T> dummyPaletteResize = (newSize, added) -> 0;
+     public final IdMap<T> registry;
+@@ -304,28 +320,54 @@ public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainer
      public synchronized PalettedContainerRO.PackedData<T> pack(IdMap<T> idList, PalettedContainer.Strategy paletteProvider) { // Paper - synchronize
          this.acquire();
  
@@ -325,9 +325,7 @@ index 983799520ce052d98c9231f4f7925492d4f7d5c9..6e7b3ea1819780aef6db3ff0b43998de
 -            int i = paletteProvider.size();
 -            int[] is = new int[i];
 -            this.data.storage.unpack(is);
--            swapPalette(is, (id) -> {
--                return hashMapPalette.idFor(this.data.palette.valueFor(id));
--            });
+-            swapPalette(is, id -> hashMapPalette.idFor(this.data.palette.valueFor(id)));
 -            int j = paletteProvider.calculateBitsForSerialization(idList, hashMapPalette.getSize());
 -            Optional<LongStream> optional;
 -            if (j != 0) {
@@ -384,7 +382,7 @@ index 983799520ce052d98c9231f4f7925492d4f7d5c9..6e7b3ea1819780aef6db3ff0b43998de
      }
  
      private static <T> void swapPalette(int[] is, IntUnaryOperator applier) {
-@@ -365,17 +405,37 @@ public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainer
+@@ -364,13 +406,33 @@ public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainer
  
      @Override
      public void count(PalettedContainer.CountConsumer<T> counter) {
@@ -392,12 +390,8 @@ index 983799520ce052d98c9231f4f7925492d4f7d5c9..6e7b3ea1819780aef6db3ff0b43998de
 -            counter.accept(this.data.palette.valueFor(0), this.data.storage.getSize());
 -        } else {
 -            Int2IntOpenHashMap int2IntOpenHashMap = new Int2IntOpenHashMap();
--            this.data.storage.getAll((key) -> {
--                int2IntOpenHashMap.addTo(key, 1);
--            });
--            int2IntOpenHashMap.int2IntEntrySet().forEach((entry) -> {
--                counter.accept(this.data.palette.valueFor(entry.getIntKey()), entry.getIntValue());
--            });
+-            this.data.storage.getAll(key -> int2IntOpenHashMap.addTo(key, 1));
+-            int2IntOpenHashMap.int2IntEntrySet().forEach(entry -> counter.accept(this.data.palette.valueFor(entry.getIntKey()), entry.getIntValue()));
 +        // Gale start - Lithium - faster chunk serialization
 +        int len = this.data.palette().getSize();
 +
@@ -408,12 +402,8 @@ index 983799520ce052d98c9231f4f7925492d4f7d5c9..6e7b3ea1819780aef6db3ff0b43998de
 +                counter.accept(this.data.palette.valueFor(0), this.data.storage.getSize());
 +            } else {
 +                Int2IntOpenHashMap int2IntOpenHashMap = new Int2IntOpenHashMap();
-+                this.data.storage.getAll((key) -> {
-+                    int2IntOpenHashMap.addTo(key, 1);
-+                });
-+                int2IntOpenHashMap.int2IntEntrySet().forEach((entry) -> {
-+                    counter.accept(this.data.palette.valueFor(entry.getIntKey()), entry.getIntValue());
-+                });
++                this.data.storage.getAll(key -> int2IntOpenHashMap.addTo(key, 1));
++                int2IntOpenHashMap.int2IntEntrySet().forEach(entry -> counter.accept(this.data.palette.valueFor(entry.getIntKey()), entry.getIntValue()));
 +            }
 +        }
 +

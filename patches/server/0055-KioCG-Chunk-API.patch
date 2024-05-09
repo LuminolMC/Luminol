@@ -101,7 +101,7 @@ index 0000000000000000000000000000000000000000..53b4397997bc9b9b9d88e48304b37a25
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index f03f01e6a3a0d0c1e99dde1d102178d57f9c342b..1be341252cd0db3b5166eb04f7334b3bb3c814af 100644
+index 8ea86315e09a6b182bab03ee902ef92c5e18d962..d933895e833bea1720cc32256e98e0fe3638f4eb 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1654,6 +1654,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -241,7 +241,7 @@ index 094ab43e5a209ea848bf0994db9018281c64e08d..e2084013770e78d006ddd9547f6c9040
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 0893b62e72fe03a14e7617f28676f53f77e7624c..8a0cf571195fa8f8771a03cba329dac294bdbece 100644
+index 82ffe6571b06a482296fb28e37aa148daf6a0ce6..9293fb2dec97e6c6bf5abe5eb7d1878bb7f200d1 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -5898,4 +5898,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
@@ -268,10 +268,10 @@ index 0a8a53710c693a220e9475f6f3112b91d8209c00..5053852c72b68db41a2f51a72fffa1f8
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index aa51819373465c733d0c31ae18ef97afee550767..94cf8625c3c15757039cf8ac295f4def703f2b26 100644
+index b3ab33fb1e77cd1f95e4669fc7c7c2a188e813ca..4c26749515f7d4508f749caf4ae90607131bed4e 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1830,4 +1830,11 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -1831,4 +1831,11 @@ public abstract class Mob extends LivingEntity implements Targeting {
  
          return itemmonsteregg == null ? null : new ItemStack(itemmonsteregg);
      }
@@ -433,10 +433,10 @@ index dca5f25cf331b5550e9be491b4e8a3466531e021..0dee50f136b81f788f84beeb1ad87200
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index a7f953a75ca8b460e3b4790f690e133bef777d89..a3f6e02bc4b2a62708efc94b44caf27cb9bf5c62 100644
+index 2a5e76b1cee25b05189bb75daad4ced939bbb343..51caaac770b063a4be432b06030e325047651e91 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3450,4 +3450,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3481,4 +3481,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      public void setSendViewDistance(final int viewDistance) {
          this.getHandle().setSendViewDistance(viewDistance);
      }

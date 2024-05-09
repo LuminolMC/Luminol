@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..1e03e51e51f56c38abaad100274e25c9
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java b/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
-index 72a8aa676836fcb3b4578689d16af65e18f55bbe..9408747cb254a99d5cb3fc26fde16ddb80168894 100644
+index 4abd7babc3aa7268975386e7c2319f7961b0c3aa..d209466866c30b3f15b8c40934ea6470292b8a77 100644
 --- a/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
 +++ b/src/main/java/net/minecraft/commands/arguments/ArgumentSignatures.java
 @@ -14,9 +14,17 @@ public record ArgumentSignatures(List<ArgumentSignatures.Entry> entries) {
@@ -52,7 +52,7 @@ index 72a8aa676836fcb3b4578689d16af65e18f55bbe..9408747cb254a99d5cb3fc26fde16ddb
 +
      @Nullable
      public MessageSignature get(String argumentName) {
-         for(ArgumentSignatures.Entry entry : this.entries) {
+         for (ArgumentSignatures.Entry entry : this.entries) {
 diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 index b863249ff7e13cf4939c8961601f0564c62fd661..6ab73b0568c3f9df8090be992736a14d49e0286c 100644
 --- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java

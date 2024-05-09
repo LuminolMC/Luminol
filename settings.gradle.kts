@@ -9,7 +9,7 @@ pluginManagement {
 
 rootProject.name = "luminol"
 for (name in listOf("Luminol-API", "Luminol-Server")) {
-    val projName = name.toLowerCase(Locale.ENGLISH)
+    val projName = name.lowercase(Locale.ENGLISH)
     include(projName)
     findProject(":$projName")!!.projectDir = file(name)
 }

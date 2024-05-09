@@ -5,7 +5,7 @@ Subject: [PATCH] Gale Optimize noise generation
 
 
 diff --git a/src/main/java/net/minecraft/world/level/levelgen/synth/ImprovedNoise.java b/src/main/java/net/minecraft/world/level/levelgen/synth/ImprovedNoise.java
-index fb84d703b4461343d50510d7c9be32fc1f09ed22..93a11c95f96f975fafe03e77a2caace57675d130 100644
+index 9a97e5cd23d839183ac4d243d28df92af3119fe7..0da2d816f0497eae0c055f3929b8194a3473a221 100644
 --- a/src/main/java/net/minecraft/world/level/levelgen/synth/ImprovedNoise.java
 +++ b/src/main/java/net/minecraft/world/level/levelgen/synth/ImprovedNoise.java
 @@ -11,6 +11,27 @@ public final class ImprovedNoise {
@@ -34,9 +34,9 @@ index fb84d703b4461343d50510d7c9be32fc1f09ed22..93a11c95f96f975fafe03e77a2caace5
 +    // Gale end - C2ME - optimize noise generation
 +
      public ImprovedNoise(RandomSource random) {
-         this.xo = random.nextDouble() * 256.0D;
-         this.yo = random.nextDouble() * 256.0D;
-@@ -40,12 +61,14 @@ public final class ImprovedNoise {
+         this.xo = random.nextDouble() * 256.0;
+         this.yo = random.nextDouble() * 256.0;
+@@ -38,12 +59,14 @@ public final class ImprovedNoise {
          double d = x + this.xo;
          double e = y + this.yo;
          double f = z + this.zo;
@@ -55,16 +55,16 @@ index fb84d703b4461343d50510d7c9be32fc1f09ed22..93a11c95f96f975fafe03e77a2caace5
 +        double l = f - k;
 +        // Gale end - C2ME - optimize noise generation - optimize: remove frequent type conversions
          double o;
-         if (yScale != 0.0D) {
+         if (yScale != 0.0) {
              double m;
-@@ -55,25 +78,27 @@ public final class ImprovedNoise {
+@@ -53,25 +76,27 @@ public final class ImprovedNoise {
                  m = h;
              }
  
--            o = (double)Mth.floor(m / yScale + (double)1.0E-7F) * yScale;
+-            o = (double)Mth.floor(m / yScale + 1.0E-7F) * yScale;
 +            o = Math.floor(m / yScale + (double)1.0E-7F) * yScale; // Gale - C2ME - optimize noise generation - optimize: remove frequent type conversions
          } else {
-             o = 0.0D;
+             o = 0.0;
          }
  
 -        return this.sampleAndLerp(i, j, k, g, h - o, l, h);
@@ -94,7 +94,7 @@ index fb84d703b4461343d50510d7c9be32fc1f09ed22..93a11c95f96f975fafe03e77a2caace5
      }
  
      private static double gradDot(int hash, double x, double y, double z) {
-@@ -85,24 +110,69 @@ public final class ImprovedNoise {
+@@ -83,24 +108,69 @@ public final class ImprovedNoise {
      }
  
      private double sampleAndLerp(int sectionX, int sectionY, int sectionZ, double localX, double localY, double localZ, double fadeLocalY) {
@@ -105,13 +105,13 @@ index fb84d703b4461343d50510d7c9be32fc1f09ed22..93a11c95f96f975fafe03e77a2caace5
 -        int m = this.p(j + sectionY);
 -        int n = this.p(j + sectionY + 1);
 -        double d = gradDot(this.p(k + sectionZ), localX, localY, localZ);
--        double e = gradDot(this.p(m + sectionZ), localX - 1.0D, localY, localZ);
--        double f = gradDot(this.p(l + sectionZ), localX, localY - 1.0D, localZ);
--        double g = gradDot(this.p(n + sectionZ), localX - 1.0D, localY - 1.0D, localZ);
--        double h = gradDot(this.p(k + sectionZ + 1), localX, localY, localZ - 1.0D);
--        double o = gradDot(this.p(m + sectionZ + 1), localX - 1.0D, localY, localZ - 1.0D);
--        double p = gradDot(this.p(l + sectionZ + 1), localX, localY - 1.0D, localZ - 1.0D);
--        double q = gradDot(this.p(n + sectionZ + 1), localX - 1.0D, localY - 1.0D, localZ - 1.0D);
+-        double e = gradDot(this.p(m + sectionZ), localX - 1.0, localY, localZ);
+-        double f = gradDot(this.p(l + sectionZ), localX, localY - 1.0, localZ);
+-        double g = gradDot(this.p(n + sectionZ), localX - 1.0, localY - 1.0, localZ);
+-        double h = gradDot(this.p(k + sectionZ + 1), localX, localY, localZ - 1.0);
+-        double o = gradDot(this.p(m + sectionZ + 1), localX - 1.0, localY, localZ - 1.0);
+-        double p = gradDot(this.p(l + sectionZ + 1), localX, localY - 1.0, localZ - 1.0);
+-        double q = gradDot(this.p(n + sectionZ + 1), localX - 1.0, localY - 1.0, localZ - 1.0);
 -        double r = Mth.smoothstep(localX);
 -        double s = Mth.smoothstep(fadeLocalY);
 -        double t = Mth.smoothstep(localZ);
@@ -183,7 +183,7 @@ index fb84d703b4461343d50510d7c9be32fc1f09ed22..93a11c95f96f975fafe03e77a2caace5
  
      private double sampleWithDerivative(int sectionX, int sectionY, int sectionZ, double localX, double localY, double localZ, double[] ds) {
 diff --git a/src/main/java/net/minecraft/world/level/levelgen/synth/PerlinNoise.java b/src/main/java/net/minecraft/world/level/levelgen/synth/PerlinNoise.java
-index 97ef7288ea935f3d17c5b7a9eba642143c786c2b..6d084145f8529fa8b0439123f9a9812940cc62da 100644
+index 35820670837376bcad8891241724d5b946fbd31f..eb7aef08bd855416902d3e7988d07576ee13a9cb 100644
 --- a/src/main/java/net/minecraft/world/level/levelgen/synth/PerlinNoise.java
 +++ b/src/main/java/net/minecraft/world/level/levelgen/synth/PerlinNoise.java
 @@ -26,6 +26,10 @@ public class PerlinNoise {
@@ -195,12 +195,12 @@ index 97ef7288ea935f3d17c5b7a9eba642143c786c2b..6d084145f8529fa8b0439123f9a98129
 +    private final double [] amplitudesArray;
 +    // Gale end - C2ME - optimize noise generation
  
-     /** @deprecated */
      @Deprecated
-@@ -131,6 +135,10 @@ public class PerlinNoise {
-         this.lowestFreqInputFactor = Math.pow(2.0D, (double)(-j));
-         this.lowestFreqValueFactor = Math.pow(2.0D, (double)(i - 1)) / (Math.pow(2.0D, (double)i) - 1.0D);
-         this.maxValue = this.edgeValue(2.0D);
+     public static PerlinNoise createLegacyForBlendedNoise(RandomSource random, IntStream octaves) {
+@@ -127,6 +131,10 @@ public class PerlinNoise {
+         this.lowestFreqInputFactor = Math.pow(2.0, (double)(-j));
+         this.lowestFreqValueFactor = Math.pow(2.0, (double)(i - 1)) / (Math.pow(2.0, (double)i) - 1.0);
+         this.maxValue = this.edgeValue(2.0);
 +        // Gale start - C2ME - optimize noise generation
 +        this.octaveSamplersCount = this.noiseLevels.length;
 +        this.amplitudesArray = this.amplitudes.toDoubleArray();
@@ -208,11 +208,11 @@ index 97ef7288ea935f3d17c5b7a9eba642143c786c2b..6d084145f8529fa8b0439123f9a98129
      }
  
      protected double maxValue() {
-@@ -142,7 +150,27 @@ public class PerlinNoise {
+@@ -138,7 +146,27 @@ public class PerlinNoise {
      }
  
      public double getValue(double x, double y, double z) {
--        return this.getValue(x, y, z, 0.0D, 0.0D, false);
+-        return this.getValue(x, y, z, 0.0, 0.0, false);
 +        // Gale start - C2ME - optimize noise generation - optimize for common cases
 +        double d = 0.0;
 +        double e = this.lowestFreqInputFactor;
@@ -236,4 +236,4 @@ index 97ef7288ea935f3d17c5b7a9eba642143c786c2b..6d084145f8529fa8b0439123f9a98129
 +        // Gale end - C2ME - optimize noise generation - optimize for common cases
      }
  
-     /** @deprecated */
+     @Deprecated

@@ -5,10 +5,10 @@ Subject: [PATCH] Gale Replace AI goal set with optimized collection
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java b/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
-index 0f53c206b4c0607e2cda5cfa4edeae5209e897bf..6313020a80cab0b8df8d775431d4aa063c51ce18 100644
+index f97b41422949bc6521b289daa6ca2861f25885a0..bcda232bb1c2490f14dd26aaca52afbc597ea9b7 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
-@@ -13,6 +13,7 @@ import java.util.function.Supplier;
+@@ -14,6 +14,7 @@ import java.util.function.Supplier;
  import java.util.stream.Stream;
  import net.minecraft.util.profiling.ProfilerFiller;
  import org.slf4j.Logger;
@@ -16,7 +16,7 @@ index 0f53c206b4c0607e2cda5cfa4edeae5209e897bf..6313020a80cab0b8df8d775431d4aa06
  
  public class GoalSelector {
      private static final Logger LOGGER = LogUtils.getLogger();
-@@ -28,7 +29,7 @@ public class GoalSelector {
+@@ -29,7 +30,7 @@ public class GoalSelector {
          }
      };
      private final Map<Goal.Flag, WrappedGoal> lockedFlags = new EnumMap<>(Goal.Flag.class);

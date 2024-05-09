@@ -133,10 +133,10 @@ index 49ccb27a17bec1d4ff31bc8d72e4724d65adc20c..34ccd489268c51c0aeecf5918878122b
  
      public static long getBlockKey(final int x, final int y, final int z) {
 diff --git a/src/main/java/net/minecraft/util/Mth.java b/src/main/java/net/minecraft/util/Mth.java
-index 03854a2d26a3cfc1817acfdc28cbf151ba59e05b..d9e0224dc108a99c194d4947d18f2d855a341534 100644
+index 28653d149bcbfa7bc37b8a09ae58229b908374f7..66192e92f18062f6bec377a43d6cfc5b277705a1 100644
 --- a/src/main/java/net/minecraft/util/Mth.java
 +++ b/src/main/java/net/minecraft/util/Mth.java
-@@ -56,13 +56,11 @@ public class Mth {
+@@ -57,13 +57,11 @@ public class Mth {
      }
  
      public static int floor(float value) {
@@ -152,7 +152,7 @@ index 03854a2d26a3cfc1817acfdc28cbf151ba59e05b..d9e0224dc108a99c194d4947d18f2d85
      }
  
      public static long lfloor(double value) {
-@@ -79,13 +77,11 @@ public class Mth {
+@@ -80,13 +78,11 @@ public class Mth {
      }
  
      public static int ceil(float value) {
@@ -168,15 +168,15 @@ index 03854a2d26a3cfc1817acfdc28cbf151ba59e05b..d9e0224dc108a99c194d4947d18f2d85
      }
  
      public static int clamp(int value, int min, int max) {
-@@ -121,15 +117,7 @@ public class Mth {
+@@ -122,15 +118,7 @@ public class Mth {
      }
  
      public static double absMax(double a, double b) {
--        if (a < 0.0D) {
+-        if (a < 0.0) {
 -            a = -a;
 -        }
 -
--        if (b < 0.0D) {
+-        if (b < 0.0) {
 -            b = -b;
 -        }
 -

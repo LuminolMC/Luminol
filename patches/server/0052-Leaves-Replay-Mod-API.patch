@@ -149,7 +149,7 @@ index 676a1499747b071515479130875157263d3a8352..e5ef298dc1df9cc42b3d349939a966b7
                              if (((List) object).size() >= i) {
                                  return (List) object;
 diff --git a/src/main/java/net/minecraft/network/Connection.java b/src/main/java/net/minecraft/network/Connection.java
-index 18b8651147dedcf80d9baf04e87fb25cfbf9b89f..e9a49eb00c64d864ebf4b24d6fe84aba7b2dbed8 100644
+index 936f8663b23908ac5de2076401a5d508f88a0376..0e8e57c291539e50f61e8178fc355fa698248967 100644
 --- a/src/main/java/net/minecraft/network/Connection.java
 +++ b/src/main/java/net/minecraft/network/Connection.java
 @@ -179,6 +179,14 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
@@ -168,7 +168,7 @@ index 18b8651147dedcf80d9baf04e87fb25cfbf9b89f..e9a49eb00c64d864ebf4b24d6fe84aba
          super.channelActive(channelhandlercontext);
          this.channel = channelhandlercontext.channel();
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index d2e02ccdfbea138f8afe335a8b8c50f0696d7108..f03f01e6a3a0d0c1e99dde1d102178d57f9c342b 100644
+index 08b0d3b970a7c86f577d20487d5fe3930b8eae6e..8ea86315e09a6b182bab03ee902ef92c5e18d962 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1727,7 +1727,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -197,18 +197,18 @@ index 24e5993b281448734eb67c7a8439a349bbf9fd72..da840e40dbb0f0c8dab5fbb27e2cfe6a
          AdvancementProgress advancementprogress = this.getOrStartProgress(advancement);
          boolean flag1 = advancementprogress.isDone();
 diff --git a/src/main/java/net/minecraft/server/commands/OpCommand.java b/src/main/java/net/minecraft/server/commands/OpCommand.java
-index 2e2a7c2cf3081187da817479a9da3eb10f662a6d..ee616fe98c98a345872c1eadf41c78524d131b61 100644
+index e7b444a10b244828827b3c66c53465206ea8e0ec..030601fdfde2232a933b2ad7022e9909db3a3783 100644
 --- a/src/main/java/net/minecraft/server/commands/OpCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/OpCommand.java
-@@ -20,7 +20,7 @@ public class OpCommand {
-             return source.hasPermission(3);
-         }).then(Commands.argument("targets", GameProfileArgument.gameProfile()).suggests((context, builder) -> {
-             PlayerList playerList = context.getSource().getServer().getPlayerList();
--            return SharedSuggestionProvider.suggest(playerList.getPlayers().stream().filter((player) -> {
-+            return SharedSuggestionProvider.suggest(playerList.realPlayers.stream().filter((player) -> { // Leaves - only real player
-                 return !playerList.isOp(player.getGameProfile());
-             }).map((player) -> {
-                 return player.getGameProfile().getName();
+@@ -25,7 +25,7 @@ public class OpCommand {
+                             (context, builder) -> {
+                                 PlayerList playerList = context.getSource().getServer().getPlayerList();
+                                 return SharedSuggestionProvider.suggest(
+-                                    playerList.getPlayers()
++                                    playerList.realPlayers // Leaves - only real player
+                                         .stream()
+                                         .filter(player -> !playerList.isOp(player.getGameProfile()))
+                                         .map(player -> player.getGameProfile().getName()),
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 index 0086a1a4611b983eefd0cb7bf8e9cff677246d0f..dcbf18eb7fb9a37fcd7faf3efe023d2503b4091a 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
@@ -223,7 +223,7 @@ index 0086a1a4611b983eefd0cb7bf8e9cff677246d0f..dcbf18eb7fb9a37fcd7faf3efe023d25
      private final ServerStatsCounter stats;
      private float lastRecordedHealthAndAbsorption = Float.MIN_VALUE;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 4fc9a47745b817d9ee2da4776cab26ff9f3b0025..e0a103ed27f834f62afb3696047c7581aa608f49 100644
+index e0f12426f18b343b27089440cd01127d79600ef0..fbe2372d871f8f2b53b04f7bddf3a5652f2eb394 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -297,7 +297,13 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -242,7 +242,7 @@ index 4fc9a47745b817d9ee2da4776cab26ff9f3b0025..e0a103ed27f834f62afb3696047c7581
          player.connection = this;
          player.getTextFilter().join();
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 90be312057221a5a78066d89783c5e22008d797d..185a4788809c0aec69420933944b468cbdbceda5 100644
+index 90be312057221a5a78066d89783c5e22008d797d..24f52fde099bac6f7c6a61cfc28a2b23437a116d 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -13,15 +13,7 @@ import java.net.SocketAddress;
@@ -544,10 +544,10 @@ index 8c7e01972888df4ccbaccc4eebceeeb5ab357f4c..99956f506d543c2917746d5eb0955981
          if (entity instanceof EnderDragonPart complexPart) {
              if (complexPart.parentMob instanceof EnderDragon) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index b76056ce93a1133eb7b50a7855830afea478bf17..a7f953a75ca8b460e3b4790f690e133bef777d89 100644
+index a68485e29466f26d1cb94cd827f5a5d9645b1e5c..2a5e76b1cee25b05189bb75daad4ced939bbb343 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2141,7 +2141,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2143,7 +2143,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
  
      @Override
      public boolean canSee(Player player) {
