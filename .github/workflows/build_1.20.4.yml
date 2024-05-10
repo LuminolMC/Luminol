@@ -31,7 +31,7 @@ jobs:
       - name: Apply Patches
         run: gradle applyPatches
       - name: CreateJar
-        run: gradle createMojmapBundlerJar createMojmapPaperclipJar
+        run: gradle createReobfBundlerJar createReobfPaperclipJar
       - name: SetENV
         run: sh scripts/SetENV.sh
       - name: Upload Artifact
