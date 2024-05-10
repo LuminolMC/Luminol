@@ -31,20 +31,20 @@ index 0000000000000000000000000000000000000000..ed62d25d6cd6dfcf8c5db20ced36eb3d
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index c7c0f6e399e472792ecad75fc402a64785fae818..31f80438e82da6de1cd1ec35a2f77c45f0127722 100644
+index 18c6fe66fa944f5e5b7892df4d8fef4c7346d3bc..a9e32fba699c718011abc52d91ec7158ab22b5ea 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5458,6 +5458,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
-         return this.feetBlockState;
+@@ -5515,6 +5515,16 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+         return this.inBlockState;
      }
  
 +    // Gale start - don't load chunks to activate climbing entities
 +    public @Nullable BlockState getFeetBlockStateIfLoaded() {
-+        if (this.feetBlockState == null) {
-+            this.feetBlockState = this.level.getBlockStateIfLoaded(this.blockPosition());
++        if (this.inBlockState == null) {
++            this.inBlockState = this.level.getBlockStateIfLoaded(this.blockPosition());
 +        }
 +
-+        return this.feetBlockState;
++        return this.inBlockState;
 +    }
 +    // Gale end - don't load chunks to activate climbing entities
 +
@@ -52,10 +52,10 @@ index c7c0f6e399e472792ecad75fc402a64785fae818..31f80438e82da6de1cd1ec35a2f77c45
          return this.chunkPosition;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 96039cd1c01cf6ea384f63bf5623de75e5def41f..e618ce4e71e4aef0620ac1b178f4df6a35deb87e 100644
+index 0e53ec3e67820b86ceb3680f3b743632489600d2..30ee36f31069a11f87b7bd619020e25a342bae00 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -2062,19 +2062,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2089,19 +2089,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
      public boolean onClimableCached() {
          if (!this.blockPosition().equals(this.lastClimbingPosition)) {
@@ -87,11 +87,11 @@ index 96039cd1c01cf6ea384f63bf5623de75e5def41f..e618ce4e71e4aef0620ac1b178f4df6a
              return false;
          } else {
              BlockPos blockposition = this.blockPosition();
--            BlockState iblockdata = this.getFeetBlockState();
+-            BlockState iblockdata = this.getInBlockState();
 +            // Gale start - don't load chunks to activate climbing entities
 +            BlockState iblockdata;
 +            if (loadChunk) {
-+                iblockdata = this.getFeetBlockState();
++                iblockdata = this.getInBlockState();
 +            } else {
 +                iblockdata = this.getFeetBlockStateIfLoaded();
 +                if (iblockdata == null) {

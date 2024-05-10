@@ -53,7 +53,7 @@ index 479e6e2aa88a22ef7f8fccb06add6806f5b71d9d..22dae23a0c2fa4c85befd670637b1e59
          buf.writeCollection(this.entries, (buf2, entry) -> entry.write(buf2));
      }
 diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
-index aafeb9c61ddba6a8671f0238eda47b227619f1af..6ba184b38864ac64ec94a8bb326d91495a56c945 100644
+index aafeb9c61ddba6a8671f0238eda47b227619f1af..dc00ad0cc7f0c5c069a8d15dfdc926f2a1487319 100644
 --- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 +++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
 @@ -129,6 +129,16 @@ public class FriendlyByteBuf extends ByteBuf {
@@ -62,7 +62,7 @@ index aafeb9c61ddba6a8671f0238eda47b227619f1af..6ba184b38864ac64ec94a8bb326d9149
  
 +        //Luminol start - Add config for chat sign
 +        if (codec == net.minecraft.network.protocol.status.ServerStatus.CODEC) {
-+            JsonElement element = Util.getOrThrow(dataresult, string -> new EncoderException("Failed to encode: " + string + " " + value));
++            JsonElement element = dataresult.getOrThrow(string -> new EncoderException("Failed to encode: " + string + " " + value));
 +            element.getAsJsonObject().addProperty("preventsChatReports", !me.earthme.luminol.config.modules.misc.ChatSignConfig.enabled);
 +
 +            this.writeUtf(GSON.toJson(element));

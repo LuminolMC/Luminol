@@ -5,10 +5,10 @@ Subject: [PATCH] Gale Optimize sun burn tick
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 62f997aae20fe392bc271b23b632441ce989c69c..485ca9a13a04ee47b27f1d23c6323583139865a1 100644
+index a9e32fba699c718011abc52d91ec7158ab22b5ea..f3c1a5b5880aefd1b3121be27172735134016437 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -308,7 +308,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -311,7 +311,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      public double xo;
      public double yo;
      public double zo;
@@ -17,7 +17,7 @@ index 62f997aae20fe392bc271b23b632441ce989c69c..485ca9a13a04ee47b27f1d23c6323583
      public BlockPos blockPosition; // Pufferfish - private->public
      private ChunkPos chunkPosition;
      private Vec3 deltaMovement;
-@@ -2066,9 +2066,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -2121,9 +2121,17 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      /** @deprecated */
      @Deprecated
      public float getLightLevelDependentMagicValue() {
@@ -37,11 +37,11 @@ index 62f997aae20fe392bc271b23b632441ce989c69c..485ca9a13a04ee47b27f1d23c6323583
          this.absMoveTo(x, y, z);
          this.setYRot(yaw % 360.0F);
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index abbbd6b56af8a177cd8ebfc5aa34c3f7282bdc59..b3ab33fb1e77cd1f95e4669fc7c7c2a188e813ca 100644
+index 78619c2ce66c34c4866755aa8c6c9ae18d594498..26362c7fa4fcc39f40c2736fd14647542e7161e2 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1750,13 +1750,29 @@ public abstract class Mob extends LivingEntity implements Targeting {
- 
+@@ -1869,13 +1869,29 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
+         return flag;
      }
  
 +    // Gale start - JettPack - optimize sun burn tick - cache eye blockpos

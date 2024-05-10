@@ -6,10 +6,10 @@ Subject: [PATCH] Gale Don't trigger lootable refresh for non-player
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
-index a5cd70b6ada2b44f64db0985483ee5eadc67003f..e49be65c2d379027c2821c0db7f151bc3cd20a4b 100644
+index 17da915ffa638500a83b67db0940a7b9a9b333a1..e47c9481f39426e1767e73275edbf9a1d298caea 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
-@@ -68,6 +68,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc
+@@ -74,6 +74,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc
  
      @Override
      public void unpackLootTable(@org.jetbrains.annotations.Nullable final Player player) {

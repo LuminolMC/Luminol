@@ -106,18 +106,10 @@ index 0000000000000000000000000000000000000000..f2f10b651e4fbecdd1ea1bc28ebf40d6
 +
 +}
 diff --git a/src/main/java/net/minecraft/server/level/WorldGenRegion.java b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
-index 8c455cda45ca2d724fbc140d53ffc7ecba3ca44c..dd63a219caf36acc58b73190e67faf9a504aef20 100644
+index 18164b1b1ba0ba00119ec456bf3b449f72d88538..d2fba2af13944009c6803956ea76320f1aed74ac 100644
 --- a/src/main/java/net/minecraft/server/level/WorldGenRegion.java
 +++ b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
-@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
- import java.util.function.Predicate;
- import java.util.function.Supplier;
- import javax.annotation.Nullable;
-+
- import net.minecraft.Util;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
-@@ -83,6 +84,10 @@ public class WorldGenRegion implements WorldGenLevel {
+@@ -88,6 +88,10 @@ public class WorldGenRegion implements WorldGenLevel {
      private Supplier<String> currentlyGenerating;
      private final AtomicLong subTickCount = new AtomicLong();
      private static final ResourceLocation WORLDGEN_REGION_RANDOM = new ResourceLocation("worldgen_region_random");
@@ -128,7 +120,7 @@ index 8c455cda45ca2d724fbc140d53ffc7ecba3ca44c..dd63a219caf36acc58b73190e67faf9a
  
      // Folia start - region threading
      @Override
-@@ -112,6 +117,11 @@ public class WorldGenRegion implements WorldGenLevel {
+@@ -117,6 +121,11 @@ public class WorldGenRegion implements WorldGenLevel {
              this.lastPos = ((ChunkAccess) chunks.get(chunks.size() - 1)).getPos();
              this.structureManager = world.structureManager().forWorldGenRegion(this);
          }
@@ -140,7 +132,7 @@ index 8c455cda45ca2d724fbc140d53ffc7ecba3ca44c..dd63a219caf36acc58b73190e67faf9a
      }
  
      // Paper start - starlight
-@@ -150,9 +160,29 @@ public class WorldGenRegion implements WorldGenLevel {
+@@ -155,8 +164,28 @@ public class WorldGenRegion implements WorldGenLevel {
  
      @Override
      public ChunkAccess getChunk(int chunkX, int chunkZ) {
@@ -156,8 +148,8 @@ index 8c455cda45ca2d724fbc140d53ffc7ecba3ca44c..dd63a219caf36acc58b73190e67faf9a
 +            throw new NullPointerException("No chunk exists at " + new ChunkPos(chunkX, chunkZ));
 +        }
 +        // Gale end - Lithium - optimize world generation chunk and block access - use the chunk array for faster access
-     }
- 
++    }
++
 +    // Gale start - Lithium - optimize world generation chunk and block access
 +    /**
 +     * Use our chunk fetch function
@@ -165,13 +157,12 @@ index 8c455cda45ca2d724fbc140d53ffc7ecba3ca44c..dd63a219caf36acc58b73190e67faf9a
 +    public ChunkAccess getChunk(BlockPos pos) {
 +        // Skip checking chunk.getStatus().isAtLeast(ChunkStatus.EMPTY) here, because it is always true
 +        return this.getChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
-+    }
+     }
 +    // Gale end - Lithium - optimize world generation chunk and block access
-+
+ 
      @Nullable
      @Override
-     public ChunkAccess getChunk(int chunkX, int chunkZ, ChunkStatus leastStatus, boolean create) {
-@@ -210,7 +240,17 @@ public class WorldGenRegion implements WorldGenLevel {
+@@ -221,7 +250,17 @@ public class WorldGenRegion implements WorldGenLevel {
  
      @Override
      public BlockState getBlockState(BlockPos pos) {

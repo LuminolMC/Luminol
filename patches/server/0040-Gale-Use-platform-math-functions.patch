@@ -99,7 +99,7 @@ public class Main {
 ```
 
 diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
-index 49ccb27a17bec1d4ff31bc8d72e4724d65adc20c..34ccd489268c51c0aeecf5918878122b49c8d123 100644
+index 2034c67f5702b7b8d093ef2dd7601901c5fef363..2a88165dd4edbc2ca1acd2f6e0a4b99ec61cf958 100644
 --- a/src/main/java/io/papermc/paper/util/MCUtil.java
 +++ b/src/main/java/io/papermc/paper/util/MCUtil.java
 @@ -168,13 +168,11 @@ public final class MCUtil {
@@ -133,10 +133,10 @@ index 49ccb27a17bec1d4ff31bc8d72e4724d65adc20c..34ccd489268c51c0aeecf5918878122b
  
      public static long getBlockKey(final int x, final int y, final int z) {
 diff --git a/src/main/java/net/minecraft/util/Mth.java b/src/main/java/net/minecraft/util/Mth.java
-index 28653d149bcbfa7bc37b8a09ae58229b908374f7..66192e92f18062f6bec377a43d6cfc5b277705a1 100644
+index 990ea96de8e940390b67e9462fcfd6025f2f5770..e102c109d01e0f992808a6096b5f6a323b52d970 100644
 --- a/src/main/java/net/minecraft/util/Mth.java
 +++ b/src/main/java/net/minecraft/util/Mth.java
-@@ -57,13 +57,11 @@ public class Mth {
+@@ -58,13 +58,11 @@ public class Mth {
      }
  
      public static int floor(float value) {
@@ -152,7 +152,7 @@ index 28653d149bcbfa7bc37b8a09ae58229b908374f7..66192e92f18062f6bec377a43d6cfc5b
      }
  
      public static long lfloor(double value) {
-@@ -80,13 +78,11 @@ public class Mth {
+@@ -81,13 +79,11 @@ public class Mth {
      }
  
      public static int ceil(float value) {
@@ -168,7 +168,7 @@ index 28653d149bcbfa7bc37b8a09ae58229b908374f7..66192e92f18062f6bec377a43d6cfc5b
      }
  
      public static int clamp(int value, int min, int max) {
-@@ -122,15 +118,7 @@ public class Mth {
+@@ -123,15 +119,7 @@ public class Mth {
      }
  
      public static double absMax(double a, double b) {

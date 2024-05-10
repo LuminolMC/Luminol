@@ -5,10 +5,10 @@ Subject: [PATCH] Gale Check frozen ticks before landing block
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index e618ce4e71e4aef0620ac1b178f4df6a35deb87e..2164413ca25dc6c1ae52e687f0786418ee4dda10 100644
+index 30ee36f31069a11f87b7bd619020e25a342bae00..fffe8413eec4ae3eda2d21d958aa2534661a0558 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -597,11 +597,10 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -608,11 +608,10 @@ public abstract class LivingEntity extends Entity implements Attackable {
      }
  
      protected void tryAddFrost() {
@@ -21,9 +21,9 @@ index e618ce4e71e4aef0620ac1b178f4df6a35deb87e..2164413ca25dc6c1ae52e687f0786418
  
                  if (attributemodifiable == null) {
                      return;
-@@ -611,7 +610,6 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -622,7 +621,6 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
-                 attributemodifiable.addTransientModifier(new AttributeModifier(LivingEntity.SPEED_MODIFIER_POWDER_SNOW_UUID, "Powder snow slow", (double) f, AttributeModifier.Operation.ADDITION));
+                 attributemodifiable.addTransientModifier(new AttributeModifier(LivingEntity.SPEED_MODIFIER_POWDER_SNOW_UUID, "Powder snow slow", (double) f, AttributeModifier.Operation.ADD_VALUE));
              }
 -        }
  
