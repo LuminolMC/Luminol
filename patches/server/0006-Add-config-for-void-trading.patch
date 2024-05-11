@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..22f3c6c70e4287f1bdd0b18f87f57efe
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 8623192d034cf761bcf63ca3510ccd1ebab4aa08..3cf345900624cb00e371a980a9828f94b8f9c674 100644
+index b194f3448b5199e1204da31e1408f2e80803a77d..6b8cbf681203c20eebb214c5c0b0fe0374aa30dc 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -3008,7 +3008,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -3011,7 +3011,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
              // Spigot Start
              if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(entity instanceof ServerPlayer) || entity.getRemovalReason() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
                  // Paper start - Fix merchant inventory not closing on entity removal

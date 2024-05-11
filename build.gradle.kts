@@ -74,7 +74,7 @@ paperweight {
     decompileRepo.set("https://maven.quiltmc.org/")
 
     useStandardUpstream("folia") {
-        url.set(github("ColdeZhang", "Folia"))
+        url.set(github("PaperMC", "Folia"))
         ref.set(providers.gradleProperty("foliaCommit"))
 
         withStandardPatcher {

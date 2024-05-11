@@ -5,10 +5,10 @@ Subject: [PATCH] Sparkly Paper Optimize canSee checks
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 66cecd5a9bf38ddc9580976c1574a524706da5ac..fff4179b10604a3bd6a534515aa013a126415b60 100644
+index c547d51eebd965f2be7ac45bc0981626c0515ef1..b7d91b7e8eb31f838cf540246f2d9b9c32b28780 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
-@@ -1423,7 +1423,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -1422,7 +1422,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
                  // Folia end - region threading
  
                  // CraftBukkit start - respect vanish API

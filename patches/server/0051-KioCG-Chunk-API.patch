@@ -102,10 +102,10 @@ index 0000000000000000000000000000000000000000..53b4397997bc9b9b9d88e48304b37a25
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index bf488b466a9901f0311bacf774ad046a18f2426b..e81d8e501ef1332a926f391b9ef46402913653cf 100644
+index b4b7f58d6780277c0dfaee22136885fa32e67761..5c3dd60a4921f6cba5061118794124318fa17c5b 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1707,6 +1707,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1700,6 +1700,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
          // Folia end - region threading
  
@@ -123,7 +123,7 @@ index bf488b466a9901f0311bacf774ad046a18f2426b..e81d8e501ef1332a926f391b9ef46402
          // Folia - region threading
          if (region == null) this.tickRateManager.tick(); // Folia - region threading
          this.tickChildren(shouldKeepTicking, region); // Folia - region threading
-@@ -1716,6 +1727,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1709,6 +1720,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
  
          // Folia - region threading
@@ -145,10 +145,10 @@ index bf488b466a9901f0311bacf774ad046a18f2426b..e81d8e501ef1332a926f391b9ef46402
          int playerSaveInterval = io.papermc.paper.configuration.GlobalConfiguration.get().playerAutoSave.rate;
          if (playerSaveInterval < 0) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 01ff844462226b262d307204acff116844c09584..47fc770320b50386fba991ea20fbcdd86eb14b2c 100644
+index 12c46e7a3f6a8675921d95dee97ece4a83252282..573cca66b905c5decb0e59c58cfa861d1788d5d3 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -1548,6 +1548,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1549,6 +1549,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
          final int timerId = isActive ? entity.getType().tickTimerId : entity.getType().inactiveTickTimerId;
          final ca.spottedleaf.leafprofiler.RegionizedProfiler.Handle profiler = io.papermc.paper.threadedregions.TickRegionScheduler.getProfiler();
          profiler.startTimer(timerId);
@@ -157,7 +157,7 @@ index 01ff844462226b262d307204acff116844c09584..47fc770320b50386fba991ea20fbcdd8
          // Folia end - timer
          try {
          // Paper end - timings
-@@ -1575,6 +1577,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1576,6 +1578,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
          } else { entity.inactiveTick(); } // Paper - EAR 2
          this.getProfiler().pop();
          } finally { timer.stopTiming(); profiler.stopTimer(timerId); } // Paper - timings // Folia - timer
@@ -165,7 +165,7 @@ index 01ff844462226b262d307204acff116844c09584..47fc770320b50386fba991ea20fbcdd8
          Iterator iterator = entity.getPassengers().iterator();
  
          while (iterator.hasNext()) {
-@@ -1603,6 +1606,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1604,6 +1607,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  final ca.spottedleaf.leafprofiler.RegionizedProfiler.Handle profiler = io.papermc.paper.threadedregions.TickRegionScheduler.getProfiler();
                  profiler.startTimer(timerId);
                  // Folia end - timer
@@ -174,7 +174,7 @@ index 01ff844462226b262d307204acff116844c09584..47fc770320b50386fba991ea20fbcdd8
                  try {
                  // Paper end
                  passenger.setOldPosAndRot();
-@@ -1643,6 +1648,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1644,6 +1649,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  }
  
              } finally { timer.stopTiming(); profiler.stopTimer(timerId); }// Paper - EAR2 timings // Folia - timer

@@ -106,10 +106,10 @@ index 0000000000000000000000000000000000000000..f2f10b651e4fbecdd1ea1bc28ebf40d6
 +
 +}
 diff --git a/src/main/java/net/minecraft/server/level/WorldGenRegion.java b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
-index 18164b1b1ba0ba00119ec456bf3b449f72d88538..d2fba2af13944009c6803956ea76320f1aed74ac 100644
+index 888cf5257fba032b9edd95a89e71ca8b4ed1fb81..dc89751d1ddd71fb98657abfdb67da7f395ef3db 100644
 --- a/src/main/java/net/minecraft/server/level/WorldGenRegion.java
 +++ b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
-@@ -88,6 +88,10 @@ public class WorldGenRegion implements WorldGenLevel {
+@@ -86,6 +86,10 @@ public class WorldGenRegion implements WorldGenLevel {
      private Supplier<String> currentlyGenerating;
      private final AtomicLong subTickCount = new AtomicLong();
      private static final ResourceLocation WORLDGEN_REGION_RANDOM = new ResourceLocation("worldgen_region_random");
@@ -119,10 +119,10 @@ index 18164b1b1ba0ba00119ec456bf3b449f72d88538..d2fba2af13944009c6803956ea76320f
 +    // Gale end - Lithium - optimize world generation chunk and block access
  
      // Folia start - region threading
-     @Override
-@@ -117,6 +121,11 @@ public class WorldGenRegion implements WorldGenLevel {
+     private final net.minecraft.world.level.StructureManager structureManager;
+@@ -116,6 +120,11 @@ public class WorldGenRegion implements WorldGenLevel {
              this.lastPos = ((ChunkAccess) chunks.get(chunks.size() - 1)).getPos();
-             this.structureManager = world.structureManager().forWorldGenRegion(this);
+             this.structureManager = world.structureManager().forWorldGenRegion(this); // Folia - region threading
          }
 +        // Gale start - Lithium - optimize world generation chunk and block access
 +        this.minChunkX = this.firstPos.x;
@@ -132,7 +132,7 @@ index 18164b1b1ba0ba00119ec456bf3b449f72d88538..d2fba2af13944009c6803956ea76320f
      }
  
      // Paper start - starlight
-@@ -155,8 +164,28 @@ public class WorldGenRegion implements WorldGenLevel {
+@@ -154,8 +163,28 @@ public class WorldGenRegion implements WorldGenLevel {
  
      @Override
      public ChunkAccess getChunk(int chunkX, int chunkZ) {
@@ -162,7 +162,7 @@ index 18164b1b1ba0ba00119ec456bf3b449f72d88538..d2fba2af13944009c6803956ea76320f
  
      @Nullable
      @Override
-@@ -221,7 +250,17 @@ public class WorldGenRegion implements WorldGenLevel {
+@@ -220,7 +249,17 @@ public class WorldGenRegion implements WorldGenLevel {
  
      @Override
      public BlockState getBlockState(BlockPos pos) {
