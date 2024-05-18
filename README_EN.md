@@ -14,7 +14,6 @@
 ## Features
 - Configurable vanilla features
 - Tpsbar support
-- Linear region file format(from kaiiju)
 - Useful optimizations to improve the performance of single threaded region
 - More API support for plugin development (W.I.P)
 
