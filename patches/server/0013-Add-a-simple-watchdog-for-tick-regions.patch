@@ -76,10 +76,10 @@ index 0000000000000000000000000000000000000000..71d80b401470db777a86274d32f178bb
 +}
 diff --git a/src/main/java/me/earthme/luminol/utils/LuminolWatchDog.java b/src/main/java/me/earthme/luminol/utils/LuminolWatchDog.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..6b4368cdf9762ad981345fef0f26cd008a4236ee
+index 0000000000000000000000000000000000000000..8901c50863032f4ae189fe47d44f9fe91f884a6c
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/utils/LuminolWatchDog.java
-@@ -0,0 +1,161 @@
+@@ -0,0 +1,162 @@
 +package me.earthme.luminol.utils;
 +
 +import com.google.common.collect.Maps;
@@ -100,13 +100,14 @@ index 0000000000000000000000000000000000000000..6b4368cdf9762ad981345fef0f26cd00
 +import java.util.Map;
 +import java.util.concurrent.CompletableFuture;
 +import java.util.concurrent.Executor;
++import java.util.concurrent.Executors;
 +import java.util.concurrent.TimeUnit;
 +
 +public class LuminolWatchDog {
 +    private static final Object keepaliveDataLock = new Object();
 +    private static Pair<Thread,Long> globalRegionLastKeepalive = null;
 +    private static final Map<Thread,Pair<ThreadedRegionizer.ThreadedRegion<?,?>,Long>> otherTickRegionKeepalive = Maps.newHashMap();
-+    private static final Executor checkTimer = CompletableFuture.delayedExecutor(50, TimeUnit.MILLISECONDS);
++    private static final Executor checkTimer = CompletableFuture.delayedExecutor(50, TimeUnit.MILLISECONDS,Executors.newSingleThreadExecutor());
 +    private static final Logger logger = MinecraftServer.LOGGER;
 +    private static int tickCount = 0;
 +    private static boolean runScheduleNext = true;
