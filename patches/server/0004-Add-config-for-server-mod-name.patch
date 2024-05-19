@@ -47,15 +47,15 @@ index 0000000000000000000000000000000000000000..94e7c8910e3623163528a844fd7a08b3
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index f5ea50264613e7f739bbcf53c3be0d0305fd337e..be87d0d8d5db0e10fb006d61389af79d7f03a7b7 100644
+index 4c9c227c1395744128f347e9303f8a13667a4aa3..45f96e545a1a9883c9925d49f5eb69968313a0e9 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -2020,7 +2020,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -2019,7 +2019,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
--        return "Luminol"; // Paper // Folia - Folia //Luminol - Luminol
-+        return me.earthme.luminol.config.modules.misc.ServerModNameConfig.fakeVanilla ? "vanilla" : me.earthme.luminol.config.modules.misc.ServerModNameConfig.serverModName; // Paper // Folia - Folia //Luminol - Luminol //Luminol - Add config for this
+-        return io.papermc.paper.ServerBuildInfo.buildInfo().brandName(); // Paper
++        return me.earthme.luminol.config.modules.misc.ServerModNameConfig.fakeVanilla ? "vanilla" : me.earthme.luminol.config.modules.misc.ServerModNameConfig.serverModName; // Paper // Luminol - Add config for this
      }
  
      public SystemReport fillSystemReport(SystemReport details) {

@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..43bbc2c30bdd3872a0179e0070403c3e
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index e25918c403ddcca87dd64d36b06f7466e2c99bd8..1664e2bd606bc38ce1fa8ac18cffe2a51944fadb 100644
+index f907dbb55369395058091dd75ae435d2025d94dd..20720424f5e63d07c885759b8b5104311aa6c7c8 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -73,6 +73,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
@@ -77,8 +77,8 @@ index e25918c403ddcca87dd64d36b06f7466e2c99bd8..1664e2bd606bc38ce1fa8ac18cffe2a5
 +            }
 +        } else {
 +
-         if (!this.isSingleplayerOwner() && elapsedTime >= KEEPALIVE_LIMIT) { // Paper - check keepalive limit, don't fire if already disconnected
-             if (this.keepAlivePending && !this.processedDisconnect) { // Paper
+         if (!this.isSingleplayerOwner() && elapsedTime >= 15000L) { // Paper - use vanilla's 15000L between keep alive packets
+             if (this.keepAlivePending && !this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // Paper - check keepalive limit, don't fire if already disconnected
                  this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT); // Paper - kick event cause
 @@ -275,6 +300,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
              }

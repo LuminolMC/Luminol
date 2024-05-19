@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    id("io.papermc.paperweight.patcher") version "1.6.3"
+    id("io.papermc.paperweight.patcher") version "1.7.1"
 }
 
 val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
@@ -56,17 +56,6 @@ subprojects {
 
 }
 
-tasks.generateDevelopmentBundle {
-    apiCoordinates.set("me.earthme.luminol:luminol-api")
-    mojangApiCoordinates.set("io.papermc.paper:paper-mojangapi")
-    libraryRepositories.set(
-        listOf(
-            "https://repo.maven.apache.org/maven2/",
-            "https://maven.pkg.github.com/LuminolMC/Luminol",
-        )
-    )
-}
-
 paperweight {
     serverProject.set(project(":luminol-server"))
 
@@ -100,9 +89,9 @@ paperweight {
 
 tasks.generateDevelopmentBundle {
     apiCoordinates.set("me.earthme.luminol:luminol-api")
-    mojangApiCoordinates.set("io.papermc.paper:paper-mojangapi")
     libraryRepositories.addAll(
         "https://repo.maven.apache.org/maven2/",
+        "https://maven.pkg.github.com/LuminolMC/Luminol",
         paperMavenPublicUrl,
     )
 }

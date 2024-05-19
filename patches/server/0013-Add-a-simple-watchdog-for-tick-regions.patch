@@ -243,10 +243,10 @@ index 0000000000000000000000000000000000000000..6b4368cdf9762ad981345fef0f26cd00
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index be87d0d8d5db0e10fb006d61389af79d7f03a7b7..b4b7f58d6780277c0dfaee22136885fa32e67761 100644
+index 45f96e545a1a9883c9925d49f5eb69968313a0e9..97016c309d0a0fc13d733269f7dfb81ca0d8c574 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1227,6 +1227,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1226,6 +1226,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  

@@ -102,10 +102,10 @@ index 0000000000000000000000000000000000000000..53b4397997bc9b9b9d88e48304b37a25
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index b4b7f58d6780277c0dfaee22136885fa32e67761..5c3dd60a4921f6cba5061118794124318fa17c5b 100644
+index 97016c309d0a0fc13d733269f7dfb81ca0d8c574..e169a9d4c2e633fdba3fe425e2f3f766d2200af5 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1700,6 +1700,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1699,6 +1699,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
          // Folia end - region threading
  
@@ -123,7 +123,7 @@ index b4b7f58d6780277c0dfaee22136885fa32e67761..5c3dd60a4921f6cba506111879412431
          // Folia - region threading
          if (region == null) this.tickRateManager.tick(); // Folia - region threading
          this.tickChildren(shouldKeepTicking, region); // Folia - region threading
-@@ -1709,6 +1720,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1708,6 +1719,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
  
          // Folia - region threading
@@ -183,7 +183,7 @@ index 12c46e7a3f6a8675921d95dee97ece4a83252282..573cca66b905c5decb0e59c58cfa861d
          } else {
              passenger.stopRiding();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index f87c7a77b8d5748c08488470bf60ea84ab95a819..d356d08f00620780b31cf717ade6c86a23ea0ab9 100644
+index 24f4370b35d2cc50340de36d81b6c6d9aa250e4c..c04058a95dc4990cd8034b381f95affcdc77dd93 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -351,6 +351,25 @@ public class ServerPlayer extends Player {
@@ -427,10 +427,10 @@ index 82b4bd669c57b18fb0b443bcd94495023cd5a528..abd845a124dbe0b9a1868ce378a0b7c7
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index e427a583f750b302b69f0ce366fdde758e6576f7..5c0dd79c3e9a76d8dc29134dcc41641d1b09e359 100644
+index eb5ec3637aedb643801f369e43d39ef987546ce0..ae53333f8ebffea8874259495026484b003d1ad9 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3547,4 +3547,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3544,4 +3544,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      public void setSendViewDistance(final int viewDistance) {
          this.getHandle().setSendViewDistance(viewDistance);
      }

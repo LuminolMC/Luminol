@@ -18,7 +18,7 @@ index c547d51eebd965f2be7ac45bc0981626c0515ef1..b7d91b7e8eb31f838cf540246f2d9b9c
                  }
                  // CraftBukkit end
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 14dca1757d518814890d9866182b50e7e22ebf58..e427a583f750b302b69f0ce366fdde758e6576f7 100644
+index ed4bdf27c38d881fd3896a736652686ff9107f16..eb5ec3637aedb643801f369e43d39ef987546ce0 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -198,7 +198,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -45,6 +45,6 @@ index 14dca1757d518814890d9866182b50e7e22ebf58..e427a583f750b302b69f0ce366fdde75
 +    }
 +    // SparklyPaper end
 +
-     public boolean canSee(UUID uuid) {
+     public boolean canSeePlayer(UUID uuid) {
          org.bukkit.entity.Entity entity = this.getServer().getPlayer(uuid);
-         if (entity == null) {
+ 
