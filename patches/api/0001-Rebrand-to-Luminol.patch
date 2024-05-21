@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Dreeam <61569423+Dreeam-qwq@users.noreply.github.com>
+Date: Tue, 21 May 2024 21:31:53 +0800
+Subject: [PATCH] Rebrand to Luminol
+
+
+diff --git a/src/main/java/io/papermc/paper/ServerBuildInfo.java b/src/main/java/io/papermc/paper/ServerBuildInfo.java
+index 9df9d09aa477d4cd3c496ba0933c816df1ef0964..b8a5e4f02499e3a3c370d43f6bbb84ffba58e1f3 100644
+--- a/src/main/java/io/papermc/paper/ServerBuildInfo.java
++++ b/src/main/java/io/papermc/paper/ServerBuildInfo.java
+@@ -18,6 +18,13 @@ public interface ServerBuildInfo {
+      */
+     Key BRAND_PAPER_ID = Key.key("papermc", "paper");
+ 
++    // Luminol start
++    /**
++     * The brand id for Luminol.
++     */
++    Key BRAND_LUMINOL_ID = Key.key("luminolmc", "luminol");
++    // Luminol end
++
+     /**
+      * Gets the {@code ServerBuildInfo}.
+      *

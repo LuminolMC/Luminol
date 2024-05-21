@@ -73,21 +73,38 @@ index 29bd788ae8bc61c1e62a4f84b9e259931a7041ce..2f37873738ab542980d13f36356b04b4
          final @Nullable Component history = this.getHistory();
  
 diff --git a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
-index e741201fdbea0dbbc0e42313ebd33368014c9dc4..94b759f220289dcc5cf1f256b0033aa22002f708 100644
+index e741201fdbea0dbbc0e42313ebd33368014c9dc4..673a81734a0903a0790f3007772642d3d9a044cc 100644
 --- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
 +++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
-@@ -42,9 +42,9 @@ public record ServerBuildInfoImpl(
+@@ -31,6 +31,7 @@ public record ServerBuildInfoImpl(
+     private static final String ATTRIBUTE_GIT_COMMIT = "Git-Commit";
+ 
+     private static final String BRAND_PAPER_NAME = "Paper";
++    private static final String BRAND_LUMINOL_NAME = "Luminol";
+ 
+     private static final String BUILD_DEV = "DEV";
+ 
+@@ -42,9 +43,9 @@ public record ServerBuildInfoImpl(
          this(
              getManifestAttribute(manifest, ATTRIBUTE_BRAND_ID)
                  .map(Key::key)
 -                .orElse(Key.key("papermc", "folia")), // Folia
-+                .orElse(Key.key("luminolmc", "luminol")), // Folia // Luminol
++                .orElse(BRAND_LUMINOL_ID), // Folia // Luminol
              getManifestAttribute(manifest, ATTRIBUTE_BRAND_NAME)
 -                .orElse("Folia"), // Folia
-+                .orElse("Luminol"), // Folia // Luminol
++                .orElse(BRAND_LUMINOL_NAME), // Folia // Luminol
              SharedConstants.getCurrentVersion().getId(),
              SharedConstants.getCurrentVersion().getName(),
              getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
+@@ -61,7 +62,7 @@ public record ServerBuildInfoImpl(
+ 
+     @Override
+     public boolean isBrandCompatible(final @NotNull Key brandId) {
+-        return brandId.equals(this.brandId);
++        return brandId.equals(this.brandId) || brandId.equals(BRAND_PAPER_ID); // Luminol
+     }
+ 
+     @Override
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 index e9b6ca3aa25e140467ae866d572483050ea3fa0e..9699d7dcca5cf67f50ad05c0e875de424a4e00c5 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
