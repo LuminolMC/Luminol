@@ -71,4 +71,3 @@ dependencies {
     <img alt="Star历史表" src="https://api.star-history.com/svg?repos=LuminolMC/Luminol%2CLuminolMC/LightingLuminol&type=Date" />
   </picture>
 </a>
-
