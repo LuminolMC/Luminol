@@ -1,10 +1,10 @@
-name: Luminol CI - ver/1.20.6
+name: [🚨] Luminol CI - dev/1.20.6
 
 on:
     push:
-      branches: [ "ver/1.20.6" ]
+      branches: [ "dev/1.20.6" ]
     pull_request:
-      branches: [ "ver/1.20.6" ]
+      branches: [ "dev/1.20.6" ]
 
 permissions: write-all
 
@@ -46,6 +46,11 @@ jobs:
           tag: ${{ env.tag }}
           name: ${{ env.project_id_b }} ${{ env.mcversion }} - ${{ env.commit_id }}
           body: |
+            > [!CAUTION]
+            > 🚨You are trying to download experimental construction!
+            > Do not use these buildings in the production environment, because there may be many errors and problems.
+            > Please report all the problems you encounter!
+            
             📦Version: `${{ env.mcversion }}` | Commit ${{ env.commit_id }} [![download](https://img.shields.io/github/downloads/LuminolMC/${{ env.project_id }}/${{ env.tag }}/total?color=0&style=flat-square)](https://github.com/LuminolMC/${{ env.project_id }}/download/${{ env.tag }}/${{ env.jar }})
             This release is automatically compiled by GitHub Actions
             ### Commit Message
