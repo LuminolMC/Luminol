@@ -402,18 +402,10 @@ index e679b40b9628b0eb7152978ef641f9c918c4c8b2..bf9ae765242bb61d3e279893b0355d12
          } catch (StackOverflowError ex) {
              world.lastPhysicsProblem = new BlockPos(pos);
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
-index 82b4bd669c57b18fb0b443bcd94495023cd5a528..abd845a124dbe0b9a1868ce378a0b7c7b9b3b818 100644
+index 82b4bd669c57b18fb0b443bcd94495023cd5a528..061f7ef0138d4b8d528c7aa71ec5660c1d7e3b27 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
-@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.chunk.ChunkAccess;
- import net.minecraft.world.level.chunk.DataLayer;
- import net.minecraft.world.level.chunk.ImposterProtoChunk;
-+import net.minecraft.world.level.chunk.LevelChunk;
- import net.minecraft.world.level.chunk.LevelChunkSection;
- import net.minecraft.world.level.chunk.PalettedContainer;
- import net.minecraft.world.level.chunk.PalettedContainerRO;
-@@ -428,4 +429,12 @@ public class CraftChunk implements Chunk {
+@@ -428,4 +428,12 @@ public class CraftChunk implements Chunk {
      static {
          Arrays.fill(FULL_LIGHT, (byte) 0xFF);
      }
@@ -421,7 +413,7 @@ index 82b4bd669c57b18fb0b443bcd94495023cd5a528..abd845a124dbe0b9a1868ce378a0b7c7
 +    // KioCG start - ChunkHot
 +    @Override
 +    public long getChunkHotAvg() {
-+        final LevelChunk target = this.worldServer.getChunkIfLoaded(this.x,this.z);
++        final net.minecraft.world.level.chunk.LevelChunk target = this.worldServer.getChunkIfLoaded(this.x,this.z);
 +        return target == null ? -1 : target.getChunkHot().getAverage();
 +    }
 +    // KioCG end
