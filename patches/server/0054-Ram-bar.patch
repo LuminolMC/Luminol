@@ -1,0 +1,267 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Sun, 2 Jun 2024 12:18:05 +0000
+Subject: [PATCH] Ram bar
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/MembarConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/MembarConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..b177d6b0b01af233f7b10200748bc791a912ddb0
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/misc/MembarConfig.java
+@@ -0,0 +1,39 @@
++package me.earthme.luminol.config.modules.misc;
++
++import com.electronwill.nightconfig.core.file.CommentedFileConfig;
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++import me.earthme.luminol.functions.GlobalServerMemoryBar;
++
++import java.util.List;
++
++public class MembarConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean memoryBarEnabled = false;
++    @ConfigInfo(baseName = "format")
++    public static String memBarFormat = "<gray>Memory usage <yellow>:</yellow> <used>MB<yellow>/</yellow><available>MB";
++    @ConfigInfo(baseName = "memory_color_list")
++    public static List<String> memColors = List.of("GREEN","YELLOW","RED","PURPLE");
++    @ConfigInfo(baseName = "update_interval_ticks")
++    public static int updateInterval = 15;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.MISC;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "membar";
++    }
++
++    @Override
++    public void onLoaded(CommentedFileConfig configInstance){
++        if (memoryBarEnabled){
++            GlobalServerMemoryBar.init();
++        }else{
++            GlobalServerMemoryBar.cancelBarUpdateTask();
++        }
++    }
++}
+diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..fdd57d5825aced511a65ee056a773c1fbe4f12bd
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
+@@ -0,0 +1,186 @@
++package me.earthme.luminol.functions;
++
++import io.papermc.paper.threadedregions.ThreadedRegionizer;
++import io.papermc.paper.threadedregions.TickRegions;
++import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
++import me.earthme.luminol.config.modules.misc.MembarConfig;
++import net.kyori.adventure.bossbar.BossBar;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.minimessage.MiniMessage;
++import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
++import org.bukkit.entity.Player;
++import org.jetbrains.annotations.NotNull;
++
++import java.lang.management.ManagementFactory;
++import java.lang.management.MemoryUsage;
++import java.util.*;
++
++public class GlobalServerMemoryBar {
++    protected static final MinecraftInternalPlugin NULL_PLUGIN = new MinecraftInternalPlugin();
++    protected static final Map<UUID, BossBar> uuid2Bossbars = new HashMap<>();
++    protected static volatile ScheduledTask tpsbarTask = null;
++    private static final Logger logger = LogManager.getLogger();
++
++    public static void init(){
++        cancelBarUpdateTask();
++
++        Bukkit.getGlobalRegionScheduler().runAtFixedRate(NULL_PLUGIN, c -> {
++            tpsbarTask = c;
++            try {
++                update();
++            }catch (Exception e){
++                logger.error(e);
++            }
++        },1, MembarConfig.updateInterval);
++    }
++
++    public static void removeAllBars(){
++        for (Map.Entry<UUID,BossBar> barEntry : uuid2Bossbars.entrySet()){
++            final UUID playerUUID = barEntry.getKey();
++            final BossBar tpsBar = barEntry.getValue();
++
++            final Player targetPlayer = Bukkit.getPlayer(playerUUID);{
++                if (targetPlayer != null){
++                    targetPlayer.hideBossBar(tpsBar);
++                }
++            }
++        }
++
++        uuid2Bossbars.clear();
++    }
++
++    public static void cancelBarUpdateTask(){
++        removeAllBars();
++
++        if (tpsbarTask == null || tpsbarTask.isCancelled()){
++            return;
++        }
++
++        tpsbarTask.cancel();
++    }
++
++    public static boolean isPlayerVisible(Player player){
++        return ((CraftPlayer) player).getHandle().isMemBarVisible;
++    }
++
++    public static void setVisibilityForPlayer(Player target,boolean canSee){
++        ((CraftPlayer) target).getHandle().isMemBarVisible = canSee;
++    }
++
++    private static void update(){
++        updateBarValues();
++        cleanUpPlayers();
++    }
++
++    private static void cleanUpPlayers(){
++        final List<UUID> toRemove = new ArrayList<>();
++
++        for (Map.Entry<UUID,BossBar> bossBarEntry : uuid2Bossbars.entrySet()){
++            final UUID uuid = bossBarEntry.getKey();
++            boolean shouldRemove = true;
++
++            final Player target = Bukkit.getPlayer(uuid);
++            if (target != null){
++                shouldRemove = !isPlayerVisible(target);
++            }
++
++            if (shouldRemove){
++                toRemove.add(uuid);
++            }
++        }
++
++        for (UUID uuid : toRemove){
++            final BossBar removed =  uuid2Bossbars.remove(uuid);
++            if (removed != null){
++                final Player targetPlayer = Bukkit.getPlayer(uuid);
++                if (targetPlayer != null){
++                    targetPlayer.hideBossBar(removed);
++                }
++            }
++        }
++    }
++
++    private static void updateBarValues(){
++        MemoryUsage heap = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
++
++        long used = heap.getUsed();
++        long xmx = heap.getMax();
++
++
++
++        for (Player apiPlayer : Bukkit.getOnlinePlayers()){
++            final ServerPlayer nmsPlayer = ((CraftPlayer) apiPlayer).getHandle();
++            final ThreadedRegionizer.ThreadedRegion<TickRegions.TickRegionData, TickRegions.TickRegionSectionData> region = ((ServerLevel) nmsPlayer.level()).regioniser.getRegionAtUnsynchronised(nmsPlayer.sectionX,nmsPlayer.sectionZ);
++
++            if (region == null){
++                continue;
++            }
++
++            BossBar targetBossbar = uuid2Bossbars.get(nmsPlayer.getUUID());
++
++            if (targetBossbar == null && isPlayerVisible(apiPlayer)){
++                targetBossbar = BossBar.bossBar(Component.text(""),0.0F, BossBar.Color.valueOf(MembarConfig.memColors.get(3)), BossBar.Overlay.NOTCHED_20);
++                uuid2Bossbars.put(nmsPlayer.getUUID(),targetBossbar);
++                apiPlayer.showBossBar(targetBossbar);
++            }
++
++            if (targetBossbar != null){
++                updateTpsBar(targetBossbar,used,xmx);
++            }
++        }
++    }
++
++    private static void updateTpsBar(@NotNull BossBar bar,long used,long xmx){
++        double percent = Math.max(Math.min((float) used / xmx, 1.0F), 0.0F);
++        bar.name(MiniMessage.miniMessage().deserialize(
++                MembarConfig.memBarFormat,
++                Placeholder.component("used", getMemoryComponent(used,xmx)),
++                Placeholder.component("available",getMaxMemComponent(xmx))
++        ));
++        bar.color(barColorFromMemory(percent));
++        bar.progress((float) percent);
++    }
++
++    private static @NotNull Component getMaxMemComponent(double max){
++        final BossBar.Color colorBukkit = BossBar.Color.GREEN;
++        final String colorString = colorBukkit.name();
++
++        final String content = "<%s><text></%s>";
++        final String replaced = String.format(content,colorString,colorString);
++
++        return MiniMessage.miniMessage().deserialize(replaced,Placeholder.parsed("text", String.valueOf(max)));
++    }
++
++    private static @NotNull Component getMemoryComponent(long used,long max){
++        final BossBar.Color colorBukkit = barColorFromMemory(Math.max(Math.min((float) used / max, 1.0F), 0.0F));
++        final String colorString = colorBukkit.name();
++
++        final String content = "<%s><text></%s>";
++        final String replaced = String.format(content,colorString,colorString);
++
++        return MiniMessage.miniMessage().deserialize(replaced,Placeholder.parsed("text", String.valueOf(used / 1024 * 1024)));
++    }
++
++    private static BossBar.Color barColorFromMemory(double memPercent){
++        if (memPercent == -1){
++            return BossBar.Color.valueOf(MembarConfig.memColors.get(3));
++        }
++
++        if (memPercent <= 50){
++            return BossBar.Color.valueOf(MembarConfig.memColors.getFirst());
++        }
++
++        if (memPercent <= 70){
++            return BossBar.Color.valueOf(MembarConfig.memColors.get(1));
++        }
++
++        return BossBar.Color.valueOf(MembarConfig.memColors.get(2));
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 6f86f25efbd4e6e79476c1563dc8f4c114c10695..67f1205ec362bbb191b642641c45c7bcc53c7625 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -851,6 +851,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+     @Override
+     public void stopServer() {
+         me.earthme.luminol.functions.GlobalServerTpsBar.cancelBarUpdateTask(); //Luminol - Tpsbar
++        me.earthme.luminol.functions.GlobalServerMemoryBar.cancelBarUpdateTask(); //Luminol - Memory bar
+         super.stopServer();
+         //Util.shutdownExecutors(); // Paper - moved into super
+         SkullBlockEntity.clear();
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index c04058a95dc4990cd8034b381f95affcdc77dd93..71bc115203933f3992315caf4e10ec8dc44955ba 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -303,6 +303,7 @@ public class ServerPlayer extends Player {
+     private final java.util.concurrent.atomic.AtomicReference<io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances> viewDistances = new java.util.concurrent.atomic.AtomicReference<>(new io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances(-1, -1, -1));
+     public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
+     public volatile boolean isTpsBarVisible = false; //Luminol - Tps bar
++    public volatile boolean isMemBarVisible = false; //Luminol - Memory bar
+ 
+     public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances getViewDistances() {
+         return this.viewDistances.get();

@@ -33,7 +33,7 @@ index 0000000000000000000000000000000000000000..b8aceab54bb60000e7c5681014027102
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 90f4cc0bd3722400411e6b1aa2d03205a350ee8a..f87c7a77b8d5748c08488470bf60ea84ab95a819 100644
+index 20f8c9bfdde62f1572e22319ebb752d12d9d5bac..24f4370b35d2cc50340de36d81b6c6d9aa250e4c 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -347,6 +347,10 @@ public class ServerPlayer extends Player {
@@ -48,7 +48,7 @@ index 90f4cc0bd3722400411e6b1aa2d03205a350ee8a..f87c7a77b8d5748c08488470bf60ea84
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 2c65527fa7bc2fce769e15f35a45ebae381c6bac..c13e3da32415607b3f0f88b6c34630a28af75128 100644
+index b4c4e72ddd09231747f82962a9d2883c6415ce30..bd666d03324291ec847136bab905f0aec726a211 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -695,7 +695,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl

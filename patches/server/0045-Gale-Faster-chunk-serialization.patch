@@ -286,7 +286,7 @@ index acae3eb30e0689048937f479dc3070f0688abdad..4b79f0474a9013dd4fdb68c6363ca194
      int onResize(int newBits, T object);
  }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java b/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java
-index adfbdca12fbdee2602feb0158674166d5256e49e..9990e60f61d678e20cfffe22848eb5cc7c554b8a 100644
+index 81368bf186365878db2e1ed305bb7bf36c26f61f..ee7ce575a80b47da752f1cc722b7f4dc3b1b1314 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java
 @@ -25,6 +25,22 @@ import net.minecraft.util.ThreadingDetector;
