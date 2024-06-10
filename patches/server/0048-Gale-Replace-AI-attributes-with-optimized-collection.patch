@@ -5,7 +5,7 @@ Subject: [PATCH] Gale Replace AI attributes with optimized collections
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java b/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
-index 683c9693754d1a87b7e8fccc757a0d0963351f60..d904cc2d882f62f74ff34f7e8266947798563ed4 100644
+index 8d6954d05d2bf6d6c1c4953db3127b011a858cec..0ddb031bfe8df351f1cf97d258f81558e4719dbf 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
 @@ -1,8 +1,6 @@

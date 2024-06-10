@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Mon, 10 Jun 2024 13:07:46 +0000
+Subject: [PATCH] Try fixing folia off region POI accessing issue
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaPOIAccessOffRegionFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaPOIAccessOffRegionFixConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..343c85ded7e7abc22fac0aaeb7be786e9bd7b39a
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaPOIAccessOffRegionFixConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.fixes;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class FoliaPOIAccessOffRegionFixConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.FIXES;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "folia.fix_poi_access_off_region";
++    }
++}
+diff --git a/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java b/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
+index 79e9e5ece5859938ca0c86ead4c25cf5bde9da27..63256feea83be1b180b1183cec94bab29b030c62 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
++++ b/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
+@@ -82,7 +82,7 @@ public class PoiManager extends SectionStorage<PoiSection> {
+ 
+     public Stream<PoiRecord> getInSquare(Predicate<Holder<PoiType>> typePredicate, BlockPos pos, int radius, PoiManager.Occupancy occupationStatus) {
+         int i = Math.floorDiv(radius, 16) + 1;
+-        return ChunkPos.rangeClosed(new ChunkPos(pos), i).flatMap(chunkPos -> this.getInChunk(typePredicate, chunkPos, occupationStatus)).filter(poi -> {
++        return ChunkPos.rangeClosed(new ChunkPos(pos), i).filter(cpos -> me.earthme.luminol.config.modules.fixes.FoliaPOIAccessOffRegionFixConfig.enabled ? io.papermc.paper.util.TickThread.isTickThreadFor(this.world,cpos) : true).flatMap(chunkPos -> this.getInChunk(typePredicate, chunkPos, occupationStatus)).filter(poi -> { //Luminol - Fix off region POI access
+             BlockPos blockPos2 = poi.getPos();
+             return Math.abs(blockPos2.getX() - pos.getX()) <= radius && Math.abs(blockPos2.getZ() - pos.getZ()) <= radius;
+         });

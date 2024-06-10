@@ -5,7 +5,7 @@ Subject: [PATCH] Pufferfish Reduce entity fluid lookups if no fluids
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 2fb2df4922a1b5b3acf732e68d8db7bb15ecc789..9b4a9025f9b30834a07a83cc02e7ee7f665dcbd9 100644
+index a19773b8721fb4011a48738977a162358b4dbcb5..ada744f8e594dbec516e2a66beaf6140e98d7510 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -5260,16 +5260,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S

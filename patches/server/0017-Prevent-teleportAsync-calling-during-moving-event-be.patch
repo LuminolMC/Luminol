@@ -48,7 +48,7 @@ index 46df26bef2f1d4b0bd5a1313e8ee4f86c2fdf355..0086a1a4611b983eefd0cb7bf8e9cff6
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 954809d8997750959541e6462668f17efd0b0f70..4fc9a47745b817d9ee2da4776cab26ff9f3b0025 100644
+index e7b510dee355a9865bd67f5aea52c62957226eb3..e0f12426f18b343b27089440cd01127d79600ef0 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -675,7 +675,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -72,7 +72,7 @@ index 954809d8997750959541e6462668f17efd0b0f70..4fc9a47745b817d9ee2da4776cab26ff
                                      // If the event is cancelled we move the player back to their old location.
                                      if (event.isCancelled()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 36f0175228f4ab80ebc67082e7c9bbbc2c14e147..ad15df5dfe34e20a6b5dafaf01e8a7306b158109 100644
+index cbf5bda50b87b8520ee6fa6d0b41c94b5c9f3583..ac4533f69e9bb22c7375ad8bc83ddc23399a56d7 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -3986,6 +3986,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
