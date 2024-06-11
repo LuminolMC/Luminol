@@ -1,22 +1,78 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
 Date: Sun, 2 Jun 2024 12:18:05 +0000
-Subject: [PATCH] Ram bar
+Subject: [PATCH] Added a simple membar
 
 
+diff --git a/src/main/java/me/earthme/luminol/commands/MembarCommand.java b/src/main/java/me/earthme/luminol/commands/MembarCommand.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..a5cbad6b947b1c3e1499bc6d311e17a5eb570c2f
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/commands/MembarCommand.java
+@@ -0,0 +1,47 @@
++package me.earthme.luminol.commands;
++
++import me.earthme.luminol.config.modules.misc.MembarConfig;
++import me.earthme.luminol.functions.GlobalServerMemoryBar;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.format.TextColor;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++import org.bukkit.entity.Player;
++import org.jetbrains.annotations.NotNull;
++
++public class MembarCommand extends Command {
++    public MembarCommand(@NotNull String name) {
++        super(name);
++        this.setPermission("luminol.commands.membar");
++        this.setDescription("Show the memory usage through a bossbar");
++        this.setUsage("/membar");
++    }
++
++    @Override
++    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
++        if (!testPermission(sender)){
++            return true;
++        }
++
++        if (!MembarConfig.memoryBarEnabled){
++            sender.sendMessage(Component.text("Membar was already disabled!").color(TextColor.color(255,0,0)));
++            return true;
++        }
++
++        if (!(sender instanceof Player player)){
++            sender.sendMessage(Component.text("Only player can use this command!").color(TextColor.color(255,0,0)));
++            return true;
++        }
++
++        if (GlobalServerMemoryBar.isPlayerVisible(player)) {
++            player.sendMessage(Component.text("Disabled mem bar").color(TextColor.color(0,255,0)));
++            GlobalServerMemoryBar.setVisibilityForPlayer(player,false);
++            return true;
++        }
++
++        player.sendMessage(Component.text("Enabled mem bar").color(TextColor.color(0,255,0)));
++        GlobalServerMemoryBar.setVisibilityForPlayer(player,true);
++
++        return true;
++    }
++}
 diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/MembarConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/MembarConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b177d6b0b01af233f7b10200748bc791a912ddb0
+index 0000000000000000000000000000000000000000..b632c4a636974535bf001f010de1dcb6b25868c0
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/misc/MembarConfig.java
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,50 @@
 +package me.earthme.luminol.config.modules.misc;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
++import me.earthme.luminol.commands.MembarCommand;
 +import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.DoNotLoad;
 +import me.earthme.luminol.config.EnumConfigCategory;
 +import me.earthme.luminol.config.IConfigModule;
 +import me.earthme.luminol.functions.GlobalServerMemoryBar;
++import org.bukkit.Bukkit;
 +
 +import java.util.List;
 +
@@ -29,6 +85,9 @@ index 0000000000000000000000000000000000000000..b177d6b0b01af233f7b10200748bc791
 +    public static List<String> memColors = List.of("GREEN","YELLOW","RED","PURPLE");
 +    @ConfigInfo(baseName = "update_interval_ticks")
 +    public static int updateInterval = 15;
++
++    @DoNotLoad
++    private static boolean inited = false;
 +
 +    @Override
 +    public EnumConfigCategory getCategory() {
@@ -47,11 +106,16 @@ index 0000000000000000000000000000000000000000..b177d6b0b01af233f7b10200748bc791
 +        }else{
 +            GlobalServerMemoryBar.cancelBarUpdateTask();
 +        }
++
++        if (!inited){
++            Bukkit.getCommandMap().register("membar","luminol",new MembarCommand("membar"));
++            inited = true;
++        }
 +    }
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..fdd57d5825aced511a65ee056a773c1fbe4f12bd
+index 0000000000000000000000000000000000000000..1c1278976fd13c1616973c70fe5db2652fcbad95
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
 @@ -0,0 +1,186 @@
@@ -82,14 +146,14 @@ index 0000000000000000000000000000000000000000..fdd57d5825aced511a65ee056a773c1f
 +public class GlobalServerMemoryBar {
 +    protected static final MinecraftInternalPlugin NULL_PLUGIN = new MinecraftInternalPlugin();
 +    protected static final Map<UUID, BossBar> uuid2Bossbars = new HashMap<>();
-+    protected static volatile ScheduledTask tpsbarTask = null;
++    protected static volatile ScheduledTask membarTask = null;
 +    private static final Logger logger = LogManager.getLogger();
 +
 +    public static void init(){
 +        cancelBarUpdateTask();
 +
 +        Bukkit.getGlobalRegionScheduler().runAtFixedRate(NULL_PLUGIN, c -> {
-+            tpsbarTask = c;
++            membarTask = c;
 +            try {
 +                update();
 +            }catch (Exception e){
@@ -101,11 +165,11 @@ index 0000000000000000000000000000000000000000..fdd57d5825aced511a65ee056a773c1f
 +    public static void removeAllBars(){
 +        for (Map.Entry<UUID,BossBar> barEntry : uuid2Bossbars.entrySet()){
 +            final UUID playerUUID = barEntry.getKey();
-+            final BossBar tpsBar = barEntry.getValue();
++            final BossBar memBar = barEntry.getValue();
 +
 +            final Player targetPlayer = Bukkit.getPlayer(playerUUID);{
 +                if (targetPlayer != null){
-+                    targetPlayer.hideBossBar(tpsBar);
++                    targetPlayer.hideBossBar(memBar);
 +                }
 +            }
 +        }
@@ -116,11 +180,11 @@ index 0000000000000000000000000000000000000000..fdd57d5825aced511a65ee056a773c1f
 +    public static void cancelBarUpdateTask(){
 +        removeAllBars();
 +
-+        if (tpsbarTask == null || tpsbarTask.isCancelled()){
++        if (membarTask == null || membarTask.isCancelled()){
 +            return;
 +        }
 +
-+        tpsbarTask.cancel();
++        membarTask.cancel();
 +    }
 +
 +    public static boolean isPlayerVisible(Player player){
@@ -189,12 +253,12 @@ index 0000000000000000000000000000000000000000..fdd57d5825aced511a65ee056a773c1f
 +            }
 +
 +            if (targetBossbar != null){
-+                updateTpsBar(targetBossbar,used,xmx);
++                updateMembar(targetBossbar,used,xmx);
 +            }
 +        }
 +    }
 +
-+    private static void updateTpsBar(@NotNull BossBar bar,long used,long xmx){
++    private static void updateMembar(@NotNull BossBar bar, long used, long xmx){
 +        double percent = Math.max(Math.min((float) used / xmx, 1.0F), 0.0F);
 +        bar.name(MiniMessage.miniMessage().deserialize(
 +                MembarConfig.memBarFormat,
