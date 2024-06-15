@@ -6,10 +6,10 @@ Subject: [PATCH] Prevent teleportAsync calling during moving event being
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaTeleportAsyncFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaTeleportAsyncFixConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b8aceab54bb60000e7c56810140271022f5147a2
+index 0000000000000000000000000000000000000000..8f1449545d6d217b46a9ffae705123daefe55b25
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaTeleportAsyncFixConfig.java
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,24 @@
 +package me.earthme.luminol.config.modules.fixes;
 +
 +import me.earthme.luminol.config.ConfigInfo;
@@ -17,7 +17,9 @@ index 0000000000000000000000000000000000000000..b8aceab54bb60000e7c5681014027102
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class FoliaTeleportAsyncFixConfig implements IConfigModule {
-+    @ConfigInfo(baseName = "enabled")
++    @ConfigInfo(baseName = "enabled", comments =
++            "A fix which fixed some bugs of teleportAsync " +
++            "that caused by plugins(such as Residence)")
 +    public static boolean enabled = false;
 +    @ConfigInfo(baseName = "throw_on_detected")
 +    public static boolean throwOnDetected = true;

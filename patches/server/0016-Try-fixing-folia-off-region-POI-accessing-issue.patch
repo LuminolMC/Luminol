@@ -6,10 +6,10 @@ Subject: [PATCH] Try fixing folia off region POI accessing issue
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaPOIAccessOffRegionFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaPOIAccessOffRegionFixConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..343c85ded7e7abc22fac0aaeb7be786e9bd7b39a
+index 0000000000000000000000000000000000000000..7812a71f05dd32646037afd22cdabf72bb23b0d1
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaPOIAccessOffRegionFixConfig.java
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,25 @@
 +package me.earthme.luminol.config.modules.fixes;
 +
 +import me.earthme.luminol.config.ConfigInfo;
@@ -17,7 +17,12 @@ index 0000000000000000000000000000000000000000..343c85ded7e7abc22fac0aaeb7be786e
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class FoliaPOIAccessOffRegionFixConfig implements IConfigModule {
-+    @ConfigInfo(baseName = "enabled")
++    @ConfigInfo(baseName = "enabled", comments =
++            """
++                    The POIManager of folia has something which has not been patched\s
++                     for regionized ticking and these would trigger the async catcher\s
++                    and make the server crash.If you would like to prevent it and didn't\s
++                    mind the side effect(currently unknown), you can enable this""")
 +    public static boolean enabled = false;
 +
 +    @Override
