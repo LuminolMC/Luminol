@@ -243,7 +243,7 @@ index 0000000000000000000000000000000000000000..6b4368cdf9762ad981345fef0f26cd00
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 0d756dd5181a2444175184227bef648d07c17236..59b1da130e519cbe06ed5eedf9e4dc881e45ba36 100644
+index cb3ae17634dfc753dec75c7e2385a4ccdcba40d3..08b0d3b970a7c86f577d20487d5fe3930b8eae6e 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1222,6 +1222,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa

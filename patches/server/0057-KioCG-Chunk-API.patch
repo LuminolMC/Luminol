@@ -182,10 +182,10 @@ index 3f394934e64df09e65b86d61a1dcabd3c6031a38..ba33c107cfbe9920fc33375daf8e6b62
          } else {
              passenger.stopRiding();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index dcbf18eb7fb9a37fcd7faf3efe023d2503b4091a..c40ec90543bf51c9b16a7b63d8339020e7333b90 100644
+index 6357440e89ffddfc61de767e4a1bfdbbb9d854b3..c25261e2c5313aedeae813b5f439a5b29a0ffcbb 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -334,6 +334,25 @@ public class ServerPlayer extends Player {
+@@ -335,6 +335,25 @@ public class ServerPlayer extends Player {
      public boolean handlingMoveEvent = false;
      //Luminol end
  
@@ -211,7 +211,7 @@ index dcbf18eb7fb9a37fcd7faf3efe023d2503b4091a..c40ec90543bf51c9b16a7b63d8339020
      public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, ClientInformation clientOptions) {
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
-@@ -872,6 +891,12 @@ public class ServerPlayer extends Player {
+@@ -873,6 +892,12 @@ public class ServerPlayer extends Player {
          this.trackStartFallingPosition();
          this.trackEnteredOrExitedLavaOnVehicle();
          this.advancements.flushDirty(this);

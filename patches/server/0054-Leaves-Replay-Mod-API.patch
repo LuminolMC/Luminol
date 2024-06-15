@@ -210,7 +210,7 @@ index e7b444a10b244828827b3c66c53465206ea8e0ec..030601fdfde2232a933b2ad7022e9909
                                          .filter(player -> !playerList.isOp(player.getGameProfile()))
                                          .map(player -> player.getGameProfile().getName()),
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 0086a1a4611b983eefd0cb7bf8e9cff677246d0f..dcbf18eb7fb9a37fcd7faf3efe023d2503b4091a 100644
+index 922ce7627bd0d546802ec6b013056f7aa6acbf33..6357440e89ffddfc61de767e4a1bfdbbb9d854b3 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -197,7 +197,7 @@ public class ServerPlayer extends Player {
