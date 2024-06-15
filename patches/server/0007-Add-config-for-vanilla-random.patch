@@ -6,7 +6,7 @@ Subject: [PATCH] Add config for vanilla random
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/VanillaRandomSourceConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/VanillaRandomSourceConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ee247014c9a2ec1bbb7f25ef41da110a270154d6
+index 0000000000000000000000000000000000000000..0e6bfc03be660415c333024b56ac6565e3b61ab1
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/VanillaRandomSourceConfig.java
 @@ -0,0 +1,20 @@
@@ -17,7 +17,7 @@ index 0000000000000000000000000000000000000000..ee247014c9a2ec1bbb7f25ef41da110a
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class VanillaRandomSourceConfig implements IConfigModule {
-+    @ConfigInfo(baseName = "enable_for_player_entity")
++    @ConfigInfo(baseName = "enable_for_player_entity",comments = "Related with RNG cracks")
 +    public static boolean useLegacyRandomSourceForPlayers = false;
 +
 +    @Override
