@@ -35,10 +35,10 @@ index 0000000000000000000000000000000000000000..8f1449545d6d217b46a9ffae705123da
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 20f8c9bfdde62f1572e22319ebb752d12d9d5bac..24f4370b35d2cc50340de36d81b6c6d9aa250e4c 100644
+index 4286420c207aa8920ae2966874b27aa81cbbc468..eeb89cfdaf0fee522f0ff1eac43dfd85de329b9a 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -347,6 +347,10 @@ public class ServerPlayer extends Player {
+@@ -348,6 +348,10 @@ public class ServerPlayer extends Player {
      public double lastEntitySpawnRadiusSquared = -1.0;
      // Paper end - optimise chunk tick iteration
  

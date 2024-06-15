@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
 Date: Sun, 2 Jun 2024 12:18:05 +0000
-Subject: [PATCH] Added a simple membar
+Subject: [PATCH] Add a simple membar
 
 
 diff --git a/src/main/java/me/earthme/luminol/commands/MembarCommand.java b/src/main/java/me/earthme/luminol/commands/MembarCommand.java
@@ -115,7 +115,7 @@ index 0000000000000000000000000000000000000000..b632c4a636974535bf001f010de1dcb6
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1c1278976fd13c1616973c70fe5db2652fcbad95
+index 0000000000000000000000000000000000000000..a33a45194273cc1b4e4157a5449c7994968a3480
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
 @@ -0,0 +1,186 @@
@@ -276,7 +276,7 @@ index 0000000000000000000000000000000000000000..1c1278976fd13c1616973c70fe5db265
 +        final String content = "<%s><text></%s>";
 +        final String replaced = String.format(content,colorString,colorString);
 +
-+        return MiniMessage.miniMessage().deserialize(replaced,Placeholder.parsed("text", String.valueOf(max)));
++        return MiniMessage.miniMessage().deserialize(replaced,Placeholder.parsed("text", String.format("%.2f", (double)max / (1024 * 1024))));
 +    }
 +
 +    private static @NotNull Component getMemoryComponent(long used,long max){
@@ -286,7 +286,7 @@ index 0000000000000000000000000000000000000000..1c1278976fd13c1616973c70fe5db265
 +        final String content = "<%s><text></%s>";
 +        final String replaced = String.format(content,colorString,colorString);
 +
-+        return MiniMessage.miniMessage().deserialize(replaced,Placeholder.parsed("text", String.valueOf(used / 1024 * 1024)));
++        return MiniMessage.miniMessage().deserialize(replaced,Placeholder.parsed("text", String.format("%.2f", (double)used / (1024 * 1024))));
 +    }
 +
 +    private static BossBar.Color barColorFromMemory(double memPercent){
@@ -306,7 +306,7 @@ index 0000000000000000000000000000000000000000..1c1278976fd13c1616973c70fe5db265
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 6f86f25efbd4e6e79476c1563dc8f4c114c10695..67f1205ec362bbb191b642641c45c7bcc53c7625 100644
+index 09bde51d3da062c5788151c15c448eaf2a02ea1b..dcdfc70e6c9b021b941a667f288ea09e3c1935e2 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -851,6 +851,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -318,7 +318,7 @@ index 6f86f25efbd4e6e79476c1563dc8f4c114c10695..67f1205ec362bbb191b642641c45c7bc
          //Util.shutdownExecutors(); // Paper - moved into super
          SkullBlockEntity.clear();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index c04058a95dc4990cd8034b381f95affcdc77dd93..71bc115203933f3992315caf4e10ec8dc44955ba 100644
+index db32beabfa7ba17b1c46d36fa1dc27bc20e06feb..25bdaec097572ee58432516ae5983f4841587046 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -303,6 +303,7 @@ public class ServerPlayer extends Player {
