@@ -6,10 +6,10 @@ Subject: [PATCH] Teleport async if entity was moving to another region at once
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaEntityMovingFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaEntityMovingFixConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..73d99a105a18231901e691922b0c283adae0cc79
+index 0000000000000000000000000000000000000000..0e51d465db3554ac80d00c6b85cc1f013f3949ba
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaEntityMovingFixConfig.java
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,28 @@
 +package me.earthme.luminol.config.modules.fixes;
 +
 +import me.earthme.luminol.config.ConfigInfo;
@@ -17,7 +17,13 @@ index 0000000000000000000000000000000000000000..73d99a105a18231901e691922b0c283a
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class FoliaEntityMovingFixConfig implements IConfigModule {
-+    @ConfigInfo(baseName = "enabled")
++    @ConfigInfo(baseName = "enabled", comments =
++            """
++                    A simple fix of a issue on folia\s
++                    (Some times the entity would\s
++                    have a large moment that cross the\s
++                    different tick regions and it would\s
++                    make the server crashed)  but sometimes it might doesn't work""")
 +    public static boolean enabled = false;
 +    @ConfigInfo(baseName = "warn_on_detected")
 +    public static boolean warnOnDetected = true;
@@ -33,7 +39,7 @@ index 0000000000000000000000000000000000000000..73d99a105a18231901e691922b0c283a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 64e58d2d69f837b268e6a70b8a795e6fd5b1ed0c..36f0175228f4ab80ebc67082e7c9bbbc2c14e147 100644
+index 8ad21bf69fe2ebbda7295c16971c31a55cd23108..cbf5bda50b87b8520ee6fa6d0b41c94b5c9f3583 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -1086,10 +1086,40 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S

@@ -6,10 +6,10 @@ Subject: [PATCH] Try fixing folia spector teleportation
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaSpectorTeleportationFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaSpectorTeleportationFixConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8487799cdfb776eaca33b57f7c99ae3aeadb890d
+index 0000000000000000000000000000000000000000..01f8c6ff3662569be5a4ff998bcd4fbbcb555105
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaSpectorTeleportationFixConfig.java
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,25 @@
 +package me.earthme.luminol.config.modules.fixes;
 +
 +import me.earthme.luminol.config.ConfigInfo;
@@ -17,7 +17,12 @@ index 0000000000000000000000000000000000000000..8487799cdfb776eaca33b57f7c99ae3a
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class FoliaSpectorTeleportationFixConfig implements IConfigModule {
-+    @ConfigInfo(baseName = "enabled")
++    @ConfigInfo(baseName = "enabled", comments =
++            """
++                    The teleportation of spector players would call absMoveTo directly.\s
++                    And when the camera teleported to another region,this would call absMoveTo\s
++                     to let the spector player move to another region without any checks, which \s
++                    would trigger the async catcher and crash the server""")
 +    public static boolean fixSpectorTeleportFolia = false;
 +
 +    @Override

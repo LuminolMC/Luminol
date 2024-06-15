@@ -6,7 +6,7 @@ Subject: [PATCH] Add config for unsafe teleportation
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/UnsafeTeleportationConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/UnsafeTeleportationConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1b0de6f0ccab72c409a63dc1904829008e30328e
+index 0000000000000000000000000000000000000000..ea374875f529b30db17e8b8cb07b99a600b722dc
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/UnsafeTeleportationConfig.java
 @@ -0,0 +1,20 @@
@@ -17,7 +17,7 @@ index 0000000000000000000000000000000000000000..1b0de6f0ccab72c409a63dc190482900
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class UnsafeTeleportationConfig implements IConfigModule {
-+    @ConfigInfo(baseName = "enabled", comments = "If you want to use sand duping,please turn on this")
++    @ConfigInfo(baseName = "enabled", comments = "Allow non player entities enter end portals if enabled.If you want to use sand duping,please turn on this")
 +    public static boolean enabled = false;
 +
 +    @Override
@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..1b0de6f0ccab72c409a63dc190482900
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 1d77bc6bdb87de1ad6c8740376391dedcaa73089..5e3a5e6b05254481ad413069b249ef554b591f8c 100644
+index 0e71fa29ebfa649bc23899046396a6b01c4bd131..6463a55477b61f8cb3d17159792e5d3f1a87f7b7 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -4065,6 +4065,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S

@@ -6,7 +6,7 @@ Subject: [PATCH] Add config for vanilla random
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/VanillaRandomSourceConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/VanillaRandomSourceConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ee247014c9a2ec1bbb7f25ef41da110a270154d6
+index 0000000000000000000000000000000000000000..0e6bfc03be660415c333024b56ac6565e3b61ab1
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/fixes/VanillaRandomSourceConfig.java
 @@ -0,0 +1,20 @@
@@ -17,7 +17,7 @@ index 0000000000000000000000000000000000000000..ee247014c9a2ec1bbb7f25ef41da110a
 +import me.earthme.luminol.config.IConfigModule;
 +
 +public class VanillaRandomSourceConfig implements IConfigModule {
-+    @ConfigInfo(baseName = "enable_for_player_entity")
++    @ConfigInfo(baseName = "enable_for_player_entity",comments = "Related with RNG cracks")
 +    public static boolean useLegacyRandomSourceForPlayers = false;
 +
 +    @Override
@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..ee247014c9a2ec1bbb7f25ef41da110a
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 5e3a5e6b05254481ad413069b249ef554b591f8c..9bbfac91f97331b1b558264c867b7e00185291f2 100644
+index 6463a55477b61f8cb3d17159792e5d3f1a87f7b7..8ad21bf69fe2ebbda7295c16971c31a55cd23108 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -567,7 +567,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
