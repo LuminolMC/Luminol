@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..ed62d25d6cd6dfcf8c5db20ced36eb3d
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 18c6fe66fa944f5e5b7892df4d8fef4c7346d3bc..a9e32fba699c718011abc52d91ec7158ab22b5ea 100644
+index 2be071c9c4a0e9e32d08f0694903e6b25aa35042..f946655347a3a2b83351e67c9be4beb0d63de32d 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5515,6 +5515,16 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -5595,6 +5595,16 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          return this.inBlockState;
      }
  
