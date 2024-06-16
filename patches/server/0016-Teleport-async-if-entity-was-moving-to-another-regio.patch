@@ -39,10 +39,10 @@ index 0000000000000000000000000000000000000000..0e51d465db3554ac80d00c6b85cc1f01
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 723ae767d7a34643bba5ed616e3943d3d7633312..f39e8291d2d8b15201835b8c018776ef6eda8d24 100644
+index 723ae767d7a34643bba5ed616e3943d3d7633312..dacdca13057c28a3a45f0d77e30c52cd3814459a 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -1128,10 +1128,40 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -1128,6 +1128,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      }
      // Paper end - detailed watchdog information
  
@@ -53,14 +53,17 @@ index 723ae767d7a34643bba5ed616e3943d3d7633312..f39e8291d2d8b15201835b8c018776ef
      public void move(MoverType movementType, Vec3 movement) {
          final Vec3 originalMovement = movement; // Paper - Expose pre-collision velocity
          // Paper start - detailed watchdog information
-         io.papermc.paper.util.TickThread.ensureTickThread("Cannot move an entity off-main");
+@@ -1138,6 +1142,32 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+             this.moveStartZ = this.getZ();
+             this.moveVector = movement;
+         }
 +        //Luminol start - Fix high position moving
 +        if (me.earthme.luminol.config.modules.fixes.FoliaEntityMovingFixConfig.enabled && io.papermc.paper.util.TickThread.isTickThread()){ //Except the threads because it may be called by the chunk system worker thread
-+            if (this.preventMoving){
++            var finalPosition = movement.add(this.position);
++            if (this.preventMoving || Double.isNaN(finalPosition.x) || Double.isNaN(finalPosition.y) || Double.isNaN(finalPosition.z)){
 +                return;
 +            }
 +
-+            var finalPosition = movement.add(this.position);
 +            if (!io.papermc.paper.util.TickThread.isTickThreadFor(((ServerLevel) this.level),finalPosition)){
 +                this.preventMoving = true;
 +                this.teleportAsync(
@@ -80,6 +83,6 @@ index 723ae767d7a34643bba5ed616e3943d3d7633312..f39e8291d2d8b15201835b8c018776ef
 +            }
 +        }
 +        //Luminol end
-         synchronized (this.posLock) {
-             this.moveStartX = this.getX();
-             this.moveStartY = this.getY();
+         try {
+         // Paper end - detailed watchdog information
+         if (this.noPhysics) {
