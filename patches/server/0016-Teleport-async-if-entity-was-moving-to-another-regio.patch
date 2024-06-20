@@ -39,10 +39,10 @@ index 0000000000000000000000000000000000000000..0e51d465db3554ac80d00c6b85cc1f01
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 723ae767d7a34643bba5ed616e3943d3d7633312..dacdca13057c28a3a45f0d77e30c52cd3814459a 100644
+index 681f1476754f49d01b99a892ef2618cac341cd25..fd1dbe0067d074101884fe1a66045f5316adeafc 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -1128,6 +1128,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -1127,6 +1127,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      }
      // Paper end - detailed watchdog information
  
@@ -53,7 +53,7 @@ index 723ae767d7a34643bba5ed616e3943d3d7633312..dacdca13057c28a3a45f0d77e30c52cd
      public void move(MoverType movementType, Vec3 movement) {
          final Vec3 originalMovement = movement; // Paper - Expose pre-collision velocity
          // Paper start - detailed watchdog information
-@@ -1138,6 +1142,32 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -1137,6 +1141,32 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
              this.moveStartZ = this.getZ();
              this.moveVector = movement;
          }

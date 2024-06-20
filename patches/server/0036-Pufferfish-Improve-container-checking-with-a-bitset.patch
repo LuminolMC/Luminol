@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <novau233@163.com>
-Date: Mon, 25 Mar 2024 13:48:33 +0000
+Date: Thu, 20 Jun 2024 04:46:56 +0000
 Subject: [PATCH] Pufferfish Improve container checking with a bitset
 
 
@@ -237,7 +237,7 @@ index f402dbbfe3a443e6bc51f88b85abe937852b52f0..541cb29a10e2c87a8214ff5beadb71bc
      float DEFAULT_DISTANCE_BUFFER = 4.0F;
  
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-index 2704389bc3ec6dbbf1b568a4380972f8c0d62d15..c53cdaa59da87d96e34f06185b1f73e56a5bfc6c 100644
+index 9549eee0d92f322bd5232abd7e695213660c2e22..2cd8ac8840c2c0346fbf209c5ae3bb67eb3905e8 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 @@ -30,7 +30,10 @@ import org.bukkit.inventory.InventoryHolder;
@@ -251,7 +251,7 @@ index 2704389bc3ec6dbbf1b568a4380972f8c0d62d15..c53cdaa59da87d96e34f06185b1f73e5
      @Nullable
      public ResourceKey<LootTable> lootTable;
      public long lootTableSeed;
-@@ -92,12 +95,18 @@ public abstract class AbstractMinecartContainer extends AbstractMinecart impleme
+@@ -86,12 +89,18 @@ public abstract class AbstractMinecartContainer extends AbstractMinecart impleme
  
      protected AbstractMinecartContainer(EntityType<?> type, Level world) {
          super(type, world);
@@ -272,10 +272,10 @@ index 2704389bc3ec6dbbf1b568a4380972f8c0d62d15..c53cdaa59da87d96e34f06185b1f73e5
      }
  
      @Override
-@@ -166,6 +175,10 @@ public abstract class AbstractMinecartContainer extends AbstractMinecart impleme
+@@ -158,6 +167,10 @@ public abstract class AbstractMinecartContainer extends AbstractMinecart impleme
+     @Override
      protected void readAdditionalSaveData(CompoundTag nbt) {
          super.readAdditionalSaveData(nbt);
-         this.lootableData.loadNbt(nbt); // Paper
 +        // Pufferfish start
 +        this.itemStacksOptimized = new gg.airplane.structs.ItemListWithBitset(this.getContainerSize());
 +        this.itemStacks = this.itemStacksOptimized.nonNullList;

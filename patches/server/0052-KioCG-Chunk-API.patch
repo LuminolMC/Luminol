@@ -102,10 +102,10 @@ index 0000000000000000000000000000000000000000..53b4397997bc9b9b9d88e48304b37a25
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 97016c309d0a0fc13d733269f7dfb81ca0d8c574..e169a9d4c2e633fdba3fe425e2f3f766d2200af5 100644
+index ac0312d5d496ee5599ff6b002196d98b42385309..d43831210937108563035ab8137ab27694a7c465 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1699,6 +1699,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1696,6 +1696,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
          // Folia end - region threading
  
@@ -123,7 +123,7 @@ index 97016c309d0a0fc13d733269f7dfb81ca0d8c574..e169a9d4c2e633fdba3fe425e2f3f766
          // Folia - region threading
          if (region == null) this.tickRateManager.tick(); // Folia - region threading
          this.tickChildren(shouldKeepTicking, region); // Folia - region threading
-@@ -1708,6 +1719,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1705,6 +1716,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
  
          // Folia - region threading
@@ -183,7 +183,7 @@ index 12c46e7a3f6a8675921d95dee97ece4a83252282..573cca66b905c5decb0e59c58cfa861d
          } else {
              passenger.stopRiding();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index eeb89cfdaf0fee522f0ff1eac43dfd85de329b9a..71bc115203933f3992315caf4e10ec8dc44955ba 100644
+index 8ec763f933e79a1c8e7a7d3b3c0277ca2fca4b74..5fe7fb97b431ae0004e25b872e372e13f92403a0 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -352,6 +352,25 @@ public class ServerPlayer extends Player {
@@ -212,7 +212,7 @@ index eeb89cfdaf0fee522f0ff1eac43dfd85de329b9a..71bc115203933f3992315caf4e10ec8d
      public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, ClientInformation clientOptions) {
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
-@@ -924,6 +943,12 @@ public class ServerPlayer extends Player {
+@@ -925,6 +944,12 @@ public class ServerPlayer extends Player {
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this);
@@ -242,10 +242,10 @@ index ee972fa1a2bc023ed18eaceae21c8c8244754e6a..0fe6afb51246701309c88febeb61aaf7
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index eb3eedad69fae7119bb5d995c30cac6ed9f44a14..81c97ae378c35b7faeaca103b7b9240e7bd0d90c 100644
+index 94a5ac99de0b51de426b9929e82d16e12290267e..56216f11320c1c12aa3f850d3764dbfd89d333e1 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -6037,4 +6037,6 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -6042,4 +6042,6 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          return ((net.minecraft.server.level.ServerChunkCache) level.getChunkSource()).isPositionTicking(this);
      }
      // Paper end - Expose entity id counter
@@ -269,7 +269,7 @@ index 4f701788bd21b61cad251a3a88f9bc416fb99051..86caa40a91ee0385bc32fd19d0fec6bd
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 26362c7fa4fcc39f40c2736fd14647542e7161e2..2e9de64ac2cdd5b43b45196565d7e048ac82cfaf 100644
+index 4e0335d683334b0c6ee4dbf16d93f4e0392cf8d4..d01a5a920a44b2168247a83aea56f6b0f02ca9f1 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -1950,4 +1950,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
@@ -318,7 +318,7 @@ index 0854e9b7ee2e6b23b6c1ee6a324a5a253c9d4679..26f2e3980cb8ac72db71dd3e91156f16
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 448a6c8d73652824157c50cf4883d4d4d9b5db80..8ab86db26ccc0b7d45ce3f657f0b72d99573f3b7 100644
+index b0f2e614c90137c526de865bd64469f09b95c964..3d8b55afaced6fbac3bc957ffdc3368252d06b61 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -2472,4 +2472,12 @@ public abstract class Player extends LivingEntity {
@@ -351,7 +351,7 @@ index 77eee09a301a838f21834319d4962eba1c8dcbed..cd133931de618e5d8ed5062f8ebfde9d
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 0c3f095854396da0e5f38234060ba9a190a572de..c15be74b855a7c62f23499143634057e2ac27b7a 100644
+index 5f60010d44f2a3df8645a0e7dafa3f28d882aecf..7592c90fdf35bcaad7ea198f920bcf9e4f35baf5 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 @@ -94,6 +94,7 @@ public class LevelChunk extends ChunkAccess {
@@ -402,10 +402,10 @@ index e679b40b9628b0eb7152978ef641f9c918c4c8b2..bf9ae765242bb61d3e279893b0355d12
          } catch (StackOverflowError ex) {
              world.lastPhysicsProblem = new BlockPos(pos);
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
-index 82b4bd669c57b18fb0b443bcd94495023cd5a528..061f7ef0138d4b8d528c7aa71ec5660c1d7e3b27 100644
+index 92f1ea81b5e90529905d9c508aca18c31443ff6a..3b972bf05d9ee79f2cdfc9b5a81692c229a5662e 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
-@@ -428,4 +428,12 @@ public class CraftChunk implements Chunk {
+@@ -434,4 +434,12 @@ public class CraftChunk implements Chunk {
      static {
          Arrays.fill(FULL_LIGHT, (byte) 0xFF);
      }
@@ -419,10 +419,10 @@ index 82b4bd669c57b18fb0b443bcd94495023cd5a528..061f7ef0138d4b8d528c7aa71ec5660c
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index eb5ec3637aedb643801f369e43d39ef987546ce0..ae53333f8ebffea8874259495026484b003d1ad9 100644
+index a3d4dc232d011c262d85028351191ac2b8547398..a3aca277422d623c6998bbbe5d9574cd1e10f544 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3544,4 +3544,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3554,4 +3554,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      public void setSendViewDistance(final int viewDistance) {
          this.getHandle().setSendViewDistance(viewDistance);
      }

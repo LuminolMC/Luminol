@@ -83,10 +83,10 @@ index 6b8cbf681203c20eebb214c5c0b0fe0374aa30dc..12c46e7a3f6a8675921d95dee97ece4a
                      if (false && this.shouldDiscardEntity(entity)) { // CraftBukkit - We prevent spawning in general, so this butchering is not needed
                          entity.discard();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 5caa390a167c770f657f142fe3355d127fc95cce..18c6fe66fa944f5e5b7892df4d8fef4c7346d3bc 100644
+index 053e9204104a886f4b7e828b7c5e0d277c44d676..a999e3204d89ce2107026940cec7399360739ef0 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -483,6 +483,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -482,6 +482,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
  
      // Folia - region ticking
      // Paper end - optimise entity tracking
@@ -111,7 +111,7 @@ index aa2bb97ef305ed234a11b05e665ac1062b571591..29699e51b3e791a1a82a19c95fd6a3f3
      private String descriptionId;
      @Nullable
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 8345d8431e1c05639f14919b9bad1029249a5f50..208f0995479df5741ff780df607451f27c6f91af 100644
+index a6c1d59085e0c58d9d1996d9e905bc24a3678e0c..fae60501284a68238c53ffc19075d46ac49cfdaa 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -249,10 +249,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Targeti
@@ -233,7 +233,7 @@ index 290d41136f5ec7671bc4990dfe50da0a770c124d..0d34e9e0f7ce35c3c28a9216cf3cdd5e
          this.level().getProfiler().pop();
          this.level().getProfiler().push("tadpoleActivityUpdate");
 diff --git a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
-index 02e49c7ae5e120302b6479cf3e3934b9217eebf0..81c9f1c2895adedec246732df9f9dadddfa5f345 100644
+index 376bcbc189008464f4d518c1e07643431ba96306..07bdea8a7d6706839a758afe0242202c7e841416 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 @@ -190,9 +190,11 @@ public class Goat extends Animal {

@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..ea374875f529b30db17e8b8cb07b99a6
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index d8be7c8dca41b6ad6d9a28590be9e33ef9045bdb..bacc97007f09fca97cd2a9d097f93cf78f4d0166 100644
+index fad6a7185e8e9ea160b47ec9da56d08af9df8396..bda387d022a0725074a2871424cfec97508c420b 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4112,6 +4112,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4117,6 +4117,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
  
      protected boolean tryEndPortal() {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot portal entity async");

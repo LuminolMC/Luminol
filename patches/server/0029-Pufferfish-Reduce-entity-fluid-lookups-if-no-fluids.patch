@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..0523b3da3fb254bce1998bae6410c632
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 94c9f407f526b2d43cf61725b414b113de03c67d..46369f332765d5995d7d6884d9b0dd3151729160 100644
+index 76911946c4ad5c87abc4a82c20d52a2e755801ef..19d901c4560be4c44adc6513adca95c9ac4e0b95 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5320,6 +5320,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -5325,6 +5325,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          if (this.touchingUnloadedChunk()) {
              return false;
          } else {
@@ -46,7 +46,7 @@ index 94c9f407f526b2d43cf61725b414b113de03c67d..46369f332765d5995d7d6884d9b0dd31
              AABB axisalignedbb = this.getBoundingBox().deflate(0.001D);
              int i = Mth.floor(axisalignedbb.minX);
              int j = Mth.ceil(axisalignedbb.maxX);
-@@ -5393,6 +5398,133 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -5398,6 +5403,133 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          }
      }
  
