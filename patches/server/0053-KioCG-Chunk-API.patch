@@ -102,7 +102,7 @@ index 0000000000000000000000000000000000000000..53b4397997bc9b9b9d88e48304b37a25
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index ac0312d5d496ee5599ff6b002196d98b42385309..d43831210937108563035ab8137ab27694a7c465 100644
+index e60c8fd49d01a5acb1054b8eebc85612b8192884..08d5e1a81c2a5eda92433ac7bd0ed7250b78e4e2 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1696,6 +1696,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa

@@ -5,7 +5,7 @@ Subject: [PATCH] Sparkly Paper Optimize canSee checks
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index c547d51eebd965f2be7ac45bc0981626c0515ef1..b7d91b7e8eb31f838cf540246f2d9b9c32b28780 100644
+index 4a0c5afd03dba788c40a71f00bc1fd0d4f0fc7e4..04f5efdc0d5729af5009e51a3e36ed7c34991123 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -1422,7 +1422,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
