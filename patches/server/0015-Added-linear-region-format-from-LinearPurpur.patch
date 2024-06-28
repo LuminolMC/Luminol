@@ -3,10 +3,6 @@ From: MrHua269 <wangxyper@163.com>
 Date: Thu, 27 Jun 2024 18:25:12 +0800
 Subject: [PATCH] Added linear region format from LinearPurpur
 
-Diff from linear purpur:
- Run I/O operations on region file I/O threads instead of using their own linear flusher
- Use a simple long to calc if it need to flush to the disk
- More simpler linear file checks
 
 diff --git a/build.gradle.kts b/build.gradle.kts
 index ab07c307bea0d3b79a6239bdcca9714e1ddf3b28..0f543eccedc7191f8c391583af30231c8b68b2a4 100644
@@ -563,10 +559,10 @@ index 0000000000000000000000000000000000000000..1325ac1d603bc65224860170b5ffad3f
 +}
 diff --git a/src/main/java/org/stupidcraft/linearpaper/region/AbstractRegionFileFactory.java b/src/main/java/org/stupidcraft/linearpaper/region/AbstractRegionFileFactory.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3d0f1a7a926253f87a5c35bddb56bce0d261bd8c
+index 0000000000000000000000000000000000000000..f28145b5575566a1e3224c3a2e177eee49fcdbbf
 --- /dev/null
 +++ b/src/main/java/org/stupidcraft/linearpaper/region/AbstractRegionFileFactory.java
-@@ -0,0 +1,51 @@
+@@ -0,0 +1,52 @@
 +package org.stupidcraft.linearpaper.region;
 +
 +import java.io.IOException;
@@ -598,7 +594,8 @@ index 0000000000000000000000000000000000000000..3d0f1a7a926253f87a5c35bddb56bce0
 +    @Contract("_, _, _, _, _, _ -> new")
 +    public static @NotNull AbstractRegionFile getAbstractRegionFile(RegionStorageInfo storageKey, @NotNull Path path, Path directory, RegionFileVersion compressionFormat, boolean dsync, boolean canRecalcHeader) throws IOException {
 +        final String fullFileName = path.getFileName().toString();
-+        final String extensionName = fullFileName.split("\\.")[1];
++        final String[] fullNameSplit = fullFileName.split("\\.");
++        final String extensionName = fullNameSplit[fullNameSplit.length - 1];
 +        switch (EnumRegionFileExtension.fromExtension(extensionName)){
 +            case UNKNOWN -> {
 +                if (RegionFormatConfig.throwOnUnknownExtension){
