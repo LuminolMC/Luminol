@@ -76,10 +76,10 @@ index 0000000000000000000000000000000000000000..71d80b401470db777a86274d32f178bb
 +}
 diff --git a/src/main/java/me/earthme/luminol/utils/LuminolWatchDog.java b/src/main/java/me/earthme/luminol/utils/LuminolWatchDog.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8901c50863032f4ae189fe47d44f9fe91f884a6c
+index 0000000000000000000000000000000000000000..3afb52d231c323aa2765c1f4c305fe4910712776
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/utils/LuminolWatchDog.java
-@@ -0,0 +1,162 @@
+@@ -0,0 +1,174 @@
 +package me.earthme.luminol.utils;
 +
 +import com.google.common.collect.Maps;
@@ -110,7 +110,7 @@ index 0000000000000000000000000000000000000000..8901c50863032f4ae189fe47d44f9fe9
 +    private static final Executor checkTimer = CompletableFuture.delayedExecutor(50, TimeUnit.MILLISECONDS,Executors.newSingleThreadExecutor());
 +    private static final Logger logger = MinecraftServer.LOGGER;
 +    private static int tickCount = 0;
-+    private static boolean runScheduleNext = true;
++    private static volatile boolean runScheduleNext = true;
 +
 +    public static void boot(){
 +        runCheck();
@@ -118,6 +118,10 @@ index 0000000000000000000000000000000000000000..8901c50863032f4ae189fe47d44f9fe9
 +
 +    private static void scheduleCheck(){
 +        checkTimer.execute(LuminolWatchDog::runCheck);
++    }
++
++    public static void stopTicking(){
++        runScheduleNext = false;
 +    }
 +
 +    private static void runCheck(){
@@ -144,15 +148,23 @@ index 0000000000000000000000000000000000000000..8901c50863032f4ae189fe47d44f9fe9
 +                    }
 +                }
 +
++                for (Map.Entry<Thread,Pair<ThreadedRegionizer.ThreadedRegion<?,?>,Long>> tickData : otherTickRegionKeepalive.entrySet()){
++                    final Thread targetThread = tickData.getKey();
++                    final Pair<ThreadedRegionizer.ThreadedRegion<?, ?>, Long> keepaliveData = tickData.getValue();
++                    final long lastKeepalive = keepaliveData.getRight();
++
++                    final long timeEscaped = currentTimeNano - lastKeepalive;
++
++                    if (timeEscaped >= WatchdogConfig.warnPeriodTicks * 50 * 1000 * 1000){
++                        threadsToWarn.add(Pair.of(targetThread,timeEscaped));
++                    }
++                }
++
 +                for(Pair<Thread,Long> warnInfo : threadsToWarn){
 +                    final Thread targetThread = warnInfo.getLeft();
 +                    final long timeEscaped = warnInfo.getRight();
 +
-+                    final ThreadedRegionizer.ThreadedRegion<?,?> targetRegion;
-+
-+                    synchronized (keepaliveDataLock){
-+                        targetRegion = otherTickRegionKeepalive.get(targetThread).getLeft();
-+                    }
++                    final ThreadedRegionizer.ThreadedRegion<?,?> targetRegion = targetThread == globalRegionLastKeepalive.getKey() ? null : otherTickRegionKeepalive.get(targetThread).getLeft();
 +
 +                    if (tickCount % WatchdogConfig.warnPeriodTicks == 0){
 +                        dumpSingleRegion(targetThread,targetRegion,timeEscaped);
@@ -244,10 +256,18 @@ index 0000000000000000000000000000000000000000..8901c50863032f4ae189fe47d44f9fe9
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 3a6d567ee9db93606aec30255400dff4f9f87b05..ac0312d5d496ee5599ff6b002196d98b42385309 100644
+index 3a6d567ee9db93606aec30255400dff4f9f87b05..14114e868d3547f2f2d4149312742d5e995e8959 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1223,6 +1223,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1003,6 +1003,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+     // Folia end - region threading
+ 
+     public void stopServer() {
++        me.earthme.luminol.utils.LuminolWatchDog.stopTicking(); // Luminol - Watchdog
+         // Folia start - region threading
+         // halt scheduler
+         // don't wait, we may be on a scheduler thread
+@@ -1223,6 +1224,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              this.statusIcon = (ServerStatus.Favicon) this.loadStatusIcon().orElse(null); // CraftBukkit - decompile error
              this.status = this.buildServerStatus();
  
