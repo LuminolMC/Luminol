@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..502b93c7bda9e8577a1901a8777b7cf9
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index dcdfc70e6c9b021b941a667f288ea09e3c1935e2..67f1205ec362bbb191b642641c45c7bcc53c7625 100644
+index b82ed9280f96bacbb87ae77a6afd5d82d8863b58..7991026d6ab467b1e889d56815bded3700ae5765 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -294,7 +294,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -39,7 +39,7 @@ index dcdfc70e6c9b021b941a667f288ea09e3c1935e2..67f1205ec362bbb191b642641c45c7bc
          String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
          // Paper end - Add Velocity IP Forwarding Support
 -        if (!this.usesAuthentication()) {
-+        if (!this.usesAuthentication() && !me.earthme.luminol.config.modules.misc.OfflineModeWarningConfig.enabled) { //Luminol - Add config for offline mod warning
++        if (!this.usesAuthentication() && me.earthme.luminol.config.modules.misc.OfflineModeWarningConfig.enabled) { //Luminol - Add config for offline mod warning
              DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
              DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
