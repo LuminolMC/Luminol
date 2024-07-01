@@ -16,24 +16,11 @@ index fc3d332aa1c1d469cedfe2aaa7102dcd78e25642..1ae61bc6603dd3ac290e3ead20416f9c
          /*
          if (false) {
              io.papermc.paper.threadedregions.ThreadedTicketLevelPropagator.main(null);
-diff --git a/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java b/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java
-index 531aa50f2c84e13358e8918bb0c15ea3cd036cb5..fd0053369eb68f0fd596d8acfba4a5247ef8105a 100644
---- a/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java
-+++ b/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java
-@@ -167,6 +167,8 @@ public final class ThreadedRegionizer<R extends ThreadedRegionizer.ThreadedRegio
-         if (removed != region) {
-             throw new IllegalStateException("Expected to remove " + region + ", but removed " + removed);
-         }
-+
-+        me.earthme.luminol.utils.LuminolWatchDog.onRegionDeath(region); //Luminol - Simple watchdog
-     }
- 
-     public int getSectionCoordinate(final int chunkCoordinate) {
 diff --git a/src/main/java/io/papermc/paper/threadedregions/TickRegions.java b/src/main/java/io/papermc/paper/threadedregions/TickRegions.java
-index 2ad25dd345ab42125d456f2b9cf67d8c4515c8b7..78c50292fb25e8703e9c91db892f05456f07d72f 100644
+index 2ad25dd345ab42125d456f2b9cf67d8c4515c8b7..183fede965c3d227bbcc7e54781869e09796081f 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/TickRegions.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/TickRegions.java
-@@ -402,6 +402,7 @@ public final class TickRegions implements ThreadedRegionizer.RegionCallbacks<Tic
+@@ -402,10 +402,11 @@ public final class TickRegions implements ThreadedRegionizer.RegionCallbacks<Tic
  
          @Override
          protected void tickRegion(final int tickCount, final long startTime, final long scheduledEnd) {
@@ -41,6 +28,11 @@ index 2ad25dd345ab42125d456f2b9cf67d8c4515c8b7..78c50292fb25e8703e9c91db892f0545
              final ca.spottedleaf.leafprofiler.RegionizedProfiler.Handle profiler = io.papermc.paper.threadedregions.TickRegionScheduler.getProfiler(); // Folia - profiler
              profiler.startTick(); try { // Folia - profiler
              MinecraftServer.getServer().tickServer(startTime, scheduledEnd, TimeUnit.MILLISECONDS.toMillis(10L), this.region);
+-            } finally { profiler.stopTick(); } // Folia - profiler
++            } finally { profiler.stopTick();  me.earthme.luminol.utils.LuminolWatchDog.releaseTickRegion(); } // Folia - profiler //Luminol - Simple watchdog
+         }
+ 
+         @Override
 diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/WatchdogConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/WatchdogConfig.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..71d80b401470db777a86274d32f178bb2aa023d5
@@ -76,10 +68,10 @@ index 0000000000000000000000000000000000000000..71d80b401470db777a86274d32f178bb
 +}
 diff --git a/src/main/java/me/earthme/luminol/utils/LuminolWatchDog.java b/src/main/java/me/earthme/luminol/utils/LuminolWatchDog.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3afb52d231c323aa2765c1f4c305fe4910712776
+index 0000000000000000000000000000000000000000..e19c6330a48cee402b1a999ca71cb2329d530356
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/utils/LuminolWatchDog.java
-@@ -0,0 +1,174 @@
+@@ -0,0 +1,178 @@
 +package me.earthme.luminol.utils;
 +
 +import com.google.common.collect.Maps;
@@ -113,6 +105,10 @@ index 0000000000000000000000000000000000000000..3afb52d231c323aa2765c1f4c305fe49
 +    private static volatile boolean runScheduleNext = true;
 +
 +    public static void boot(){
++        if (!WatchdogConfig.enabled){
++            return;
++        }
++
 +        runCheck();
 +    }
 +
@@ -244,7 +240,7 @@ index 0000000000000000000000000000000000000000..3afb52d231c323aa2765c1f4c305fe49
 +        }
 +    }
 +
-+    public static void onRegionDeath(ThreadedRegionizer.ThreadedRegion<?,?> currentRegion){
++    public static void releaseTickRegion(){
 +        if (!WatchdogConfig.enabled){
 +            return;
 +        }
