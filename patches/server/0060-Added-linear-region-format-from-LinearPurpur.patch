@@ -747,10 +747,10 @@ index 0000000000000000000000000000000000000000..c88ff6fda185a8489cbefa51a7b09ccb
 +}
 diff --git a/src/main/java/org/purpurmc/purpur/region/LinearRegionFile.java b/src/main/java/org/purpurmc/purpur/region/LinearRegionFile.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..da9d8b64269f4c93579403fe375034cb33a2d7a0
+index 0000000000000000000000000000000000000000..fe6c06a1a4b57d8da01fae8fa6a881f6f0496dd4
 --- /dev/null
 +++ b/src/main/java/org/purpurmc/purpur/region/LinearRegionFile.java
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,314 @@
 +package org.purpurmc.purpur.region;
 +
 +import com.github.luben.zstd.ZstdInputStream;
@@ -946,6 +946,7 @@ index 0000000000000000000000000000000000000000..da9d8b64269f4c93579403fe375034cb
 +            fileStream.getChannel().force(true); // Ensure atomicity on Btrfs
 +        }
 +        Files.move(tempFile.toPath(), this.path, StandardCopyOption.REPLACE_EXISTING);
++        this.lastFlushed = System.nanoTime();
 +    }
 +
 +
