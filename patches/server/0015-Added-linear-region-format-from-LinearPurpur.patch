@@ -166,7 +166,7 @@ index 0000000000000000000000000000000000000000..d2fd2a718c40360e9a648671c6563085
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 09b72783bab881a42d94b77c453c638f5b7aaf40..e192ae7eb424613fbb5b54d226ece9121545d468 100644
+index 6ab9f83786dcfbd3156d2f2bd6da57baed1399f4..0e8023d7105ea9781482e26e75d35565c52bfcb7 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -211,7 +211,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
@@ -213,7 +213,7 @@ index 09b72783bab881a42d94b77c453c638f5b7aaf40..e192ae7eb424613fbb5b54d226ece912
          regionFile.setStatus(chunkPos.x, chunkPos.z, ChunkSerializer.getStatus(compound));
      }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index ba33c107cfbe9920fc33375daf8e6b62cc794d98..3ab3e61879e5b2ab93fae9ace79deec9305b0df9 100644
+index 43b8f64d7c14e6dd0975b24a3205806c4433f26f..6439c6974f0292d105581456fcb5e27fdfbae6d6 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -446,8 +446,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -287,7 +287,7 @@ index 77dd632a266f4abed30b87b7909d77857c01e316..4938d86f62071f578822684f576b8382
                          try {
                              for (int i1 = 0; i1 < 32; ++i1) {
 diff --git a/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java b/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
-index 63256feea83be1b180b1183cec94bab29b030c62..c7860dca86e4a9251d81d98129347e1a59c09f04 100644
+index 79e9e5ece5859938ca0c86ead4c25cf5bde9da27..a26cc9b81d93f04cd741a2558f0787bb2037351e 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
 @@ -59,8 +59,8 @@ public class PoiManager extends SectionStorage<PoiSection> {

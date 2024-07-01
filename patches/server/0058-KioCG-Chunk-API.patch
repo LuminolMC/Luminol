@@ -144,7 +144,7 @@ index 8ea86315e09a6b182bab03ee902ef92c5e18d962..d933895e833bea1720cc32256e98e0fe
          int playerSaveInterval = io.papermc.paper.configuration.GlobalConfiguration.get().playerAutoSave.rate;
          if (playerSaveInterval < 0) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 3f394934e64df09e65b86d61a1dcabd3c6031a38..ba33c107cfbe9920fc33375daf8e6b62cc794d98 100644
+index 2847d5c82f8f266ab552410e23168a7115c1e3ab..3ab3e61879e5b2ab93fae9ace79deec9305b0df9 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1542,6 +1542,8 @@ public class ServerLevel extends Level implements WorldGenLevel {

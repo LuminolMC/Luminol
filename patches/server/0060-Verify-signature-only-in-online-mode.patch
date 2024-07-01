@@ -32,7 +32,7 @@ index 0000000000000000000000000000000000000000..e45ce3abf49684c911678abcefd69586
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/player/ProfilePublicKey.java b/src/main/java/net/minecraft/world/entity/player/ProfilePublicKey.java
-index 2fa51c3a70f43cd23b8f494fc643d66cecfda7d2..d286ca7e070a839e4df82febe5b00cd79e70a4b2 100644
+index 2fa51c3a70f43cd23b8f494fc643d66cecfda7d2..5adefc33c501baf967adeaa4741373507eb0946d 100644
 --- a/src/main/java/net/minecraft/world/entity/player/ProfilePublicKey.java
 +++ b/src/main/java/net/minecraft/world/entity/player/ProfilePublicKey.java
 @@ -23,7 +23,7 @@ public record ProfilePublicKey(ProfilePublicKey.Data data) {
@@ -40,7 +40,7 @@ index 2fa51c3a70f43cd23b8f494fc643d66cecfda7d2..d286ca7e070a839e4df82febe5b00cd7
  
      public static ProfilePublicKey createValidated(SignatureValidator servicesSignatureVerifier, UUID playerUuid, ProfilePublicKey.Data publicKeyData) throws ProfilePublicKey.ValidationException {
 -        if (!publicKeyData.validateSignature(servicesSignatureVerifier, playerUuid)) {
-+        if ((!import me.earthme.luminol.config.modules.misc.PublickeyVerifyConfig.enabled || org.bukkit.Bukkit.getServer().getOnlineMode()) && !publicKeyData.validateSignature(servicesSignatureVerifier, playerUuid)) { // Luminol - Verify signature only in online-mode
++        if ((!me.earthme.luminol.config.modules.misc.PublickeyVerifyConfig.enabled || org.bukkit.Bukkit.getServer().getOnlineMode()) && !publicKeyData.validateSignature(servicesSignatureVerifier, playerUuid)) { // Luminol - Verify signature only in online-mode
              throw new ProfilePublicKey.ValidationException(INVALID_SIGNATURE, org.bukkit.event.player.PlayerKickEvent.Cause.INVALID_PUBLIC_KEY_SIGNATURE); // Paper - kick event causes
          } else {
              return new ProfilePublicKey(publicKeyData);
