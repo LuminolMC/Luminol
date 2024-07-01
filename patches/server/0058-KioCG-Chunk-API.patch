@@ -101,10 +101,10 @@ index 0000000000000000000000000000000000000000..53b4397997bc9b9b9d88e48304b37a25
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 8ea86315e09a6b182bab03ee902ef92c5e18d962..d933895e833bea1720cc32256e98e0fe3638f4eb 100644
+index 2ed097054d18919ad570a0fa990876285279f921..37e7e88fa75dda6c2b59ed610ec3ae2136c653a5 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1654,6 +1654,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1655,6 +1655,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
          // Folia end - region threading
  
@@ -122,7 +122,7 @@ index 8ea86315e09a6b182bab03ee902ef92c5e18d962..d933895e833bea1720cc32256e98e0fe
          // Folia - region threading
          if (region == null) this.tickRateManager.tick(); // Folia - region threading
          this.tickChildren(shouldKeepTicking, region); // Folia - region threading
-@@ -1663,6 +1674,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1664,6 +1675,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
  
          // Folia - region threading
