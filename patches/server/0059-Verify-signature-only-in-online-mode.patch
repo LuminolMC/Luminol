@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Stabrinai <wujiaxin752@outlook.com>
+Date: Sun, 30 Jun 2024 20:46:42 +0800
+Subject: [PATCH] Verify signature only in online-mode
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/PublickeyVerifyConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/PublickeyVerifyConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..e45ce3abf49684c911678abcefd69586246cc0e3
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/misc/PublickeyVerifyConfig.java
+@@ -0,0 +1,21 @@
++package me.earthme.luminol.config.modules.misc;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class PublickeyVerifyConfig implements IConfigModule {
++
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.MISC;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "verify_publickey_only_in_online_mode";
++    }
++}
+diff --git a/src/main/java/net/minecraft/world/entity/player/ProfilePublicKey.java b/src/main/java/net/minecraft/world/entity/player/ProfilePublicKey.java
+index 2fa51c3a70f43cd23b8f494fc643d66cecfda7d2..d286ca7e070a839e4df82febe5b00cd79e70a4b2 100644
+--- a/src/main/java/net/minecraft/world/entity/player/ProfilePublicKey.java
++++ b/src/main/java/net/minecraft/world/entity/player/ProfilePublicKey.java
+@@ -23,7 +23,7 @@ public record ProfilePublicKey(ProfilePublicKey.Data data) {
+     public static final Codec<ProfilePublicKey> TRUSTED_CODEC = ProfilePublicKey.Data.CODEC.xmap(ProfilePublicKey::new, ProfilePublicKey::data);
+ 
+     public static ProfilePublicKey createValidated(SignatureValidator servicesSignatureVerifier, UUID playerUuid, ProfilePublicKey.Data publicKeyData) throws ProfilePublicKey.ValidationException {
+-        if (!publicKeyData.validateSignature(servicesSignatureVerifier, playerUuid)) {
++        if ((!import me.earthme.luminol.config.modules.misc.PublickeyVerifyConfig.enabled || org.bukkit.Bukkit.getServer().getOnlineMode()) && !publicKeyData.validateSignature(servicesSignatureVerifier, playerUuid)) { // Luminol - Verify signature only in online-mode
+             throw new ProfilePublicKey.ValidationException(INVALID_SIGNATURE, org.bukkit.event.player.PlayerKickEvent.Cause.INVALID_PUBLIC_KEY_SIGNATURE); // Paper - kick event causes
+         } else {
+             return new ProfilePublicKey(publicKeyData);
