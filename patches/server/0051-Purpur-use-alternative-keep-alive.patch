@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..43bbc2c30bdd3872a0179e0070403c3e
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index f907dbb55369395058091dd75ae435d2025d94dd..20720424f5e63d07c885759b8b5104311aa6c7c8 100644
+index f907dbb55369395058091dd75ae435d2025d94dd..972b6edfaac4b13313d078d8843a2d63f569afdc 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 @@ -73,6 +73,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
@@ -48,10 +48,10 @@ index f907dbb55369395058091dd75ae435d2025d94dd..20720424f5e63d07c885759b8b510431
      public void handleKeepAlive(ServerboundKeepAlivePacket packet) {
 +        // Purpur start
 +        if (me.earthme.luminol.config.modules.optimizations.PurpurAlternativeKeepaliveConfig.useAlternateKeepAlive) {
-+            long id = packet.getId();
-+            if (keepAlives.size() > 0 && keepAlives.contains(id)) {
-+                int ping = (int) (Util.getMillis() - id);
++            if (this.keepAlivePending && !keepAlives.isEmpty() && keepAlives.contains(packet.getId())) {
++                int ping = (int) (Util.getMillis() - packet.getId());
 +                this.latency = (this.latency * 3 + ping) / 4;
++                this.keepAlivePending = false;
 +                keepAlives.clear(); // we got a valid response, lets roll with it and forget the rest
 +            }
 +        } else
@@ -59,20 +59,21 @@ index f907dbb55369395058091dd75ae435d2025d94dd..20720424f5e63d07c885759b8b510431
          //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - handle ServerboundKeepAlivePacket async
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
-@@ -264,6 +275,20 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -264,6 +275,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
          long currentTime = Util.getMillis();
          long elapsedTime = currentTime - this.keepAliveTime;
  
 +        // Purpur start
 +        if (me.earthme.luminol.config.modules.optimizations.PurpurAlternativeKeepaliveConfig.useAlternateKeepAlive) {
 +            if (elapsedTime >= 1000L) { // 1 second
-+                if (!processedDisconnect && keepAlives.size() * 1000L >= KEEPALIVE_LIMIT) {
++                if (this.keepAlivePending && !this.processedDisconnect && keepAlives.size() * 1000L >= KEEPALIVE_LIMIT) {
 +                    LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName());
-+                    disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT);
-+                } else {
-+                    keepAliveTime = currentTime; // hijack this field for 1 second intervals
-+                    keepAlives.add(currentTime); // currentTime is ID
-+                    send(new ClientboundKeepAlivePacket(currentTime));
++                    this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT);
++                } else if (this.checkIfClosed(currentTime)) {
++                    this.keepAlivePending = true;
++                    this.keepAliveTime = currentTime; // hijack this field for 1 second intervals
++                    this.keepAlives.add(currentTime); // currentTime is ID
++                    this.send(new ClientboundKeepAlivePacket(currentTime));
 +                }
 +            }
 +        } else {
@@ -80,7 +81,7 @@ index f907dbb55369395058091dd75ae435d2025d94dd..20720424f5e63d07c885759b8b510431
          if (!this.isSingleplayerOwner() && elapsedTime >= 15000L) { // Paper - use vanilla's 15000L between keep alive packets
              if (this.keepAlivePending && !this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // Paper - check keepalive limit, don't fire if already disconnected
                  this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT); // Paper - kick event cause
-@@ -275,6 +300,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -275,6 +301,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
              }
          }
          // Paper end - give clients a longer time to respond to pings as per pre 1.12.2 timings
