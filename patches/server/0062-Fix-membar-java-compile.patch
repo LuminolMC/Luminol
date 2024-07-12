@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Fri, 12 Jul 2024 21:53:03 +0800
+Subject: [PATCH] Fix membar java compile
+
+
+diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
+index a33a45194273cc1b4e4157a5449c7994968a3480..e7b37460587ec5b0b1b24e164713a7e19da9e40e 100644
+--- a/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
++++ b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
+@@ -174,7 +174,7 @@ public class GlobalServerMemoryBar {
+         }
+ 
+         if (memPercent <= 50){
+-            return BossBar.Color.valueOf(MembarConfig.memColors.getFirst());
++            return BossBar.Color.valueOf(MembarConfig.memColors.get(0));
+         }
+ 
+         if (memPercent <= 70){

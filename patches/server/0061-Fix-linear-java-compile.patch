@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Fri, 12 Jul 2024 21:52:54 +0800
+Subject: [PATCH] Fix linear java compile
+
+
+diff --git a/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java b/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java
+index 4938d86f62071f578822684f576b838296d4070f..654eaae20ccddd6d6ffa6f431472e28ffb44ae0c 100644
+--- a/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java
++++ b/src/main/java/net/minecraft/util/worldupdate/WorldUpgrader.java
+@@ -118,9 +118,9 @@ public class WorldUpgrader {
+ 
+                 // LinearPurpur start
+                 String worldName = this.levelStorage.getLevelId();
+-                org.purpurmc.purpur.region.RegionFileFormat formatName = ((org.bukkit.craftbukkit.CraftWorld) org.bukkit.Bukkit.getWorld(worldName)).getHandle().purpurConfig.regionFormatName;
+-                int linearCompression = ((org.bukkit.craftbukkit.CraftWorld) org.bukkit.Bukkit.getWorld(worldName)).getHandle().purpurConfig.regionFormatLinearCompressionLevel;
+-                boolean linearCrashOnBrokenSymlink = ((org.bukkit.craftbukkit.CraftWorld) org.bukkit.Bukkit.getWorld(worldName)).getHandle().purpurConfig.linearCrashOnBrokenSymlink;
++                org.purpurmc.purpur.region.RegionFileFormat formatName = me.earthme.luminol.config.modules.misc.RegionFormatConfig.regionFormatType;
++                int linearCompression = me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearCompressionLevel;
++                boolean linearCrashOnBrokenSymlink = me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearCrashOnBrokenSymlink;
+                 builder1.put(resourcekey1, new ChunkStorage(formatName, linearCompression, linearCrashOnBrokenSymlink, path.resolve("region"), this.dataFixer, true));
+                 // LinearPurpur end
+             }
+@@ -268,7 +268,7 @@ public class WorldUpgrader {
+                     try {
+                         // LinearPurpur start
+                         String worldName = this.levelStorage.getLevelId();
+-                        int linearCompression = ((org.bukkit.craftbukkit.CraftWorld) org.bukkit.Bukkit.getWorld(worldName)).getHandle().purpurConfig.regionFormatLinearCompressionLevel;
++                        int linearCompression = me.earthme.luminol.config.modules.misc.RegionFormatConfig.linearCompressionLevel;
+                         org.purpurmc.purpur.region.AbstractRegionFile regionfile = org.purpurmc.purpur.region.AbstractRegionFileFactory.getAbstractRegionFile(linearCompression, file2.toPath(), file1.toPath(), true);
+                         // LinearPurpur end
+ 
