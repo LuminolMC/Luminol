@@ -36,7 +36,7 @@ index 0000000000000000000000000000000000000000..7812a71f05dd32646037afd22cdabf72
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/GoToPotentialJobSite.java b/src/main/java/net/minecraft/world/entity/ai/behavior/GoToPotentialJobSite.java
-index aac1df9e2c0652bc6348af0404deba7465f82d42..e9173c3fe6489bba6dfb90c71bba2e23aa838af6 100644
+index aac1df9e2c0652bc6348af0404deba7465f82d42..4dcf71e9f861596bd02902d0851ffa57ff9e4170 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/GoToPotentialJobSite.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/GoToPotentialJobSite.java
 @@ -49,10 +49,17 @@ public class GoToPotentialJobSite extends Behavior<Villager> {
@@ -51,7 +51,7 @@ index aac1df9e2c0652bc6348af0404deba7465f82d42..e9173c3fe6489bba6dfb90c71bba2e23
 -
 +                };
 +                if (!io.papermc.paper.util.TickThread.isTickThreadFor(serverLevel2, blockPos) && me.earthme.luminol.config.modules.fixes.FoliaPOIAccessOffRegionFixConfig.enabled)
-+                    io.papermc.paper.threadedregions.RegionizedServer.getInstance().taskQueue.queueTickTaskQueue(serverLevel, blockPos.getX() >> 4, blockPos.getZ() >> 4, scheduledRelease);
++                    io.papermc.paper.threadedregions.RegionizedServer.getInstance().taskQueue.queueTickTaskQueue(serverLevel2, blockPos.getX() >> 4, blockPos.getZ() >> 4, scheduledRelease);
 +                else
 +                    scheduledRelease.run();
 +                //Luminol end
