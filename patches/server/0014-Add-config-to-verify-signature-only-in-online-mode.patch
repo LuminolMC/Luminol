@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stabrinai <wujiaxin752@outlook.com>
 Date: Sun, 30 Jun 2024 20:46:42 +0800
-Subject: [PATCH] Verify signature only in online-mode
+Subject: [PATCH] Add config to verify signature only in online-mode
 
 
 diff --git a/src/main/java/me/earthme/luminol/config/modules/misc/PublickeyVerifyConfig.java b/src/main/java/me/earthme/luminol/config/modules/misc/PublickeyVerifyConfig.java
