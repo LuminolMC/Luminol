@@ -33,7 +33,7 @@ index 0000000000000000000000000000000000000000..12683ec5a5102e45b6171fea0b833ba5
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index a8d2f7a9d0bcb6db0b38ac30b098d59951053b47..1d62c164cf891a183ff3b5cfb8f88fd9508f4e12 100644
+index a8d2f7a9d0bcb6db0b38ac30b098d59951053b47..829b63c8a7574d6aefe95b7d190dccc4c6ecf1ba 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 @@ -46,6 +46,38 @@ public abstract class Projectile extends Entity implements TraceableEntity {
@@ -47,7 +47,7 @@ index a8d2f7a9d0bcb6db0b38ac30b098d59951053b47..1d62c164cf891a183ff3b5cfb8f88fd9
 +    private int loadedLifetime = 0;
 +    @Override
 +    public void setPos(double x, double y, double z) {
-+        if (io.papermc.paper.util.TickThread.isTickThreadFor(this)){
++        if (io.papermc.paper.util.TickThread.isTickThreadFor(this) && io.papermc.paper.threadedregions.TickRegionScheduler.getCurrentRegion() != null){
 +            long currentTick = io.papermc.paper.threadedregions.TickRegionScheduler.getCurrentRegion().getData().getCurrentTick();
 +            if (loadedTick != currentTick) {
 +                loadedTick = currentTick;
