@@ -334,10 +334,10 @@ index 579eb5a81281ca36c145153d8c24a517242ffe18..a758081a3058bee62721a0b73adbce51
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 11dfac223d36b0a8cbd865b3a29de15b4268eeb0..2dcfcb226bef8ca0f60ade043dcde1acc8a0811c 100644
+index d44510a3b70b97b13b87a8e0868fdc699b70b75b..2430e5c15be02c75d0e7de3af4118846da122554 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -351,4 +351,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -353,4 +353,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
      public boolean mayBreak(Level world) {
          return this.getType().is(EntityTypeTags.IMPACT_PROJECTILES) && world.getGameRules().getBoolean(GameRules.RULE_PROJECTILESCANBREAKBLOCKS);
      }
