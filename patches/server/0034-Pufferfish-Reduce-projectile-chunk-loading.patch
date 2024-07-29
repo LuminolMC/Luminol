@@ -33,10 +33,10 @@ index 0000000000000000000000000000000000000000..12683ec5a5102e45b6171fea0b833ba5
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index a8d2f7a9d0bcb6db0b38ac30b098d59951053b47..77eee09a301a838f21834319d4962eba1c8dcbed 100644
+index a8d2f7a9d0bcb6db0b38ac30b098d59951053b47..1d62c164cf891a183ff3b5cfb8f88fd9508f4e12 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -46,6 +46,36 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -46,6 +46,38 @@ public abstract class Projectile extends Entity implements TraceableEntity {
          super(type, world);
      }
  
@@ -47,23 +47,25 @@ index a8d2f7a9d0bcb6db0b38ac30b098d59951053b47..77eee09a301a838f21834319d4962eba
 +    private int loadedLifetime = 0;
 +    @Override
 +    public void setPos(double x, double y, double z) {
-+        long currentTick = io.papermc.paper.threadedregions.TickRegionScheduler.getCurrentRegion().getData().getCurrentTick();
-+        if (loadedTick != currentTick) {
-+            loadedTick = currentTick;
-+            loadedThisTick = 0;
-+        }
-+        int previousX = Mth.floor(this.getX()) >> 4, previousZ = Mth.floor(this.getZ()) >> 4;
-+        int newX = Mth.floor(x) >> 4, newZ = Mth.floor(z) >> 4;
-+        if (previousX != newX || previousZ != newZ) {
-+            boolean isLoaded = ((net.minecraft.server.level.ServerChunkCache) this.level().getChunkSource()).getChunkAtIfLoadedMainThread(newX, newZ) != null;
-+            if (!isLoaded) {
-+                if (Projectile.loadedThisTick > me.earthme.luminol.config.modules.optimizations.ProjectileChunkReduceConfig.maxProjectileLoadsPerTick) {
-+                    if (++this.loadedLifetime > me.earthme.luminol.config.modules.optimizations.ProjectileChunkReduceConfig.maxProjectileLoadsPerProjectile) {
-+                        this.discard();
++        if (io.papermc.paper.util.TickThread.isTickThreadFor(this)){
++            long currentTick = io.papermc.paper.threadedregions.TickRegionScheduler.getCurrentRegion().getData().getCurrentTick();
++            if (loadedTick != currentTick) {
++                loadedTick = currentTick;
++                loadedThisTick = 0;
++            }
++            int previousX = Mth.floor(this.getX()) >> 4, previousZ = Mth.floor(this.getZ()) >> 4;
++            int newX = Mth.floor(x) >> 4, newZ = Mth.floor(z) >> 4;
++            if ((previousX != newX || previousZ != newZ) && io.papermc.paper.util.TickThread.isTickThreadFor(((ServerLevel) this.level()), newX, newZ)) {
++                boolean isLoaded = ((net.minecraft.server.level.ServerChunkCache) this.level().getChunkSource()).getChunkAtIfLoadedMainThread(newX, newZ) != null;
++                if (!isLoaded) {
++                    if (Projectile.loadedThisTick > me.earthme.luminol.config.modules.optimizations.ProjectileChunkReduceConfig.maxProjectileLoadsPerTick) {
++                        if (++this.loadedLifetime > me.earthme.luminol.config.modules.optimizations.ProjectileChunkReduceConfig.maxProjectileLoadsPerProjectile) {
++                            this.discard();
++                        }
++                        return;
 +                    }
-+                    return;
++                    Projectile.loadedThisTick++;
 +                }
-+                Projectile.loadedThisTick++;
 +            }
 +        }
 +        super.setPos(x, y, z);

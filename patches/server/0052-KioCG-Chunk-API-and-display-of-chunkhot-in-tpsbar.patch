@@ -400,10 +400,10 @@ index b0f2e614c90137c526de865bd64469f09b95c964..3d8b55afaced6fbac3bc957ffdc33682
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 77eee09a301a838f21834319d4962eba1c8dcbed..cd133931de618e5d8ed5062f8ebfde9d8a9e799c 100644
+index 1d62c164cf891a183ff3b5cfb8f88fd9508f4e12..c2976e61f6d8840c8811e10d6097051bd50654df 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -400,4 +400,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -402,4 +402,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
      public float getPickRadius() {
          return this.isPickable() ? 1.0F : 0.0F;
      }
