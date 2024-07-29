@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Mon, 29 Jul 2024 20:12:08 +0800
+Subject: [PATCH] Pufferfish Skip cloning loot parameters
+
+
+diff --git a/src/main/java/net/minecraft/world/level/storage/loot/LootParams.java b/src/main/java/net/minecraft/world/level/storage/loot/LootParams.java
+index 37a0002bbe6539648db5219bb373e0404ae48dc0..ca0571d232e102c4b177a1ea44b96f5f0f440211 100644
+--- a/src/main/java/net/minecraft/world/level/storage/loot/LootParams.java
++++ b/src/main/java/net/minecraft/world/level/storage/loot/LootParams.java
+@@ -21,8 +21,10 @@ public class LootParams {
+ 
+     public LootParams(ServerLevel world, Map<LootContextParam<?>, Object> parameters, Map<ResourceLocation, LootParams.DynamicDrop> dynamicDrops, float luck) {
+         this.level = world;
+-        this.params = parameters;
+-        this.dynamicDrops = dynamicDrops;
++        // Pufferfish start - use unmodifiable maps instead of immutable ones to skip the copy
++        this.params = java.util.Collections.unmodifiableMap(parameters);
++        this.dynamicDrops = java.util.Collections.unmodifiableMap(dynamicDrops);
++        // Pufferfish end
+         this.luck = luck;
+     }
+ 
