@@ -1,0 +1,68 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Tue, 30 Jul 2024 17:58:25 +0800
+Subject: [PATCH] FoliaPR Add TPS From Region
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index 15049641b8123abf03edcbb49257fb4f3db0a5ec..0492d5738a7168b68b60dcbb24a09946a640a1a1 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -2397,6 +2397,28 @@ public final class Bukkit {
+     }
+     // Paper end
+ 
++    // Folia start
++    /**
++     * Gets the current location TPS.
++     *
++     * @param location the location for which to get the TPS
++     * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist
++     */
++    public double @Nullable [] getTPS(Location location) {
++        return server.getTPS(location);
++    }
++
++    /**
++     * Gets the current chunk TPS.
++     *
++     * @param chunk the chunk for which to get the TPS
++     * @return current chunk TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist
++     */
++    public double @Nullable [] getTPS(Chunk chunk){
++        return server.getTPS(chunk);
++    }
++    // Folia end
++
+     /**
+      * Get the advancement specified by this key.
+      *
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 1f51f80e8516cfac7ed4078ed96e535389a31f25..d5c89a7a63239e6403f1fa1429d8f5a9802883b1 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -2050,6 +2050,24 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+     double getAverageTickTime();
+     // Paper end
+ 
++    // Folia start
++    /**
++     * Gets the current location TPS.
++     *
++     * @param location the location for which to get the TPS
++     * @return current location TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist
++     */
++    public double @Nullable [] getTPS(Location location);
++
++    /**
++     * Gets the current chunk TPS.
++     *
++     * @param chunk the chunk for which to get the TPS
++     * @return current chunk TPS (5s, 15s, 1m, 5m, 15m in Folia-Server), or null if the region doesn't exist
++     */
++    public double @Nullable [] getTPS(Chunk chunk);
++    // Folia end
++
+     // Paper start
+     /**
+      * Gets the active {@link org.bukkit.command.CommandMap}
