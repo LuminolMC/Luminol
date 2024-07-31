@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 21:24:06 +0800
+Subject: [PATCH] Try fixing folia #253
+
+A solution for https://github.com/PaperMC/Folia/issues/253 ?()
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
+index 135fa024d81b962761f0edc6896a2a507b6981f9..9f7a89d07295223689d2d2beb14c4ec78eb6aa3c 100644
+--- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
++++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
+@@ -452,9 +452,18 @@ public class ServerChunkCache extends ChunkSource implements ca.spottedleaf.moon
+                 }
+                 System.arraycopy(raw, 0, regionizedWorldData.iterationCopy, 0, size); // Folia - region threading
+ 
+-                list = it.unimi.dsi.fastutil.objects.ObjectArrayList.wrap(
++                // Luminol start - Fix issue #253
++                //Do not wrap as there are some null elements
++                /*list = it.unimi.dsi.fastutil.objects.ObjectArrayList.wrap(
+                     regionizedWorldData.iterationCopy, size // Folia - region threading
+-                );
++                );*/
++                list = new it.unimi.dsi.fastutil.objects.ObjectArrayList<>(size);
++                for (ChunkAndHolder holder : regionizedWorldData.iterationCopy){
++                    if (holder != null){
++                        list.add(holder);
++                    }
++                }
++                // Luminol end
+             }
+             } finally { profiler.stopTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.CHUNK_TICK_COLLECT_CHUNKS); } // Folia - profiler
+             // Paper end - chunk tick iteration optimisations
+@@ -559,12 +568,12 @@ public class ServerChunkCache extends ChunkSource implements ca.spottedleaf.moon
+             profiler.startTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.BROADCAST_BLOCK_CHANGES); try { // Folia - profiler
+             {
+                 final it.unimi.dsi.fastutil.objects.ObjectArrayList<net.minecraft.server.level.ServerChunkCache.ChunkAndHolder> chunks = (it.unimi.dsi.fastutil.objects.ObjectArrayList<net.minecraft.server.level.ServerChunkCache.ChunkAndHolder>)list;
+-                final ServerChunkCache.ChunkAndHolder[] raw = chunks.elements();
++                final Object[] raw = chunks.elements(); // Luminol - Try fixing folia #253
+                 final int size = chunks.size();
+ 
+                 Objects.checkFromToIndex(0, size, raw.length);
+                 for (int idx = 0; idx < size; ++idx) {
+-                    final ServerChunkCache.ChunkAndHolder holder = raw[idx];
++                    final ServerChunkCache.ChunkAndHolder holder = (ServerChunkCache.ChunkAndHolder) raw[idx];
+                     raw[idx] = null;
+ 
+                     holder.holder().broadcastChanges(holder.chunk());
