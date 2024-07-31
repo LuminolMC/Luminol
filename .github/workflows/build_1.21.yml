@@ -1,10 +1,10 @@
-name: Luminol CI - vev/1.20.6
+name: Luminol CI - dev/1.21
 
 on:
     push:
-      branches: [ "ver/1.20.6" ]
+      branches: [ "dev/1.21" ]
     pull_request:
-      branches: [ "ver/1.20.6" ]
+      branches: [ "de/1.21" ]
 
 permissions: write-all
 
