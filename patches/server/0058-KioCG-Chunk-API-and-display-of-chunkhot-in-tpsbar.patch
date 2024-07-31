@@ -484,10 +484,10 @@ index 92f1ea81b5e90529905d9c508aca18c31443ff6a..3b972bf05d9ee79f2cdfc9b5a81692c2
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index a3d4dc232d011c262d85028351191ac2b8547398..a3aca277422d623c6998bbbe5d9574cd1e10f544 100644
+index 2e2c8d6fa55f3b58fb6e48de0c36b22d51b09653..6c8eb658145ad0a15f6e734e0902916ba32e77bb 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3554,4 +3554,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -3560,4 +3560,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      public void setSendViewDistance(final int viewDistance) {
          this.getHandle().setSendViewDistance(viewDistance);
      }

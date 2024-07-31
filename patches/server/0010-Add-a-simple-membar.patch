@@ -306,7 +306,7 @@ index 0000000000000000000000000000000000000000..a33a45194273cc1b4e4157a5449c7994
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 09bde51d3da062c5788151c15c448eaf2a02ea1b..dcdfc70e6c9b021b941a667f288ea09e3c1935e2 100644
+index 0c9b1289f445b7951a8c92c6d9effb0a7fb8ba01..b82ed9280f96bacbb87ae77a6afd5d82d8863b58 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -851,6 +851,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -318,7 +318,7 @@ index 09bde51d3da062c5788151c15c448eaf2a02ea1b..dcdfc70e6c9b021b941a667f288ea09e
          //Util.shutdownExecutors(); // Paper - moved into super
          SkullBlockEntity.clear();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index db32beabfa7ba17b1c46d36fa1dc27bc20e06feb..25bdaec097572ee58432516ae5983f4841587046 100644
+index a8f2eddba3ac3b7c551d39e260e096067e8bdc0f..92e9860b146b6e3e1dc593bfd5bfddab3318761d 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -303,6 +303,7 @@ public class ServerPlayer extends Player {
@@ -329,3 +329,27 @@ index db32beabfa7ba17b1c46d36fa1dc27bc20e06feb..25bdaec097572ee58432516ae5983f48
  
      public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances getViewDistances() {
          return this.viewDistances.get();
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 28583ad8117167400faf3ca0dc4bc9f3f44dbedb..730887465bf9ca380ef692b4c2d4a28bc6caaaa9 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -2373,6 +2373,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+             //Luminol start - Tpsbar
+             getHandle().isTpsBarVisible = data.getBoolean("tpsbarVisible");
+             //Luminol end
++            //Luminol start - Membar
++            getHandle().isMemBarVisible = data.getBoolean("membarVisible");
++            //Luminol end
+         }
+     }
+ 
+@@ -2397,6 +2400,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         //Luminol start - Tpsbar
+         data.putBoolean("tpsbarVisible",handle.isTpsBarVisible);
+         //Luminol end
++        //Luminol start - Membar
++        data.putBoolean("membarVisible",handle.isMemBarVisible);
++        //Luminol end
+         // Paper start - persist for use in offline save data
+         if (!nbttagcompound.contains("Paper")) {
+             nbttagcompound.put("Paper", new CompoundTag());
