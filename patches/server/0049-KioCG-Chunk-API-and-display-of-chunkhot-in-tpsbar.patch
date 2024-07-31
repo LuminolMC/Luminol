@@ -179,16 +179,34 @@ index e456c54b4ac3906a0a0310bdfba5ef39dc02c4ef..0c6ae960cc1d1a39f625295f649169d3
          if (mspt == -1){
              return BossBar.Color.valueOf(TpsBarConfig.tpsColors.get(3));
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 05b8f509b119b8166012567f865b99a23ad84ae2..3cb2fe584503b8c605bd3aacdafbb6c33ea17bad 100644
+index 05b8f509b119b8166012567f865b99a23ad84ae2..1dce4e4d2a4e03afb38090de9254059ab203d33c 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1717,6 +1717,17 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1717,6 +1717,35 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
          // Folia end - region threading
  
 +        // KioCG start - ChunkHot
++        final ca.spottedleaf.moonrise.common.list.IteratorSafeOrderedReferenceSet<net.minecraft.world.level.chunk.LevelChunk> chunks = new ca.spottedleaf.moonrise.common.list.IteratorSafeOrderedReferenceSet<>();
++        if (region != null){
++            for (ca.spottedleaf.moonrise.patches.chunk_system.scheduling.NewChunkHolder chunkHolder : region.world.moonrise$getChunkTaskScheduler().chunkHolderManager.getChunkHolders()){
++                if (!chunkHolder.isFullChunkReady()){
++                    continue;
++                }
++
++                if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(region.world, chunkHolder.chunkX, chunkHolder.chunkZ)){
++                    continue;
++                }
++
++                final net.minecraft.world.level.chunk.LevelChunk chunk = (net.minecraft.world.level.chunk.LevelChunk) chunkHolder.getCurrentChunk();
++
++                if (chunk != null){
++                    chunks.add(chunk);
++                }
++            }
++        }
 +        if (region != null && io.papermc.paper.threadedregions.RegionizedServer.getCurrentTick() % 20 == 0){
-+            final Iterator<net.minecraft.world.level.chunk.LevelChunk> chunkIterator = region.world.getCurrentWorldData().getChunks().unsafeIterator();
++            final Iterator<net.minecraft.world.level.chunk.LevelChunk> chunkIterator = chunks.unsafeIterator();
 +            while (chunkIterator.hasNext()){
 +                final net.minecraft.world.level.chunk.LevelChunk targetChunk = chunkIterator.next();
 +
@@ -200,13 +218,13 @@ index 05b8f509b119b8166012567f865b99a23ad84ae2..3cb2fe584503b8c605bd3aacdafbb6c3
          // Folia - region threading
          if (region == null) this.tickRateManager.tick(); // Folia - region threading
          this.tickChildren(shouldKeepTicking, region); // Folia - region threading
-@@ -1726,6 +1737,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1726,6 +1755,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
  
          // Folia - region threading
 +        // KioCG start - ChunkHot
 +        if (region != null && io.papermc.paper.threadedregions.RegionizedServer.getCurrentTick() % 20 == 0){
-+            final Iterator<net.minecraft.world.level.chunk.LevelChunk> chunkIterator = region.world.getCurrentWorldData().getChunks().unsafeIterator();
++            final Iterator<net.minecraft.world.level.chunk.LevelChunk> chunkIterator = chunks.unsafeIterator();
 +            while (chunkIterator.hasNext()){
 +                final net.minecraft.world.level.chunk.LevelChunk targetChunk = chunkIterator.next();
 +
@@ -260,22 +278,23 @@ index 618e0f585f4edf81246dcae66af63e391bc28658..872762938eb234a1143a8c2654634071
          } else {
              passenger.stopRiding();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index e36672e7eb8393f58326091976ac45b5aa905013..290f6d2b7588690b05e7bc1e401c839103c033eb 100644
+index e36672e7eb8393f58326091976ac45b5aa905013..aa9cd58dab22ffbc1922868e55aedeb6314cebe1 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -339,6 +339,25 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -339,6 +339,26 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
      public boolean handlingMoveEvent = false;
      //Luminol end
  
 +    // KioCG start - ChunkHot
-+    private long nearbyChunkHot = 0;
++    private volatile long nearbyChunkHot = 0;
 +
 +    public long getNearbyChunkHot() { return this.nearbyChunkHot; }
 +
 +    private long refreshNearbyChunkHot() {
 +        long total = 0L;
-+        for (int i = this.moonrise$getSectionX() - 4; i <= this.moonrise$getSectionX() + 4; ++i) {
-+            for (int j = this.moonrise$getSectionZ() - 4; j <= this.moonrise$getSectionZ() + 4; ++j) {
++        int searchRadius = ((ServerLevel) this.level()).moonrise$getViewDistanceHolder().getViewDistances().tickViewDistance();
++        for (int i = this.moonrise$getSectionX() - searchRadius; i <= this.moonrise$getSectionX() + searchRadius; ++i) {
++            for (int j = this.moonrise$getSectionZ() - searchRadius; j <= this.moonrise$getSectionZ() + searchRadius; ++j) {
 +                net.minecraft.world.level.chunk.LevelChunk targetChunk = this.level().getChunkIfLoaded(i, j);
 +                if (targetChunk != null) {
 +                    total += targetChunk.getChunkHot().getAverage();
@@ -289,7 +308,7 @@ index e36672e7eb8393f58326091976ac45b5aa905013..290f6d2b7588690b05e7bc1e401c8391
      public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, ClientInformation clientOptions) {
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
-@@ -960,6 +979,12 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -960,6 +980,12 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this);
