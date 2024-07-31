@@ -1,0 +1,111 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 14:30:23 +0800
+Subject: [PATCH] Purpur use alternative keep alive
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/PurpurAlternativeKeepaliveConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/PurpurAlternativeKeepaliveConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..43bbc2c30bdd3872a0179e0070403c3e257c320e
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/PurpurAlternativeKeepaliveConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.optimizations;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class PurpurAlternativeKeepaliveConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean useAlternateKeepAlive = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.OPTIMIZATIONS;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "alternative_keepalive_handling";
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/level/ServerEntity.java b/src/main/java/net/minecraft/server/level/ServerEntity.java
+index 8ea2f24695f5dad55e21f238b69442513e7a90c6..d61359db1773ece7b0349e13ca56ad3883fd4b43 100644
+--- a/src/main/java/net/minecraft/server/level/ServerEntity.java
++++ b/src/main/java/net/minecraft/server/level/ServerEntity.java
+@@ -216,6 +216,7 @@ public class ServerEntity {
+ 
+                 if ((this.trackDelta || this.entity.hasImpulse || this.entity instanceof LivingEntity && ((LivingEntity) this.entity).isFallFlying()) && this.tickCount > 0) {
+                     Vec3 vec3d1 = this.entity.getDeltaMovement();
++                    if (vec3d1 != this.lastSentMovement) { // SparklyPaper start - skip distanceToSqr call in ServerEntity#sendChanges if the delta movement hasn't changed
+                     double d0 = vec3d1.distanceToSqr(this.lastSentMovement);
+ 
+                     if (d0 > 1.0E-7D || d0 > 0.0D && vec3d1.lengthSqr() == 0.0D) {
+@@ -230,6 +231,7 @@ public class ServerEntity {
+                             this.broadcast.accept(new ClientboundSetEntityMotionPacket(this.entity.getId(), this.lastSentMovement));
+                         }
+                     }
++                    } // SparklyPaper end
+                 }
+ 
+                 if (packet1 != null) {
+diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+index d766bb360eb98bab1e067cad032b54fa6455f386..89080162548c8343202bef910865136075172da7 100644
+--- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+@@ -74,6 +74,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+     private long keepAliveChallenge;
+     private long closedListenerTime;
+     private boolean closed = false;
++    private it.unimi.dsi.fastutil.longs.LongList keepAlives = new it.unimi.dsi.fastutil.longs.LongArrayList(); // Purpur
+     private int latency;
+     private volatile boolean suspendFlushingOnServerThread = false;
+     public final java.util.Map<java.util.UUID, net.kyori.adventure.resource.ResourcePackCallback> packCallbacks = new java.util.concurrent.ConcurrentHashMap<>(); // Paper - adventure resource pack callbacks
+@@ -136,6 +137,16 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+ 
+     @Override
+     public void handleKeepAlive(ServerboundKeepAlivePacket packet) {
++        // Purpur start
++        if (me.earthme.luminol.config.modules.optimizations.PurpurAlternativeKeepaliveConfig.useAlternateKeepAlive) {
++            if (this.keepAlivePending && !keepAlives.isEmpty() && keepAlives.contains(packet.getId())) {
++                int ping = (int) (Util.getMillis() - packet.getId());
++                this.latency = (this.latency * 3 + ping) / 4;
++                this.keepAlivePending = false;
++                keepAlives.clear(); // we got a valid response, lets roll with it and forget the rest
++            }
++        } else
++            // Purpur end
+         //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // CraftBukkit // Paper - handle ServerboundKeepAlivePacket async
+         if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
+             int i = (int) (Util.getMillis() - this.keepAliveTime);
+@@ -265,6 +276,21 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+         long currentTime = Util.getMillis();
+         long elapsedTime = currentTime - this.keepAliveTime;
+ 
++        // Purpur start
++        if (me.earthme.luminol.config.modules.optimizations.PurpurAlternativeKeepaliveConfig.useAlternateKeepAlive) {
++            if (elapsedTime >= 1000L) { // 1 second
++                if (this.keepAlivePending && !this.processedDisconnect && keepAlives.size() * 1000L >= KEEPALIVE_LIMIT) {
++                    LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName());
++                    this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT);
++                } else if (this.checkIfClosed(currentTime)) {
++                    this.keepAlivePending = true;
++                    this.keepAliveTime = currentTime; // hijack this field for 1 second intervals
++                    this.keepAlives.add(currentTime); // currentTime is ID
++                    this.send(new ClientboundKeepAlivePacket(currentTime));
++                }
++            }
++        } else {
++
+         if (!this.isSingleplayerOwner() && elapsedTime >= 15000L) { // Paper - use vanilla's 15000L between keep alive packets
+             if (this.keepAlivePending && !this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // Paper - check keepalive limit, don't fire if already disconnected
+                 this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE, PlayerKickEvent.Cause.TIMEOUT); // Paper - kick event cause
+@@ -276,6 +302,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+             }
+         }
+         // Paper end - give clients a longer time to respond to pings as per pre 1.12.2 timings
++        } // Purpur end
+ 
+         this.server.getProfiler().pop();
+     }

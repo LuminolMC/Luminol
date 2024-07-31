@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 12:41:14 +0800
+Subject: [PATCH] Petal Reduce sensor work
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/PetalReduceSensorWorkConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/PetalReduceSensorWorkConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..dd45cf1fde5ee4cf8347064f106c64b861b77ead
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/PetalReduceSensorWorkConfig.java
+@@ -0,0 +1,22 @@
++package me.earthme.luminol.config.modules.optimizations;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class PetalReduceSensorWorkConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = true;
++    @ConfigInfo(baseName = "delay_ticks")
++    public static int delayTicks = 10;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.OPTIMIZATIONS;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "reduce_sensor_work";
++    }
++}
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index 741ba5f0834ab5f0b0ffdeb91a9ff8cfaf922792..85ba544b5cb106847034c5e7a6827045c4f35040 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -936,12 +936,12 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+             return;
+         }
+         // Paper end - Allow nerfed mobs to jump and float
++        int i = this.tickCount + this.getId(); //Luminol - Petal - Move up
+         ProfilerFiller gameprofilerfiller = this.level().getProfiler();
+ 
+         gameprofilerfiller.push("sensing");
+-        this.sensing.tick();
++        if (i % me.earthme.luminol.config.modules.optimizations.PetalReduceSensorWorkConfig.delayTicks == 0 || !me.earthme.luminol.config.modules.optimizations.PetalReduceSensorWorkConfig.enabled) this.sensing.tick(); // Luminol - Petal - Reduce sensor work
+         gameprofilerfiller.pop();
+-        int i = this.tickCount + this.getId();
+ 
+         if (i % 2 != 0 && this.tickCount > 1) {
+             gameprofilerfiller.push("targetSelector");

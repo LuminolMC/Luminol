@@ -1,0 +1,151 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 12:33:32 +0800
+Subject: [PATCH] Prevent teleportAsync calling during moving event being
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaTeleportAsyncFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaTeleportAsyncFixConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..8f1449545d6d217b46a9ffae705123daefe55b25
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/fixes/FoliaTeleportAsyncFixConfig.java
+@@ -0,0 +1,24 @@
++package me.earthme.luminol.config.modules.fixes;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class FoliaTeleportAsyncFixConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled", comments =
++            "A fix which fixed some bugs of teleportAsync " +
++            "that caused by plugins(such as Residence)")
++    public static boolean enabled = false;
++    @ConfigInfo(baseName = "throw_on_detected")
++    public static boolean throwOnDetected = true;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.FIXES;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "folia.prevent_teleportasync_call_during_moving";
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index a278097ed9a8a6bada11bef1af2eda617f040ea8..e36672e7eb8393f58326091976ac45b5aa905013 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -335,6 +335,10 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+     }
+     // Paper end - rewrite chunk system
+ 
++    //Luminol start - Prevent teleportAsync calling during moving event being handled
++    public boolean handlingMoveEvent = false;
++    //Luminol end
++
+     public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, ClientInformation clientOptions) {
+         super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
+         this.chatVisibility = ChatVisiblity.FULL;
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 73057c695addefd9c8fa0949743803fdeab60dda..a6a05faf46aa236e6734cfe2f6a90d25cf857c4d 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -686,7 +686,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+ 
+                     Location oldTo = to.clone();
+                     PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
++                    this.player.handlingMoveEvent = true; //Luminol - Prevent teleportAsync calling during moving event being handled
+                     this.cserver.getPluginManager().callEvent(event);
++                    this.player.handlingMoveEvent = false; //Luminol - Prevent teleportAsync calling during moving event being handled
+ 
+                     // If the event is cancelled we move the player back to their old location.
+                     if (event.isCancelled()) {
+@@ -1562,7 +1564,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+ 
+                                     Location oldTo = to.clone();
+                                     PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
++                                    this.player.handlingMoveEvent = true; //Luminol - Prevent teleportAsync calling during moving event being handled
+                                     this.cserver.getPluginManager().callEvent(event);
++                                    this.player.handlingMoveEvent = false; //Luminol - Prevent teleportAsync calling during moving event being handled
+ 
+                                     // If the event is cancelled we move the player back to their old location.
+                                     if (event.isCancelled()) {
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index f153159600fe14eff770b426fde318a4bd4b5b44..fe3aeadd4357cc0b28ac9cfc21f0f1100d22d3a0 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -4073,6 +4073,18 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+                                        java.util.function.Consumer<Entity> teleportComplete) {
+         ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this, "Cannot teleport entity async");
+ 
++        //Luminol start - Prevent teleportAsync calling during moving event being handled
++        if (this instanceof ServerPlayer player && me.earthme.luminol.config.modules.fixes.FoliaTeleportAsyncFixConfig.enabled){
++            if (player.handlingMoveEvent){
++                if (me.earthme.luminol.config.modules.fixes.FoliaTeleportAsyncFixConfig.throwOnDetected){
++                    throw new IllegalStateException("Player " + player.getScoreboardName() + " is trying to teleport to " + pos + " during move event handling!");
++                }
++                MinecraftServer.LOGGER.warn("Player {} is trying to teleport to {} during move event handling!",player.getScoreboardName(),pos);
++                return false;
++            }
++        }
++        //Luminol end
++
+         if (!ServerLevel.isInSpawnableBounds(new BlockPos(ca.spottedleaf.moonrise.common.util.CoordinateUtils.getBlockX(pos), ca.spottedleaf.moonrise.common.util.CoordinateUtils.getBlockY(pos), ca.spottedleaf.moonrise.common.util.CoordinateUtils.getBlockZ(pos)))) {
+             return false;
+         }
+diff --git a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
+index f403fc311a974558233028663dbe14c27b27d3f9..fbc936a218bc972866486f384baaa44949b29580 100644
+--- a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
++++ b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
+@@ -375,7 +375,21 @@ public abstract class AbstractMinecart extends VehicleEntity {
+             this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
+ 
+             if (!from.equals(to)) {
++                //Luminol start - Prevent teleportAsync calling during moving event being handled
++                for (Entity passenger : this.getPassengers()) {
++                    if (passenger instanceof net.minecraft.server.level.ServerPlayer player){
++                        player.handlingMoveEvent = true;
++                    }
++                }
++                //Luminol end
+                 this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleMoveEvent(vehicle, from, to));
++                //Luminol start - Prevent teleportAsync calling during moving event being handled
++                for (Entity passenger : this.getPassengers()) {
++                    if (passenger instanceof net.minecraft.server.level.ServerPlayer player){
++                        player.handlingMoveEvent = false;
++                    }
++                }
++                //Luminol end
+             }
+             // CraftBukkit end
+             if (this.getMinecartType() == AbstractMinecart.Type.RIDEABLE && this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
+diff --git a/src/main/java/net/minecraft/world/entity/vehicle/Boat.java b/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
+index f1955afc8e367f80ead85bd5ad3b8d66c255565a..19c19532947f785c8538f5bbdc6a88f6e09efbab 100644
+--- a/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
++++ b/src/main/java/net/minecraft/world/entity/vehicle/Boat.java
+@@ -374,8 +374,22 @@ public class Boat extends VehicleEntity implements Leashable, VariantHolder<Boat
+         server.getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
+ 
+         if (this.lastLocation != null && !this.lastLocation.equals(to)) {
++            //Luminol start - Prevent teleportAsync calling during moving event being handled
++            for (Entity passenger : this.getPassengers()) {
++                if (passenger instanceof net.minecraft.server.level.ServerPlayer player){
++                    player.handlingMoveEvent = true;
++                }
++            }
++            //Luminol end
+             VehicleMoveEvent event = new VehicleMoveEvent(vehicle, this.lastLocation, to);
+             server.getPluginManager().callEvent(event);
++            //Luminol start - Prevent teleportAsync calling during moving event being handled
++            for (Entity passenger : this.getPassengers()) {
++                if (passenger instanceof net.minecraft.server.level.ServerPlayer player){
++                    player.handlingMoveEvent = false;
++                }
++            }
++            //Luminol end
+         }
+         this.lastLocation = vehicle.getLocation();
+         // CraftBukkit end

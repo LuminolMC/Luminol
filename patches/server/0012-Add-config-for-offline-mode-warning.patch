@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..502b93c7bda9e8577a1901a8777b7cf9
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index b82ed9280f96bacbb87ae77a6afd5d82d8863b58..7991026d6ab467b1e889d56815bded3700ae5765 100644
+index 8bd9baba560051e681277b8cea9d1374ea3ee825..79b79a5d41dc3568ae6a3d7701e6ac6b91045e36 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -294,7 +294,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -300,7 +300,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
          String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
          // Paper end - Add Velocity IP Forwarding Support

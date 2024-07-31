@@ -1,0 +1,100 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 13:35:06 +0800
+Subject: [PATCH] Gale Simpler ShapelessRecipe comparison for vanilla
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Simpler ShapelessRecipes comparison for Vanilla"
+By: Paul Sauve <paul@technove.co>
+As part of: Airplane (https://github.com/TECHNOVE/Airplane)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Airplane description *
+
+Paper added a fancy sorting comparison due to Bukkit recipes breaking
+the vanilla one, however this is far more advanced than what you need
+for all the vanilla recipes.
+
+* Airplane copyright *
+
+Airplane
+Copyright (C) 2020 Technove LLC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+diff --git a/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java b/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
+index 213ee4aa988dd4c2a5a7be99b1d13f67338e5209..a51f21995b66e08b33e8645297c25e1f979d0e73 100644
+--- a/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
++++ b/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
+@@ -25,8 +25,15 @@ public class ShapelessRecipe extends io.papermc.paper.inventory.recipe.RecipeBoo
+     final CraftingBookCategory category;
+     final ItemStack result;
+     final NonNullList<Ingredient> ingredients;
++    private final boolean isBukkit; // Gale - Airplane - simpler ShapelessRecipe comparison for vanilla
+ 
+     public ShapelessRecipe(String group, CraftingBookCategory category, ItemStack result, NonNullList<Ingredient> ingredients) {
++        // Gale start - Airplane - simpler ShapelessRecipe comparison for vanilla
++        this(group, category, result, ingredients, false);
++    }
++    public ShapelessRecipe(String group, CraftingBookCategory category, ItemStack result, NonNullList<Ingredient> ingredients, boolean isBukkit) {
++        this.isBukkit = isBukkit;
++        // Gale end - Airplane - simpler ShapelessRecipe comparison for vanilla
+         this.group = group;
+         this.category = category;
+         this.result = result;
+@@ -76,6 +83,29 @@ public class ShapelessRecipe extends io.papermc.paper.inventory.recipe.RecipeBoo
+     }
+ 
+     public boolean matches(CraftingInput input, Level world) {
++        // Gale start - Airplane - simpler ShapelessRecipe comparison for vanilla
++        if (!this.isBukkit) {
++            java.util.List<Ingredient> ingredients = com.google.common.collect.Lists.newArrayList(this.ingredients.toArray(new Ingredient[0]));
++
++            inventory:
++            for (int index = 0; index < input.size(); index++) {
++                ItemStack itemStack = input.getItem(index);
++
++                if (!itemStack.isEmpty()) {
++                    for (int i = 0; i < ingredients.size(); i++) {
++                        if (ingredients.get(i).test(itemStack)) {
++                            ingredients.remove(i);
++                            continue inventory;
++                        }
++                    }
++                    return false;
++                }
++            }
++
++            return ingredients.isEmpty();
++        }
++        // Gale end - Airplane - simpler ShapelessRecipe comparison for vanilla
++
+         // Paper start - unwrap ternary & better exact choice recipes
+         if (input.ingredientCount() != this.ingredients.size()) {
+             return false;
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
+index 96d772eb02f79f8c478f5e6f065e387aa7665b18..0d27792dcc3deb4cc7835512f4156b490223358d 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
+@@ -45,6 +45,6 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
+             data.set(i, this.toNMS(ingred.get(i), true));
+         }
+ 
+-        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new net.minecraft.world.item.crafting.ShapelessRecipe(this.getGroup(), CraftRecipe.getCategory(this.getCategory()), CraftItemStack.asNMSCopy(this.getResult()), data)));
++        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new net.minecraft.world.item.crafting.ShapelessRecipe(this.getGroup(), CraftRecipe.getCategory(this.getCategory()), CraftItemStack.asNMSCopy(this.getResult()), data, true))); // Gale - Airplane - simpler ShapelessRecipe comparison for vanilla
+     }
+ }

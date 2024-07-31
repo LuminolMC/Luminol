@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 13:38:04 +0800
+Subject: [PATCH] Gale Skip entity move if movement is zero
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index bb585e163ea3e066c3d8fc7caebf6c2b6f7a945b..3c217574bb9c161ac6c556d6abce31a10fce40c0 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -323,6 +323,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+     public float yRotO;
+     public float xRotO;
+     private AABB bb;
++    private boolean boundingBoxChanged = false; // Gale - VMP - skip entity move if movement is zero
+     public boolean onGround;
+     public boolean horizontalCollision;
+     public boolean verticalCollision;
+@@ -1139,6 +1140,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+     //Luminol end
+ 
+     public void move(MoverType movementType, Vec3 movement) {
++        // Gale start - VMP - skip entity move if movement is zero
++        if (!this.boundingBoxChanged && movement.equals(Vec3.ZERO)) {
++            return;
++        }
++        // Gale end - VMP - skip entity move if movement is zero
+         final Vec3 originalMovement = movement; // Paper - Expose pre-collision velocity
+         // Paper start - detailed watchdog information
+         ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread("Cannot move an entity off-main");
+@@ -4964,6 +4970,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+     }
+ 
+     public final void setBoundingBox(AABB boundingBox) {
++        // Gale start - VMP - skip entity move if movement is zero
++        if (!this.bb.equals(boundingBox)) {
++            this.boundingBoxChanged = true;
++        }
++        // Gale end - VMP - skip entity move if movement is zero
+         // CraftBukkit start - block invalid bounding boxes
+         double minX = boundingBox.minX,
+                 minY = boundingBox.minY,

@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MrHua269 <novau233@163.com>
-Date: Wed, 7 Feb 2024 00:45:19 +0000
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 11:49:53 +0800
 Subject: [PATCH] Empty config file base
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index f9919b9da90317bd615d7e57607df73ebcc1d077..ab07c307bea0d3b79a6239bdcca9714e1ddf3b28 100644
+index de5a43db5f0c7c507c492db8789ad2d4a4cff3c8..f657ee64810d1c02a967b9262b95fbc65eb3fce2 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -14,6 +14,7 @@ val alsoShade: Configuration by configurations.creating
@@ -191,20 +191,18 @@ index 0000000000000000000000000000000000000000..9f6896711907ac30fe0c00130207b970
 +}
 diff --git a/src/main/java/me/earthme/luminol/config/LuminolConfig.java b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2b4e64796bf01b0a5fcb306850cd60837ed4d36b
+index 0000000000000000000000000000000000000000..976cc572861174787b37992388a03ab01f8703a4
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/LuminolConfig.java
-@@ -0,0 +1,218 @@
+@@ -0,0 +1,220 @@
 +package me.earthme.luminol.config;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 +import io.papermc.paper.threadedregions.RegionizedServer;
 +import me.earthme.luminol.commands.LuminolConfigCommand;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
 +import org.jetbrains.annotations.Contract;
 +import org.jetbrains.annotations.NotNull;
-+
 +import java.io.File;
 +import java.io.IOException;
 +import java.lang.reflect.Field;
@@ -218,7 +216,6 @@ index 0000000000000000000000000000000000000000..2b4e64796bf01b0a5fcb306850cd6083
 +import java.util.concurrent.CompletableFuture;
 +import java.util.jar.JarEntry;
 +import java.util.jar.JarFile;
-+
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
 +
@@ -229,7 +226,6 @@ index 0000000000000000000000000000000000000000..2b4e64796bf01b0a5fcb306850cd6083
 +    private static final Set<IConfigModule> allInstanced = new HashSet<>();
 +    private static CommentedFileConfig configFileInstance;
 +    public static boolean alreadyInited = false;
-+    private static MinecraftInternalPlugin NULL_PLUGIN = new MinecraftInternalPlugin();
 +
 +    public static void setupLatch(){
 +        Bukkit.getCommandMap().register("luminolconfig","luminol",new LuminolConfigCommand());
@@ -249,7 +245,13 @@ index 0000000000000000000000000000000000000000..2b4e64796bf01b0a5fcb306850cd6083
 +
 +    @Contract(" -> new")
 +    public static @NotNull CompletableFuture<Void> reloadAsync(){
-+        return CompletableFuture.runAsync(LuminolConfig::reload,task -> Bukkit.getGlobalRegionScheduler().run(NULL_PLUGIN,scheduled -> task.run()));
++        return CompletableFuture.runAsync(LuminolConfig::reload,task -> RegionizedServer.getInstance().addTask(() -> {
++            try{
++                task.run();
++            }catch (Exception e){
++                logger.error(e);
++            }
++        }));
 +    }
 +
 +    public static void dropAllInstanced(){
@@ -413,16 +415,175 @@ index 0000000000000000000000000000000000000000..2b4e64796bf01b0a5fcb306850cd6083
 +        }
 +    }
 +}
+diff --git a/src/main/java/me/earthme/luminol/utils/NullPlugin.java b/src/main/java/me/earthme/luminol/utils/NullPlugin.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..de94c8e39f0ae0da80d5a79af63413e287f5d190
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/utils/NullPlugin.java
+@@ -0,0 +1,152 @@
++package me.earthme.luminol.utils;
++
++import io.papermc.paper.plugin.configuration.PluginMeta;
++import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
++import org.bukkit.Server;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++import org.bukkit.configuration.file.FileConfiguration;
++import org.bukkit.generator.BiomeProvider;
++import org.bukkit.generator.ChunkGenerator;
++import org.bukkit.plugin.*;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++
++import java.io.File;
++import java.io.InputStream;
++import java.util.List;
++import java.util.logging.Logger;
++
++public class NullPlugin  extends PluginBase {
++    private boolean enabled = true;
++
++    private final String pluginName;
++    private PluginDescriptionFile pdf;
++
++    public NullPlugin() {
++        this.pluginName = "Minecraft";
++        pdf = new PluginDescriptionFile(pluginName, "1.0", "nms");
++    }
++
++    public void setEnabled(boolean enabled) {
++        this.enabled = enabled;
++    }
++
++    @Override
++    public File getDataFolder() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public PluginDescriptionFile getDescription() {
++        return pdf;
++    }
++    // Paper start
++    @Override
++    public io.papermc.paper.plugin.configuration.PluginMeta getPluginMeta() {
++        return pdf;
++    }
++    // Paper end
++
++    @Override
++    public FileConfiguration getConfig() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public InputStream getResource(String filename) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void saveConfig() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void saveDefaultConfig() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void saveResource(String resourcePath, boolean replace) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void reloadConfig() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public PluginLogger getLogger() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public PluginLoader getPluginLoader() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public Server getServer() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public boolean isEnabled() {
++        return enabled;
++    }
++
++    @Override
++    public void onDisable() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void onLoad() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void onEnable() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public boolean isNaggable() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public void setNaggable(boolean canNag) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public @Nullable BiomeProvider getDefaultBiomeProvider(@NotNull String worldName, @Nullable String id) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    @Override
++    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++
++    // Paper start - lifecycle events
++    @Override
++    public @NotNull io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager<org.bukkit.plugin.Plugin> getLifecycleManager() {
++        throw new UnsupportedOperationException("Not supported.");
++    }
++    // Paper end - lifecycle events
++}
+\ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index bd333ffb44798069e180cad67c07d86425253024..bbd3b57b83b71ae9840124909f3864c36254f02c 100644
+index 301d7fa29fce2997a5881b3852896eff5af33672..0755e8f460f59e2dbc00cac73026bb441c04e9ea 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -222,6 +222,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -226,6 +226,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          this.paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
          this.paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
          // Paper end - initialize global and world-defaults configuration
 +        me.earthme.luminol.config.LuminolConfig.loadConfig(); //Luminol - load config file
 +        me.earthme.luminol.config.LuminolConfig.setupLatch(); //Luminol - load config file
+         this.server.spark.enableEarlyIfRequested(); // Paper - spark
          // Paper start - fix converting txt to json file; convert old users earlier after PlayerList creation but before file load/save
          if (this.convertOldUsers()) {
-             this.getProfileCache().save(false); // Paper

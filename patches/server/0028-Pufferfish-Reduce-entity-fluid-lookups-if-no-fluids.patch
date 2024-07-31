@@ -1,0 +1,218 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 13:11:43 +0800
+Subject: [PATCH] Pufferfish Reduce entity fluid lookups if no fluids
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/ReduceEntityFluidLookupConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/ReduceEntityFluidLookupConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..0523b3da3fb254bce1998bae6410c6323ccac2ef
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/ReduceEntityFluidLookupConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.optimizations;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class ReduceEntityFluidLookupConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled", comments = "See the optimization on Pufferfish")
++    public static boolean enabled = true;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.OPTIMIZATIONS;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "reduce_entity_fluid_lookups_if_no_fluids";
++    }
++}
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index c1881c4a590a64950679bdac452960ed8d394f89..79b39562632a2e4dedfaa72db14c63d325e3eb4b 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -5262,6 +5262,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+         if (this.touchingUnloadedChunk()) {
+             return false;
+         } else {
++            //Luminol start - Configurable pufferfish optimization: Reduce entity fluid lookups if no fluids
++            if (me.earthme.luminol.config.modules.optimizations.ReduceEntityFluidLookupConfig.enabled){
++                return this.updateFluidHeightAndDoFluidPushingPufferfish$half(tag, speed);
++            }
++            //Luminol end
+             AABB axisalignedbb = this.getBoundingBox().deflate(0.001D);
+             int i = Mth.floor(axisalignedbb.minX);
+             int j = Mth.ceil(axisalignedbb.maxX);
+@@ -5335,6 +5340,133 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+         }
+     }
+ 
++    //Luminol start - Configurable pufferfish optimization: Reduce entity fluid lookups if no fluids
++    private boolean updateFluidHeightAndDoFluidPushingPufferfish$half(TagKey<Fluid> tag, double speed) {
++        AABB axisalignedbb = this.getBoundingBox().deflate(0.001D);
++        // Pufferfish start - rename
++        int minBlockX = Mth.floor(axisalignedbb.minX);
++        int maxBlockX = Mth.ceil(axisalignedbb.maxX);
++        int minBlockY = Mth.floor(axisalignedbb.minY);
++        int maxBlockY = Mth.ceil(axisalignedbb.maxY);
++        int minBlockZ = Mth.floor(axisalignedbb.minZ);
++        int maxBlockZ = Mth.ceil(axisalignedbb.maxZ);
++        // Pufferfish end
++        double d1 = 0.0D;
++        boolean flag = this.isPushedByFluid();
++        boolean flag1 = false;
++        Vec3 vec3d = Vec3.ZERO;
++        int k1 = 0;
++        BlockPos.MutableBlockPos blockposition_mutableblockposition = new BlockPos.MutableBlockPos();
++
++        // Pufferfish start - based off CollisionUtil.getCollisionsForBlocksOrWorldBorder
++        final int minSection = io.papermc.paper.util.WorldUtil.getMinSection(this.level());
++        final int maxSection = io.papermc.paper.util.WorldUtil.getMaxSection(this.level());
++        final int minBlock = minSection << 4;
++        final int maxBlock = (maxSection << 4) | 15;
++
++        // special cases:
++        if (minBlockY > maxBlock || maxBlockY < minBlock) {
++            // no point in checking
++            return false;
++        }
++
++        int minYIterate = Math.max(minBlock, minBlockY);
++        int maxYIterate = Math.min(maxBlock, maxBlockY);
++
++        int minChunkX = minBlockX >> 4;
++        int maxChunkX = maxBlockX >> 4;
++
++        int minChunkZ = minBlockZ >> 4;
++        int maxChunkZ = maxBlockZ >> 4;
++
++        for (int currChunkZ = minChunkZ; currChunkZ <= maxChunkZ; ++currChunkZ) {
++            int minZ = currChunkZ == minChunkZ ? minBlockZ & 15 : 0; // coordinate in chunk
++            int maxZ = currChunkZ == maxChunkZ ? maxBlockZ & 15 : 16; // coordinate in chunk
++
++            for (int currChunkX = minChunkX; currChunkX <= maxChunkX; ++currChunkX) {
++                int minX = currChunkX == minChunkX ? minBlockX & 15 : 0; // coordinate in chunk
++                int maxX = currChunkX == maxChunkX ? maxBlockX & 15 : 16; // coordinate in chunk
++
++                net.minecraft.world.level.chunk.ChunkAccess chunk = this.level().getChunkIfLoadedImmediately(currChunkX, currChunkZ);
++                if (chunk == null) {
++                    return false; // if we're touching an unloaded chunk then it's false
++                }
++
++                net.minecraft.world.level.chunk.LevelChunkSection[] sections = chunk.getSections();
++
++                for (int currY = minYIterate; currY < maxYIterate; ++currY) {
++                    net.minecraft.world.level.chunk.LevelChunkSection section = sections[(currY >> 4) - minSection];
++
++                    if (section == null || section.hasOnlyAir() || section.fluidStateCount == 0) { // if no fluids, nothing in this section
++                        // empty
++                        // skip to next section
++                        currY = (currY & ~(15)) + 15; // increment by 15: iterator loop increments by the extra one
++                        continue;
++                    }
++
++                    net.minecraft.world.level.chunk.PalettedContainer<BlockState> blocks = section.states;
++
++                    for (int currZ = minZ; currZ < maxZ; ++currZ) {
++                        for (int currX = minX; currX < maxX; ++currX) {
++                            FluidState fluid = blocks.get(currX & 15, currY & 15, currZ & 15).getFluidState();
++
++                            if (fluid.is(tag)) {
++                                blockposition_mutableblockposition.set((currChunkX << 4) + currX, currY, (currChunkZ << 4) + currZ);
++                                double d2 = (double) ((float) currY + fluid.getHeight(this.level(), blockposition_mutableblockposition));
++
++                                if (d2 >= axisalignedbb.minY) {
++                                    flag1 = true;
++                                    d1 = Math.max(d2 - axisalignedbb.minY, d1);
++                                    if (flag) {
++                                        Vec3 vec3d1 = fluid.getFlow(this.level(), blockposition_mutableblockposition);
++
++                                        if (d1 < 0.4D) {
++                                            vec3d1 = vec3d1.scale(d1);
++                                        }
++
++                                        vec3d = vec3d.add(vec3d1);
++                                        ++k1;
++                                    }
++                                    // CraftBukkit start - store last lava contact location
++                                    if (tag == FluidTags.LAVA) {
++                                        this.lastLavaContact = blockposition_mutableblockposition.immutable();
++                                    }
++                                    // CraftBukkit end
++                                }
++                            }
++                        }
++                    }
++                }
++            }
++        }
++        // Pufferfish end
++
++        if (vec3d.length() > 0.0D) {
++            if (k1 > 0) {
++                vec3d = vec3d.scale(1.0D / (double) k1);
++            }
++
++            if (!(this instanceof Player)) {
++                vec3d = vec3d.normalize();
++            }
++
++            Vec3 vec3d2 = this.getDeltaMovement();
++
++            vec3d = vec3d.scale(speed * 1.0D);
++            double d3 = 0.003D;
++
++            if (Math.abs(vec3d2.x) < 0.003D && Math.abs(vec3d2.z) < 0.003D && vec3d.length() < 0.0045000000000000005D) {
++                vec3d = vec3d.normalize().scale(0.0045000000000000005D);
++            }
++
++            this.setDeltaMovement(this.getDeltaMovement().add(vec3d));
++        }
++
++        this.fluidHeight.put(tag, d1);
++        return flag1;
++    }
++    //Luminol end
++
+     public boolean touchingUnloadedChunk() {
+         AABB axisalignedbb = this.getBoundingBox().inflate(1.0D);
+         int i = Mth.floor(axisalignedbb.minX);
+diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
+index c3b1caa352b988ec44fa2b2eb0536517711f5460..7a7b1a326c54b68adcae22365939d9cd6aa34cf8 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
++++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
+@@ -25,6 +25,7 @@ public class LevelChunkSection implements ca.spottedleaf.moonrise.patches.block_
+     public final PalettedContainer<BlockState> states;
+     // CraftBukkit start - read/write
+     private PalettedContainer<Holder<Biome>> biomes;
++    public short fluidStateCount; // Pufferfish
+ 
+     // Paper start - block counting
+     private static final it.unimi.dsi.fastutil.ints.IntArrayList FULL_LIST = new it.unimi.dsi.fastutil.ints.IntArrayList(16*16*16);
+@@ -104,6 +105,7 @@ public class LevelChunkSection implements ca.spottedleaf.moonrise.patches.block_
+ 
+         if (!fluid.isEmpty()) {
+             --this.tickingFluidCount;
++            --this.fluidStateCount; // Pufferfish
+         }
+ 
+         if (!state.isAir()) {
+@@ -115,6 +117,7 @@ public class LevelChunkSection implements ca.spottedleaf.moonrise.patches.block_
+ 
+         if (!fluid1.isEmpty()) {
+             ++this.tickingFluidCount;
++            ++this.fluidStateCount; // Pufferfish
+         }
+ 
+         // Paper start - block counting
+@@ -199,6 +202,7 @@ public class LevelChunkSection implements ca.spottedleaf.moonrise.patches.block_
+                     for (int i = 0; i < paletteCount; ++i) {
+                         this.tickingBlocks.add(raw[i], state);
+                     }
++                this.fluidStateCount++; // Pufferfish
+                 }
+ 
+                 final FluidState fluid = state.getFluidState();

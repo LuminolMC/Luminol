@@ -1,0 +1,90 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 13:20:23 +0800
+Subject: [PATCH] Pufferfish Entity TTL
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/EntityTTLOptimizationConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/EntityTTLOptimizationConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..15697d69659b6e1e776acf5094684b5f0c079b57
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/EntityTTLOptimizationConfig.java
+@@ -0,0 +1,38 @@
++package me.earthme.luminol.config.modules.optimizations;
++
++import com.electronwill.nightconfig.core.file.CommentedFileConfig;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.world.entity.EntityType;
++
++import java.util.Locale;
++
++public class EntityTTLOptimizationConfig implements IConfigModule {
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.OPTIMIZATIONS;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "entity_time_outs";
++    }
++
++    @Override
++    public void onLoaded(CommentedFileConfig config) {
++        // Set some defaults
++        this.get("optimizations.entity_timeouts.SNOWBALL", -1,config);
++        this.get("optimizations.entity_timeouts.LLAMA_SPIT", -1,config);
++        config.setComment("optimizations.entity_timeouts",
++                """
++                        These values define a entity's maximum lifespan. If an
++                        entity is in this list and it has survived for longer than
++                        that number of ticks, then it will be removed. Setting a value to
++                        -1 disables this feature.""");
++        for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
++            String type = EntityType.getKey(entityType).getPath().toUpperCase(Locale.ROOT);
++            entityType.ttl = this.get("optimizations.entity_timeouts." + type, -1,config);
++        }
++    }
++}
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 79b39562632a2e4dedfaa72db14c63d325e3eb4b..47cfeef4d40ff9c99280d925eacb64d243f6ed8b 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -857,6 +857,12 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+     }
+ 
+     public void tick() {
++        // Pufferfish start - entity TTL
++        if (type != EntityType.PLAYER && type.ttl >= 0 && this.tickCount >= type.ttl) {
++            discard();
++            return;
++        }
++        // Pufferfish end - entity TTL
+         this.baseTick();
+     }
+ 
+@@ -5359,8 +5365,8 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+         BlockPos.MutableBlockPos blockposition_mutableblockposition = new BlockPos.MutableBlockPos();
+ 
+         // Pufferfish start - based off CollisionUtil.getCollisionsForBlocksOrWorldBorder
+-        final int minSection = io.papermc.paper.util.WorldUtil.getMinSection(this.level());
+-        final int maxSection = io.papermc.paper.util.WorldUtil.getMaxSection(this.level());
++        final int minSection = ca.spottedleaf.moonrise.common.util.WorldUtil.getMinSection(this.level());
++        final int maxSection = ca.spottedleaf.moonrise.common.util.WorldUtil.getMaxSection(this.level());
+         final int minBlock = minSection << 4;
+         final int maxBlock = (maxSection << 4) | 15;
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/EntityType.java b/src/main/java/net/minecraft/world/entity/EntityType.java
+index c74a01a8551457507441d266b6923b4248560abf..293ec464b1cb4db1734d0c059e59f60bfeb2b7eb 100644
+--- a/src/main/java/net/minecraft/world/entity/EntityType.java
++++ b/src/main/java/net/minecraft/world/entity/EntityType.java
+@@ -325,6 +325,7 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
+     private final EntityDimensions dimensions;
+     private final float spawnDimensionsScale;
+     private final FeatureFlagSet requiredFeatures;
++    public int ttl = -1; // Pufferfish
+ 
+     private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder type) { // CraftBukkit - decompile error
+         return (EntityType) Registry.register(BuiltInRegistries.ENTITY_TYPE, id, (EntityType<T>) type.build(id)); // CraftBukkit - decompile error

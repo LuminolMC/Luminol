@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MrHua269 <novau233@163.com>
-Date: Wed, 7 Feb 2024 02:33:00 +0000
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 12:02:01 +0800
 Subject: [PATCH] Add config for vanilla random
 
 
@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..0e6bfc03be660415c333024b56ac6565
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index bda387d022a0725074a2871424cfec97508c420b..681f1476754f49d01b99a892ef2618cac341cd25 100644
+index de5263b0261ed2f8f97b9525936be8067ddb79b2..dfac4257d8de1a607ff952a1b27f61f3b4329516 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -568,7 +568,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -570,7 +570,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          this.bb = Entity.INITIAL_AABB;
          this.stuckSpeedMultiplier = Vec3.ZERO;
          this.nextStep = 1.0F;

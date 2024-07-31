@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 14:22:07 +0800
+Subject: [PATCH] Gale Replace throttle tracker map with optimized collection
+
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
+index ddf42645402afefc0f5caebc684b191eef9d6ec2..a943f83e874d348251ddd3feb732e543641172d9 100644
+--- a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.server.network;
+ 
++import it.unimi.dsi.fastutil.objects.Object2LongMap;
++import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.network.Connection;
+ import net.minecraft.network.DisconnectionDetails;
+@@ -15,7 +17,8 @@ import net.minecraft.server.MinecraftServer;
+ 
+ // CraftBukkit start
+ import java.net.InetAddress;
+-import java.util.HashMap;
++import java.util.Iterator;
++import java.util.Map;
+ // CraftBukkit end
+ 
+ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
+@@ -26,7 +29,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+     static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
+     // Spigot end
+     // CraftBukkit start - add fields
+-    private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
++    private static final Object2LongOpenHashMap<InetAddress> throttleTracker = new Object2LongOpenHashMap<>(); // Gale - Dionysus - replace throttle tracker map with optimized collection
+     private static int throttleCounter = 0;
+     // CraftBukkit end
+     private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
+@@ -87,7 +90,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+             InetAddress address = ((java.net.InetSocketAddress) this.connection.getRemoteAddress()).getAddress();
+ 
+             synchronized (ServerHandshakePacketListenerImpl.throttleTracker) {
+-                if (ServerHandshakePacketListenerImpl.throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - ServerHandshakePacketListenerImpl.throttleTracker.get(address) < connectionThrottle) {
++                        if (ServerHandshakePacketListenerImpl.throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - ServerHandshakePacketListenerImpl.throttleTracker.getLong(address) < connectionThrottle) { // Gale - Dionysus - replace throttle tracker map with optimized collection
+                     ServerHandshakePacketListenerImpl.throttleTracker.put(address, currentTime);
+                             Component chatmessage = io.papermc.paper.adventure.PaperAdventure.asVanilla(io.papermc.paper.configuration.GlobalConfiguration.get().messages.kick.connectionThrottle); // Paper - Configurable connection throttle kick message
+                     this.connection.send(new ClientboundLoginDisconnectPacket(chatmessage));
+@@ -101,13 +104,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+                     ServerHandshakePacketListenerImpl.throttleCounter = 0;
+ 
+                     // Cleanup stale entries
+-                    java.util.Iterator iter = ServerHandshakePacketListenerImpl.throttleTracker.entrySet().iterator();
+-                    while (iter.hasNext()) {
+-                        java.util.Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
+-                        if (entry.getValue() > connectionThrottle) {
+-                            iter.remove();
+-                        }
+-                    }
++                            throttleTracker.object2LongEntrySet().removeIf(entry -> entry.getLongValue() > connectionThrottle); // Gale - Dionysus - replace throttle tracker map with optimized collection
+                 }
+             }
+             } // Paper - Unix domain socket support

@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MrHua269 <novau233@163.com>
-Date: Wed, 7 Feb 2024 00:59:18 +0000
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 12:01:17 +0800
 Subject: [PATCH] Add config for void trading
 
 
@@ -31,15 +31,15 @@ index 0000000000000000000000000000000000000000..22f3c6c70e4287f1bdd0b18f87f57efe
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index b194f3448b5199e1204da31e1408f2e80803a77d..6b8cbf681203c20eebb214c5c0b0fe0374aa30dc 100644
+index 72aa1b66950c1111793dad1583c19ac0d7e5823d..8e94a8abf0fddf1756600c8ed80c0b8b9851ef6f 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -3011,7 +3011,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -2818,7 +2818,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
              // Spigot Start
              if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(entity instanceof ServerPlayer) || entity.getRemovalReason() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
                  // Paper start - Fix merchant inventory not closing on entity removal
 -                if (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null) {
-+                if (!me.earthme.luminol.config.modules.fixes.VoidTradingFixConfig.enabled && (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null)) { //Luminol - Add config for void trading
++                if (!me.earthme.luminol.config.modules.fixes.VoidTradingFixConfig.enabled && (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant merchant && merchant.getTrader() != null)) {  // Luminol - Add config for void trading
                      merchant.getTrader().closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.UNLOADED);
                  }
                  // Paper end - Fix merchant inventory not closing on entity removal

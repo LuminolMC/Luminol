@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MrHua269 <novau233@163.com>
-Date: Wed, 7 Feb 2024 04:39:56 +0000
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 12:05:39 +0800
 Subject: [PATCH] Add a simple tpsbar
 
 
@@ -117,7 +117,7 @@ index 0000000000000000000000000000000000000000..aafb2f5052c7c8e5971a47308253badb
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3f1478dde900d671c4bfa43df80f629519cd602e
+index 0000000000000000000000000000000000000000..e456c54b4ac3906a0a0310bdfba5ef39dc02c4ef
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 @@ -0,0 +1,225 @@
@@ -128,6 +128,7 @@ index 0000000000000000000000000000000000000000..3f1478dde900d671c4bfa43df80f6295
 +import io.papermc.paper.threadedregions.TickRegions;
 +import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 +import me.earthme.luminol.config.modules.misc.TpsBarConfig;
++import me.earthme.luminol.utils.NullPlugin;
 +import net.kyori.adventure.bossbar.BossBar;
 +import net.kyori.adventure.text.Component;
 +import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -138,7 +139,6 @@ index 0000000000000000000000000000000000000000..3f1478dde900d671c4bfa43df80f6295
 +import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
 +import org.bukkit.entity.Player;
 +import org.jetbrains.annotations.NotNull;
 +
@@ -146,7 +146,7 @@ index 0000000000000000000000000000000000000000..3f1478dde900d671c4bfa43df80f6295
 +import java.util.concurrent.TimeUnit;
 +
 +public class GlobalServerTpsBar {
-+    protected static final MinecraftInternalPlugin NULL_PLUGIN = new MinecraftInternalPlugin();
++    protected static final NullPlugin NULL_PLUGIN = new NullPlugin();
 +    protected static final Map<UUID,BossBar> uuid2Bossbars = new HashMap<>();
 +    protected static volatile ScheduledTask tpsbarTask = null;
 +    private static final Logger logger = LogManager.getLogger();
@@ -233,7 +233,7 @@ index 0000000000000000000000000000000000000000..3f1478dde900d671c4bfa43df80f6295
 +    private static void updateBarValues(){
 +        for (Player apiPlayer : Bukkit.getOnlinePlayers()){
 +            final ServerPlayer nmsPlayer = ((CraftPlayer) apiPlayer).getHandle();
-+            final ThreadedRegionizer.ThreadedRegion<TickRegions.TickRegionData, TickRegions.TickRegionSectionData> region = ((ServerLevel) nmsPlayer.level()).regioniser.getRegionAtUnsynchronised(nmsPlayer.sectionX,nmsPlayer.sectionZ);
++            final ThreadedRegionizer.ThreadedRegion<TickRegions.TickRegionData, TickRegions.TickRegionSectionData> region = ((ServerLevel) nmsPlayer.level()).regioniser.getRegionAtUnsynchronised(nmsPlayer.moonrise$getSectionX(),nmsPlayer.moonrise$getSectionZ());
 +
 +            if (region == null){
 +                continue;
@@ -347,10 +347,10 @@ index 0000000000000000000000000000000000000000..3f1478dde900d671c4bfa43df80f6295
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index e456435e2f0606e840c7f4c0ff522e49da6e40e1..0c9b1289f445b7951a8c92c6d9effb0a7fb8ba01 100644
+index 0755e8f460f59e2dbc00cac73026bb441c04e9ea..690d0f59daf8c4630c3d70b6fb690c2e1cedd402 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -850,6 +850,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -855,6 +855,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
  
      @Override
      public void stopServer() {
@@ -359,22 +359,23 @@ index e456435e2f0606e840c7f4c0ff522e49da6e40e1..0c9b1289f445b7951a8c92c6d9effb0a
          //Util.shutdownExecutors(); // Paper - moved into super
          SkullBlockEntity.clear();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 8ee61c2415455f8d4ff1ae687753117a40eb687b..a8f2eddba3ac3b7c551d39e260e096067e8bdc0f 100644
+index 2480166aa0f7acefc1302bc44bc31b6ad48c0711..466928317a9777318aeb08e38d2bcf4c49de4cd8 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -302,6 +302,7 @@ public class ServerPlayer extends Player {
-     // Paper start - replace player chunk loader
-     private final java.util.concurrent.atomic.AtomicReference<io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances> viewDistances = new java.util.concurrent.atomic.AtomicReference<>(new io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances(-1, -1, -1));
-     public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
+@@ -303,7 +303,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+     public com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
+     public @Nullable String clientBrandName = null; // Paper - Brand support
+     public org.bukkit.event.player.PlayerQuitEvent.QuitReason quitReason = null; // Paper - Add API for quit reason; there are a lot of changes to do if we change all methods leading to the event
+-
 +    public volatile boolean isTpsBarVisible = false; //Luminol - Tps bar
- 
-     public io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.ViewDistances getViewDistances() {
-         return this.viewDistances.get();
+     // Paper start - rewrite chunk system
+     private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
+     private final ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.ViewDistanceHolder viewDistanceHolder = new ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.ViewDistanceHolder();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 639b8678ad7711582f2e912772a98233c5313f63..28583ad8117167400faf3ca0dc4bc9f3f44dbedb 100644
+index eb1e14be98b3731e0557726324593dee2eadd31b..e77b7d98f53676010b2b7d91eeab2addaca1241a 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2370,6 +2370,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2389,6 +2389,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                  handle.expToDrop = data.getInt("expToDrop");
                  handle.keepLevel = data.getBoolean("keepLevel");
              }
@@ -384,7 +385,7 @@ index 639b8678ad7711582f2e912772a98233c5313f63..28583ad8117167400faf3ca0dc4bc9f3
          }
      }
  
-@@ -2391,6 +2394,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2410,6 +2413,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          data.putLong("lastPlayed", System.currentTimeMillis());
          data.putString("lastKnownName", handle.getScoreboardName());
  

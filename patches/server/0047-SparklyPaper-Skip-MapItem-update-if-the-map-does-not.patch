@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 14:28:06 +0800
+Subject: [PATCH] SparklyPaper Skip "MapItem#update()" if the map does not have
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/MapItemUpdateSkipConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/MapItemUpdateSkipConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..6235ff18455a21695bdc2d65367558d3936a45c5
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/MapItemUpdateSkipConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.optimizations;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class MapItemUpdateSkipConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = true;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.OPTIMIZATIONS;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "skip_map_item_updates_if_no_bukkit_render";
++    }
++}
+diff --git a/src/main/java/net/minecraft/world/item/MapItem.java b/src/main/java/net/minecraft/world/item/MapItem.java
+index e96f15814986109e5e947c7b3b210be6e56ba0ed..31354cbf344c222a8e6e892091ea30d81b8b2706 100644
+--- a/src/main/java/net/minecraft/world/item/MapItem.java
++++ b/src/main/java/net/minecraft/world/item/MapItem.java
+@@ -281,7 +281,7 @@ public class MapItem extends ComplexItem {
+                     mapItemSavedData.tickCarriedBy(player, stack);
+                 }
+ 
+-                if (!mapItemSavedData.locked && (selected || entity instanceof Player && ((Player)entity).getOffhandItem() == stack)) {
++                if (!mapItemSavedData.locked && (!me.earthme.luminol.config.modules.optimizations.MapItemUpdateSkipConfig.enabled || mapItemSavedData.mapView.getRenderers().stream().anyMatch(mapRenderer -> mapRenderer.getClass() == org.bukkit.craftbukkit.map.CraftMapRenderer.class)) && (selected || entity instanceof Player && ((Player)entity).getOffhandItem() == stack)) { // SparklyPaper - don't update maps if they don't have the CraftMapRenderer in the render list
+                     this.update(world, entity, mapItemSavedData);
+                 }
+                 } // Folia - region threading

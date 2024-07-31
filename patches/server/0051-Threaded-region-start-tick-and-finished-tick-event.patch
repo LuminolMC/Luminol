@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 31 Jul 2024 14:50:23 +0800
+Subject: [PATCH] Threaded region start tick and finished tick event
+
+
+diff --git a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
+index c43b263e6502ba48a876803385f8d05c5e84ba3e..9b1a2dd2538652298571c2abc3d9afb144fddd95 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
++++ b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
+@@ -394,7 +394,7 @@ public final class TickRegionScheduler {
+ 
+             final long scheduledStart = this.getScheduledStart();
+             final long scheduledEnd = scheduledStart + TIME_BETWEEN_TICKS;
+-
++            new me.earthme.luminol.api.events.TickRegionStartTickEvent(this.region == null ? -1 : this.region.region.id,System.nanoTime()); //Luminol - Threaded regions API
+             synchronized (this) {
+                 this.currentTickData = new TickTime(
+                     lastTickStart, scheduledStart, tickStart, cpuStart,
+@@ -429,6 +429,7 @@ public final class TickRegionScheduler {
+                 );
+ 
+                 this.addTickTime(time);
++                new me.earthme.luminol.api.events.TickRegionFinishedTickEvent(this.region == null ? -1 : this.region.region.id,System.nanoTime()); //Luminol - Threaded regions API
+                 TickRegionScheduler.setTickTask(null);
+                 if (this.region != null) {
+                     TickRegionScheduler.setTickingRegion(null);
