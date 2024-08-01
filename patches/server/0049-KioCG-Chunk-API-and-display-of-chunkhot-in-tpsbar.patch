@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <wangxyper@163.com>
-Date: Wed, 31 Jul 2024 14:41:52 +0800
+Date: Thu, 1 Aug 2024 10:57:48 +0800
 Subject: [PATCH] KioCG Chunk API and display of chunkhot in tpsbar
 
 
@@ -179,30 +179,24 @@ index e456c54b4ac3906a0a0310bdfba5ef39dc02c4ef..0c6ae960cc1d1a39f625295f649169d3
          if (mspt == -1){
              return BossBar.Color.valueOf(TpsBarConfig.tpsColors.get(3));
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 05b8f509b119b8166012567f865b99a23ad84ae2..1dce4e4d2a4e03afb38090de9254059ab203d33c 100644
+index 05b8f509b119b8166012567f865b99a23ad84ae2..36f0a5c7ae1534589f3d1e52ab9d8697b43e5e09 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1717,6 +1717,35 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1717,6 +1717,29 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
          // Folia end - region threading
  
 +        // KioCG start - ChunkHot
 +        final ca.spottedleaf.moonrise.common.list.IteratorSafeOrderedReferenceSet<net.minecraft.world.level.chunk.LevelChunk> chunks = new ca.spottedleaf.moonrise.common.list.IteratorSafeOrderedReferenceSet<>();
 +        if (region != null){
-+            for (ca.spottedleaf.moonrise.patches.chunk_system.scheduling.NewChunkHolder chunkHolder : region.world.moonrise$getChunkTaskScheduler().chunkHolderManager.getChunkHolders()){
-+                if (!chunkHolder.isFullChunkReady()){
++            for (net.minecraft.server.level.ServerChunkCache.ChunkAndHolder chunkAndHolder : region.world.getCurrentWorldData().getTickingChunks()){
++                final net.minecraft.world.level.chunk.LevelChunk chunk = chunkAndHolder.chunk();
++
++                if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(region.world, chunk.locX, chunk.locZ)){
 +                    continue;
 +                }
 +
-+                if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(region.world, chunkHolder.chunkX, chunkHolder.chunkZ)){
-+                    continue;
-+                }
-+
-+                final net.minecraft.world.level.chunk.LevelChunk chunk = (net.minecraft.world.level.chunk.LevelChunk) chunkHolder.getCurrentChunk();
-+
-+                if (chunk != null){
-+                    chunks.add(chunk);
-+                }
++                chunks.add(chunk);
 +            }
 +        }
 +        if (region != null && io.papermc.paper.threadedregions.RegionizedServer.getCurrentTick() % 20 == 0){
@@ -218,7 +212,7 @@ index 05b8f509b119b8166012567f865b99a23ad84ae2..1dce4e4d2a4e03afb38090de9254059a
          // Folia - region threading
          if (region == null) this.tickRateManager.tick(); // Folia - region threading
          this.tickChildren(shouldKeepTicking, region); // Folia - region threading
-@@ -1726,6 +1755,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1726,6 +1749,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
  
          // Folia - region threading
