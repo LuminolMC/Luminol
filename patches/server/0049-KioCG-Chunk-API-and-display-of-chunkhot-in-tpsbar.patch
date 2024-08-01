@@ -5,17 +5,17 @@ Subject: [PATCH] KioCG Chunk API and display of chunkhot in tpsbar
 
 
 diff --git a/src/main/java/ca/spottedleaf/moonrise/common/util/ChunkSystem.java b/src/main/java/ca/spottedleaf/moonrise/common/util/ChunkSystem.java
-index f1cb1ecedf0e183cbf6acf12e2034907a8aa9cdd..43f55231adf4a6b11574bde1ba4dcd2b667611b2 100644
+index 83b052dbf6d21775664b286518f3cef1d86e87d1..c6c5292e96ef610b6edbb9341fda97d4cdec30e3 100644
 --- a/src/main/java/ca/spottedleaf/moonrise/common/util/ChunkSystem.java
 +++ b/src/main/java/ca/spottedleaf/moonrise/common/util/ChunkSystem.java
-@@ -119,6 +119,7 @@ public final class ChunkSystem {
+@@ -113,6 +113,7 @@ public final class ChunkSystem {
      }
  
      public static void onChunkNotTicking(final LevelChunk chunk, final ChunkHolder holder) {
 +        chunk.getChunkHot().clear(); // KioCG
-         ((ChunkSystemServerLevel)((ServerLevel)chunk.getLevel())).moonrise$getTickingChunks().remove(
-                 ((ChunkSystemLevelChunk)chunk).moonrise$getChunkAndHolder()
-         );
+         chunk.getLevel().getCurrentWorldData().removeTickingChunk(chunk.moonrise$getChunkAndHolder()); // Folia - region threading
+     }
+ 
 diff --git a/src/main/java/com/kiocg/ChunkHot.java b/src/main/java/com/kiocg/ChunkHot.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..53b4397997bc9b9b9d88e48304b37a2590161906
@@ -240,10 +240,10 @@ index 05b8f509b119b8166012567f865b99a23ad84ae2..1dce4e4d2a4e03afb38090de9254059a
          int playerSaveInterval = io.papermc.paper.configuration.GlobalConfiguration.get().playerAutoSave.rate;
          if (playerSaveInterval < 0) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 618e0f585f4edf81246dcae66af63e391bc28658..872762938eb234a1143a8c265463407128be76c4 100644
+index 80123dd30328336b02a5e2e3414ece44ba040ad2..6f4d5312c8140e0a49646e4f069b027a9e1bd5ad 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -1381,6 +1381,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1377,6 +1377,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
          final int timerId = isActive ? entity.getType().tickTimerId : entity.getType().inactiveTickTimerId;
          final ca.spottedleaf.leafprofiler.RegionizedProfiler.Handle profiler = io.papermc.paper.threadedregions.TickRegionScheduler.getProfiler();
          profiler.startTimer(timerId);
@@ -252,7 +252,7 @@ index 618e0f585f4edf81246dcae66af63e391bc28658..872762938eb234a1143a8c2654634071
          // Folia end - timer
          try {
          // Paper end - timings
-@@ -1408,6 +1410,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1404,6 +1406,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
          } else { entity.inactiveTick(); } // Paper - EAR 2
          this.getProfiler().pop();
          } finally { timer.stopTiming(); profiler.stopTimer(timerId); } // Paper - timings // Folia - timer
@@ -260,7 +260,7 @@ index 618e0f585f4edf81246dcae66af63e391bc28658..872762938eb234a1143a8c2654634071
          Iterator iterator = entity.getPassengers().iterator();
  
          while (iterator.hasNext()) {
-@@ -1436,6 +1439,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1432,6 +1435,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
                  final ca.spottedleaf.leafprofiler.RegionizedProfiler.Handle profiler = io.papermc.paper.threadedregions.TickRegionScheduler.getProfiler();
                  profiler.startTimer(timerId);
                  // Folia end - timer
@@ -269,7 +269,7 @@ index 618e0f585f4edf81246dcae66af63e391bc28658..872762938eb234a1143a8c2654634071
                  try {
                  // Paper end
                  passenger.setOldPosAndRot();
-@@ -1476,6 +1481,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -1472,6 +1477,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
                  }
  
              } finally { timer.stopTiming(); profiler.stopTimer(timerId); }// Paper - EAR2 timings // Folia - timer

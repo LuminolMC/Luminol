@@ -99,10 +99,10 @@ index 0000000000000000000000000000000000000000..12683ec5a5102e45b6171fea0b833ba5
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 8e94a8abf0fddf1756600c8ed80c0b8b9851ef6f..618e0f585f4edf81246dcae66af63e391bc28658 100644
+index b5cb700e2cd1de2f78ad582245208c056fa6fa79..80123dd30328336b02a5e2e3414ece44ba040ad2 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -809,6 +809,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+@@ -805,6 +805,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
              this.timings.entityTick.startTiming(); // Spigot
              profiler.startTimer(ca.spottedleaf.leafprofiler.LProfilerRegistry.ENTITY_TICK); try { // Folia - profiler
              regionizedWorldData.forEachTickingEntity((entity) -> { // Folia - regionised ticking
