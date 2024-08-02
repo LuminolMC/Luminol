@@ -1,0 +1,111 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Fri, 2 Aug 2024 22:22:18 +0800
+Subject: [PATCH] Try optimizing the task dispatching
+
+
+diff --git a/src/main/java/ca/spottedleaf/concurrentutil/scheduler/SchedulerThreadPool.java b/src/main/java/ca/spottedleaf/concurrentutil/scheduler/SchedulerThreadPool.java
+index 8197ccb1c4e5878dbd8007b5fb514640765ec8e4..6a17cb6037bd15b367319bb0accb71813f078087 100644
+--- a/src/main/java/ca/spottedleaf/concurrentutil/scheduler/SchedulerThreadPool.java
++++ b/src/main/java/ca/spottedleaf/concurrentutil/scheduler/SchedulerThreadPool.java
+@@ -366,6 +366,12 @@ public class SchedulerThreadPool {
+                     "scheduled_state=" + this.scheduled.get() + ","
+                     + "}";
+         }
++
++        // Luminol start
++        protected boolean flushExtraTask(){
++            return false;
++        }
++        // Luminol end
+     }
+ 
+     private static final class TickThreadRunner implements Runnable {
+@@ -526,7 +532,7 @@ public class SchedulerThreadPool {
+                             if (diff <= 0L) {
+                                 break;
+                             }
+-                            LockSupport.parkNanos(startState, diff);
++                            if (!startStateTask.flushExtraTask()) LockSupport.parkNanos(startState, 1_000); // Luminol - Optimize task dispatching
+                             if (this.scheduler.halted) {
+                                 return;
+                             }
+diff --git a/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java b/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java
+index ce388e0ef231d7d73f75f5778c58eb40f6402f0f..bba0d3b572cf9aa7c03816c0a74b7579b2280210 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java
++++ b/src/main/java/io/papermc/paper/threadedregions/ThreadedRegionizer.java
+@@ -676,13 +676,13 @@ public final class ThreadedRegionizer<R extends ThreadedRegionizer.ThreadedRegio
+         private static final AtomicLong REGION_ID_GENERATOR = new AtomicLong();
+ 
+         private static final int STATE_TRANSIENT     = 0;
+-        private static final int STATE_READY         = 1;
++        public static final int STATE_READY         = 1;  // Luminol - Optimize task dispatching
+         private static final int STATE_TICKING       = 2;
+         private static final int STATE_DEAD          = 3;
+ 
+         public final long id;
+ 
+-        private int state;
++        public int state; // Luminol - Optimize task dispatching
+ 
+         private final Long2ReferenceOpenHashMap<ThreadedRegionSection<R, S>> sectionByKey = new Long2ReferenceOpenHashMap<>();
+         private final ReferenceOpenHashSet<ThreadedRegionSection<R, S>> deadSections = new ReferenceOpenHashSet<>();
+diff --git a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
+index c43b263e6502ba48a876803385f8d05c5e84ba3e..350eeea4f2a1d3d5eec01d795e23d88cabd0ea07 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
++++ b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
+@@ -357,6 +357,54 @@ public final class TickRegionScheduler {
+             return !this.markNotTicking() || this.cancelled.get() ? null : Boolean.valueOf(ret);
+         }
+ 
++        @Override
++        public boolean flushExtraTask(){
++            if (this.region.region.state != ThreadedRegionizer.ThreadedRegion.STATE_READY){
++                return false;
++            }
++
++            if (this.cancelled.get()) {
++                return false;
++            }
++
++            if (!this.tryMarkTicking()) {
++                if (!this.cancelled.get()) {
++                    throw new IllegalStateException("Scheduled region should be acquirable");
++                }
++                return false;
++            }
++
++            if (this.cancelled.get()) {
++                this.markNotTicking();
++                return false;
++            }
++
++            if (this.region != null) {
++                TickRegionScheduler.setTickingRegion(this.region.region);
++            }
++
++            try {
++                if (this.region == null){
++                    return false;
++                }
++
++                if (this.region.region.getData().getTaskQueueData().executeChunkTask()){
++                    return true;
++                }
++
++                if (this.region.region.getData().getTaskQueueData().executeTickTask()){
++                    return true;
++                }
++            }finally {
++                this.markNotTicking();
++                if (this.region != null) {
++                    TickRegionScheduler.setTickingRegion(null);
++                }
++            }
++
++            return false;
++        }
++
+         @Override
+         public final boolean runTick() {
+             // Remember, we are supposed use setScheduledStart if we return true here, otherwise
