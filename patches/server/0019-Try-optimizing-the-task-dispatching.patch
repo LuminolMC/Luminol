@@ -51,7 +51,7 @@ index ce388e0ef231d7d73f75f5778c58eb40f6402f0f..bba0d3b572cf9aa7c03816c0a74b7579
          private final Long2ReferenceOpenHashMap<ThreadedRegionSection<R, S>> sectionByKey = new Long2ReferenceOpenHashMap<>();
          private final ReferenceOpenHashSet<ThreadedRegionSection<R, S>> deadSections = new ReferenceOpenHashSet<>();
 diff --git a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
-index c43b263e6502ba48a876803385f8d05c5e84ba3e..350eeea4f2a1d3d5eec01d795e23d88cabd0ea07 100644
+index c43b263e6502ba48a876803385f8d05c5e84ba3e..0197be1de64afbcda4897a8613e999239b90133a 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
 @@ -357,6 +357,54 @@ public final class TickRegionScheduler {
@@ -60,7 +60,7 @@ index c43b263e6502ba48a876803385f8d05c5e84ba3e..350eeea4f2a1d3d5eec01d795e23d88c
  
 +        @Override
 +        public boolean flushExtraTask(){
-+            if (this.region.region.state != ThreadedRegionizer.ThreadedRegion.STATE_READY){
++            if (this.region != null && this.region.region.state != ThreadedRegionizer.ThreadedRegion.STATE_READY){
 +                return false;
 +            }
 +
