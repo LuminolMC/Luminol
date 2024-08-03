@@ -5,7 +5,7 @@ Subject: [PATCH] Try optimizing the task dispatching
 
 
 diff --git a/src/main/java/ca/spottedleaf/concurrentutil/scheduler/SchedulerThreadPool.java b/src/main/java/ca/spottedleaf/concurrentutil/scheduler/SchedulerThreadPool.java
-index 8197ccb1c4e5878dbd8007b5fb514640765ec8e4..6a17cb6037bd15b367319bb0accb71813f078087 100644
+index 8197ccb1c4e5878dbd8007b5fb514640765ec8e4..81db3c6f330729cb353b198badc86fe29e76bafc 100644
 --- a/src/main/java/ca/spottedleaf/concurrentutil/scheduler/SchedulerThreadPool.java
 +++ b/src/main/java/ca/spottedleaf/concurrentutil/scheduler/SchedulerThreadPool.java
 @@ -366,6 +366,12 @@ public class SchedulerThreadPool {
@@ -26,7 +26,7 @@ index 8197ccb1c4e5878dbd8007b5fb514640765ec8e4..6a17cb6037bd15b367319bb0accb7181
                                  break;
                              }
 -                            LockSupport.parkNanos(startState, diff);
-+                            if (!startStateTask.flushExtraTask()) LockSupport.parkNanos(startState, 1_000); // Luminol - Optimize task dispatching
++                            if (!me.earthme.luminol.config.modules.experiment.ExtraOptimizationConfig.enabled || !startStateTask.flushExtraTask()) LockSupport.parkNanos(startState, 1_000); // Luminol - Optimize task dispatching
                              if (this.scheduler.halted) {
                                  return;
                              }
@@ -109,3 +109,29 @@ index c43b263e6502ba48a876803385f8d05c5e84ba3e..0197be1de64afbcda4897a8613e99923
          @Override
          public final boolean runTick() {
              // Remember, we are supposed use setScheduledStart if we return true here, otherwise
+diff --git a/src/main/java/me/earthme/luminol/config/modules/experiment/ExtraOptimizationConfig.java b/src/main/java/me/earthme/luminol/config/modules/experiment/ExtraOptimizationConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..d908123da05c620586a1defcead423cc519113e9
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/experiment/ExtraOptimizationConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.experiment;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class ExtraOptimizationConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.EXPERIMENT;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "run_extra_tasks_during_waiting";
++    }
++}
