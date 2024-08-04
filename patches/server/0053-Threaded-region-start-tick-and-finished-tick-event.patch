@@ -5,7 +5,7 @@ Subject: [PATCH] Threaded region start tick and finished tick event
 
 
 diff --git a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
-index 350eeea4f2a1d3d5eec01d795e23d88cabd0ea07..3588e9052afe8c3b8dc0872a73acb736062d3a2f 100644
+index 0197be1de64afbcda4897a8613e999239b90133a..dfc35e9fc5c627d13a844379d782c611e3435917 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
 @@ -442,7 +442,7 @@ public final class TickRegionScheduler {
