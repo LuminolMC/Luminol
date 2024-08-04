@@ -31,11 +31,15 @@ index 0000000000000000000000000000000000000000..0523b3da3fb254bce1998bae6410c632
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index c1881c4a590a64950679bdac452960ed8d394f89..79b39562632a2e4dedfaa72db14c63d325e3eb4b 100644
+index c1881c4a590a64950679bdac452960ed8d394f89..8b00f2bdb6f053842844b945d65d1150f596714c 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5262,6 +5262,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
-         if (this.touchingUnloadedChunk()) {
+@@ -5259,9 +5259,14 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+     }
+ 
+     public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tag, double speed) {
+-        if (this.touchingUnloadedChunk()) {
++        if (!me.earthme.luminol.config.modules.optimizations.ReduceEntityFluidLookupConfig.enabled && this.touchingUnloadedChunk()) { //Luminol - Configurable pufferfish optimization: Reduce entity fluid lookups if no fluids
              return false;
          } else {
 +            //Luminol start - Configurable pufferfish optimization: Reduce entity fluid lookups if no fluids
@@ -162,7 +166,7 @@ index c1881c4a590a64950679bdac452960ed8d394f89..79b39562632a2e4dedfaa72db14c63d3
 +
 +            Vec3 vec3d2 = this.getDeltaMovement();
 +
-+            vec3d = vec3d.scale(speed * 1.0D);
++            vec3d = vec3d.scale(speed);
 +            double d3 = 0.003D;
 +
 +            if (Math.abs(vec3d2.x) < 0.003D && Math.abs(vec3d2.z) < 0.003D && vec3d.length() < 0.0045000000000000005D) {
