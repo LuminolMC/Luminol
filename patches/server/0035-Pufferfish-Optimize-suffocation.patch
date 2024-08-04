@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <wangxyper@163.com>
-Date: Wed, 31 Jul 2024 12:53:49 +0800
+Date: Sun, 4 Aug 2024 21:39:59 +0800
 Subject: [PATCH] Pufferfish Optimize suffocation
 
 
@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..3e48cd297b4869e5c89b6abc43c726d3
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index f3c442976dd358958053ba71a433d7f104559857..3c5c0634088f523f422912837abab818156ca291 100644
+index 30bd7101cca4a93df592f0e3c0dd4aac0f347d07..f39842df9abb752f43a5b98030a276baf71f7067 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -464,7 +464,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -463,7 +463,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
              boolean flag = this instanceof net.minecraft.world.entity.player.Player;
  
              if (!this.level().isClientSide) {
@@ -43,7 +43,7 @@ index f3c442976dd358958053ba71a433d7f104559857..3c5c0634088f523f422912837abab818
                      this.hurt(this.damageSources().inWall(), 1.0F);
                  } else if (flag && !this.level().getWorldBorder().isWithinBounds(this.getBoundingBox())) {
                      double d0 = this.level().getWorldBorder().getDistanceToBorder(this) + this.level().getWorldBorder().getDamageSafeZone();
-@@ -1428,6 +1428,19 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -1427,6 +1427,19 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return this.getHealth() <= 0.0F;
      }
  

@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..ed62d25d6cd6dfcf8c5db20ced36eb3d
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index c1ac70dd05e049953e259f3b19135582ae21290e..644fcde5b570e36139b1897c0eff527c6194d305 100644
+index c1953e9860c60c96e31336189e54176fe46f3a3c..3b23cd9d321a5eec5a237983315bf9ec7f76fe7f 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5537,6 +5537,16 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -5544,6 +5544,16 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          return this.inBlockState;
      }
  
@@ -52,10 +52,10 @@ index c1ac70dd05e049953e259f3b19135582ae21290e..644fcde5b570e36139b1897c0eff527c
          return this.chunkPosition;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 3c5c0634088f523f422912837abab818156ca291..7aade876648e79e48b80b4048ba0f8c07483bd96 100644
+index f39842df9abb752f43a5b98030a276baf71f7067..6a19b65162fbc6104050a072c5e8ac9608aae5a4 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -2104,19 +2104,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2103,19 +2103,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
      public boolean onClimableCached() {
          if (!this.blockPosition().equals(this.lastClimbingPosition)) {

@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <wangxyper@163.com>
-Date: Wed, 31 Jul 2024 13:35:06 +0800
+Date: Sun, 4 Aug 2024 22:14:21 +0800
 Subject: [PATCH] Gale Optimize sun burn tick
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 644fcde5b570e36139b1897c0eff527c6194d305..bb585e163ea3e066c3d8fc7caebf6c2b6f7a945b 100644
+index 0c94d54a380968019aec07d0563f20ceb4fa2ce3..c1953e9860c60c96e31336189e54176fe46f3a3c 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -314,7 +314,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -14,10 +14,10 @@ index 644fcde5b570e36139b1897c0eff527c6194d305..bb585e163ea3e066c3d8fc7caebf6c2b
      public double zo;
 -    private Vec3 position;
 +    public Vec3 position; // Gale - JettPack - optimize sun burn tick - private -> public
-     public BlockPos blockPosition; // Pufferfish - private->public
+     private BlockPos blockPosition;
      private ChunkPos chunkPosition;
      private Vec3 deltaMovement;
-@@ -2124,9 +2124,17 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -2121,9 +2121,19 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      /** @deprecated */
      @Deprecated
      public float getLightLevelDependentMagicValue() {
@@ -26,7 +26,9 @@ index 644fcde5b570e36139b1897c0eff527c6194d305..bb585e163ea3e066c3d8fc7caebf6c2b
      }
  
 +    // Gale start - JettPack - optimize sun burn tick - allow passing BlockPos to getLightLevelDependentMagicValue
-+    /** @deprecated */
++    /**
++     * @deprecated
++     */
 +    @Deprecated
 +    public float getLightLevelDependentMagicValue(BlockPos pos) {
 +        return this.level().hasChunkAt(this.getBlockX(), this.getBlockZ()) ? this.level.getLightLevelDependentMagicValue(pos) : 0.0F;
@@ -37,10 +39,10 @@ index 644fcde5b570e36139b1897c0eff527c6194d305..bb585e163ea3e066c3d8fc7caebf6c2b
          this.absMoveTo(x, y, z);
          this.absRotateTo(yaw, pitch);
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 2384a9e68f99b61382d9d8a46523d226786ee584..56c1b21aa02abaf3c1a13c9b500cc84798acc611 100644
+index 2384a9e68f99b61382d9d8a46523d226786ee584..73c65124d6996b4a74a044e562f04eda573589fc 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1774,13 +1774,30 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1774,13 +1774,29 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
      protected void playAttackSound() {}
  
@@ -48,7 +50,6 @@ index 2384a9e68f99b61382d9d8a46523d226786ee584..56c1b21aa02abaf3c1a13c9b500cc847
 +    private BlockPos cached_eye_blockpos;
 +    private int cached_position_hashcode;
 +    // Gale end - JettPack - optimize sun burn tick - cache eye blockpos
-+
 +
      public boolean isSunBurnTick() {
          if (this.level().isDay() && !this.level().isClientSide) {

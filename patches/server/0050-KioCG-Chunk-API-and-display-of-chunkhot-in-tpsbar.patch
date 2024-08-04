@@ -332,10 +332,10 @@ index 1859477e96709368683fe5707327e92f56fbfc8e..4c4814094552fa4382b1cbe649f24f47
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 3c217574bb9c161ac6c556d6abce31a10fce40c0..1fbdcfe496efc6615e5246a24c699de2d6e864bf 100644
+index 3ff85d9e5ecef61ca5bcec4c260d88e2d5c61bea..bd0e0cd7888dbb24d941aedd88e9232e98935cab 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5985,4 +5985,6 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -5984,4 +5984,6 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          return ((net.minecraft.server.level.ServerChunkCache) level.getChunkSource()).isPositionTicking(this);
      }
      // Paper end - Expose entity id counter
@@ -359,10 +359,10 @@ index 4f701788bd21b61cad251a3a88f9bc416fb99051..86caa40a91ee0385bc32fd19d0fec6bd
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 56c1b21aa02abaf3c1a13c9b500cc84798acc611..a418d3eb870331d9809ff65a7aca4041f68648e6 100644
+index 73c65124d6996b4a74a044e562f04eda573589fc..b87a1b054998a062e1f69b56daff520e3e4e0b6a 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1851,4 +1851,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1850,4 +1850,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
          return itemmonsteregg == null ? null : new ItemStack(itemmonsteregg);
      }
@@ -425,10 +425,10 @@ index b3377ed06d703f54e01ba174e5a06dc928cdff96..80af7979f9a2078a6c40c958ced1d487
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 19ae105d5a35e2c497fe15e830808a9c0100a0f7..598960f1cf746971c28ebcda78b6fe7eee11e3fd 100644
+index bc944fec524d79fd6e5fc01a808e4d13153afc05..095e68ff301a5bbba2eff0a867d0a3df786a5f0f 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -427,4 +427,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -429,4 +429,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
  
          return DoubleDoubleImmutablePair.of(d0, d1);
      }

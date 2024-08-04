@@ -30,26 +30,6 @@ index 0000000000000000000000000000000000000000..43bbc2c30bdd3872a0179e0070403c3e
 +        return "alternative_keepalive_handling";
 +    }
 +}
-diff --git a/src/main/java/net/minecraft/server/level/ServerEntity.java b/src/main/java/net/minecraft/server/level/ServerEntity.java
-index 8ea2f24695f5dad55e21f238b69442513e7a90c6..d61359db1773ece7b0349e13ca56ad3883fd4b43 100644
---- a/src/main/java/net/minecraft/server/level/ServerEntity.java
-+++ b/src/main/java/net/minecraft/server/level/ServerEntity.java
-@@ -216,6 +216,7 @@ public class ServerEntity {
- 
-                 if ((this.trackDelta || this.entity.hasImpulse || this.entity instanceof LivingEntity && ((LivingEntity) this.entity).isFallFlying()) && this.tickCount > 0) {
-                     Vec3 vec3d1 = this.entity.getDeltaMovement();
-+                    if (vec3d1 != this.lastSentMovement) { // SparklyPaper start - skip distanceToSqr call in ServerEntity#sendChanges if the delta movement hasn't changed
-                     double d0 = vec3d1.distanceToSqr(this.lastSentMovement);
- 
-                     if (d0 > 1.0E-7D || d0 > 0.0D && vec3d1.lengthSqr() == 0.0D) {
-@@ -230,6 +231,7 @@ public class ServerEntity {
-                             this.broadcast.accept(new ClientboundSetEntityMotionPacket(this.entity.getId(), this.lastSentMovement));
-                         }
-                     }
-+                    } // SparklyPaper end
-                 }
- 
-                 if (packet1 != null) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 index d766bb360eb98bab1e067cad032b54fa6455f386..89080162548c8343202bef910865136075172da7 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java

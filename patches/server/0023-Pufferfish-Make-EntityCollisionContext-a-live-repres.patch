@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MrHua269 <wangxyper@163.com>
-Date: Mon, 29 Jul 2024 19:53:42 +0800
+From: Paul Sauve <paul@technove.co>
+Date: Sun, 9 May 2021 18:35:05 -0500
 Subject: [PATCH] Pufferfish Make EntityCollisionContext a live representation
 
 

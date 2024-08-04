@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..0523b3da3fb254bce1998bae6410c632
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index c1881c4a590a64950679bdac452960ed8d394f89..8b00f2bdb6f053842844b945d65d1150f596714c 100644
+index 39e96b21e77607782da13b4c74c65d8a68af2433..32f027b67b9bd18e486eb321d8874a1e523c1a00 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -5259,9 +5259,14 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -73,8 +73,8 @@ index c1881c4a590a64950679bdac452960ed8d394f89..8b00f2bdb6f053842844b945d65d1150
 +        BlockPos.MutableBlockPos blockposition_mutableblockposition = new BlockPos.MutableBlockPos();
 +
 +        // Pufferfish start - based off CollisionUtil.getCollisionsForBlocksOrWorldBorder
-+        final int minSection = io.papermc.paper.util.WorldUtil.getMinSection(this.level());
-+        final int maxSection = io.papermc.paper.util.WorldUtil.getMaxSection(this.level());
++        final int minSection = ca.spottedleaf.moonrise.common.util.WorldUtil.getMinSection(this.level());
++        final int maxSection = ca.spottedleaf.moonrise.common.util.WorldUtil.getMaxSection(this.level());
 +        final int minBlock = minSection << 4;
 +        final int maxBlock = (maxSection << 4) | 15;
 +

@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <novau233@163.com>
+Date: Wed, 7 Feb 2024 05:45:24 +0000
+Subject: [PATCH] Pufferfish Reduce projectile chunk loading
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/ProjectileChunkReduceConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/ProjectileChunkReduceConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..12683ec5a5102e45b6171fea0b833ba57e5e188c
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/ProjectileChunkReduceConfig.java
+@@ -0,0 +1,22 @@
++package me.earthme.luminol.config.modules.optimizations;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class ProjectileChunkReduceConfig implements IConfigModule {
++    @ConfigInfo(baseName = "max-loads-per-tick")
++    public static int maxProjectileLoadsPerTick;
++    @ConfigInfo(baseName = "max-loads-per-projectile")
++    public static int maxProjectileLoadsPerProjectile;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.OPTIMIZATIONS;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "projectile";
++    }
++}
+diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
+index c7a59234fb1fdc09745b62039011d0d2f7cd3fb6..bc944fec524d79fd6e5fc01a808e4d13153afc05 100644
+--- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
++++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
+@@ -52,6 +52,40 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+         super(type, world);
+     }
+ 
++    // Pufferfish start
++    private static final java.lang.ThreadLocal<Long> loadedThisTick = java.lang.ThreadLocal.withInitial(() -> 0L);
++    private static final java.lang.ThreadLocal<Long> loadedTick = java.lang.ThreadLocal.withInitial(() -> 0L);
++
++    private int loadedLifetime = 0;
++    @Override
++    public void setPos(double x, double y, double z) {
++        if (io.papermc.paper.threadedregions.TickRegionScheduler.getCurrentRegion() != null && ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(this)){
++            long currentTick = io.papermc.paper.threadedregions.TickRegionScheduler.getCurrentRegion().getData().getCurrentTick();
++
++            if (loadedTick.get() != currentTick) {
++                loadedTick = currentTick;
++                loadedThisTick.set(0L);
++            }
++
++            int previousX = Mth.floor(this.getX()) >> 4, previousZ = Mth.floor(this.getZ()) >> 4;
++            int newX = Mth.floor(x) >> 4, newZ = Mth.floor(z) >> 4;
++            if ((previousX != newX || previousZ != newZ) && ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(this.level(), newX, newZ)) {
++                boolean isLoaded = ((net.minecraft.server.level.ServerChunkCache) this.level().getChunkSource()).getChunkAtIfCachedImmediately(newX, newZ) != null;
++                if (!isLoaded) {
++                    if (Projectile.loadedThisTick.get() > me.earthme.luminol.config.modules.optimizations.ProjectileChunkReduceConfig.maxProjectileLoadsPerTick) {
++                        if (++this.loadedLifetime > me.earthme.luminol.config.modules.optimizations.ProjectileChunkReduceConfig.maxProjectileLoadsPerProjectile) {
++                            this.discard();
++                        }
++                        return;
++                    }
++                    Projectile.loadedThisTick.set(Projectile.loadedThisTick.get() + 1);
++                }
++            }
++        }
++        super.setPos(x, y, z);
++    }
++    // Pufferfish end
++
+     public void setOwner(@Nullable Entity entity) {
+         if (entity != null) {
+             this.ownerUUID = entity.getUUID();

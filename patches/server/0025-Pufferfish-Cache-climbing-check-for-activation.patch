@@ -1,27 +1,22 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MrHua269 <wangxyper@163.com>
-Date: Wed, 31 Jul 2024 12:47:11 +0800
+From: Paul Sauve <paul@technove.co>
+Date: Mon, 26 Apr 2021 10:52:56 -0500
 Subject: [PATCH] Pufferfish Cache climbing check for activation
 
 
-diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index fe3aeadd4357cc0b28ac9cfc21f0f1100d22d3a0..c1881c4a590a64950679bdac452960ed8d394f89 100644
---- a/src/main/java/net/minecraft/world/entity/Entity.java
-+++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -315,7 +315,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
-     public double yo;
-     public double zo;
-     private Vec3 position;
--    private BlockPos blockPosition;
-+    public BlockPos blockPosition; // Pufferfish - private->public
-     private ChunkPos chunkPosition;
-     private Vec3 deltaMovement;
-     private float yRot;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 8ccc18881d047e2b06ab3494a25f27e209931413..f3c442976dd358958053ba71a433d7f104559857 100644
+index 8ccc18881d047e2b06ab3494a25f27e209931413..30bd7101cca4a93df592f0e3c0dd4aac0f347d07 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -2084,6 +2084,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -157,7 +157,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
+ import org.bukkit.event.player.PlayerItemConsumeEvent;
+ // CraftBukkit end
+ 
+-import co.aikar.timings.MinecraftTimings; // Paper
+ 
+ public abstract class LivingEntity extends Entity implements Attackable {
+ 
+@@ -2084,6 +2083,20 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return this.lastClimbablePos;
      }
  
@@ -43,7 +38,7 @@ index 8ccc18881d047e2b06ab3494a25f27e209931413..f3c442976dd358958053ba71a433d7f1
          if (this.isSpectator()) {
              return false;
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index 91c63c3dceddf09018d3651f4c11bf521eb53ecf..3918fcfbb85cf0be523b3c723d9861aa5bca6d8c 100644
+index 91c63c3dceddf09018d3651f4c11bf521eb53ecf..96103d7c380e095c06876da00bd4132ae9598671 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
 @@ -307,7 +307,7 @@ public class ActivationRange
@@ -51,7 +46,7 @@ index 91c63c3dceddf09018d3651f4c11bf521eb53ecf..3918fcfbb85cf0be523b3c723d9861aa
          {
              LivingEntity living = (LivingEntity) entity;
 -            if ( living.onClimbable() || living.jumping || living.hurtTime > 0 || living.activeEffects.size() > 0 || living.isFreezing()) // Paper
-+            if ( living.onClimableCached() || living.jumping || living.hurtTime > 0 || living.activeEffects.size() > 0 || living.isFreezing()) // Paper // Pufferfish - use cached
++            if ( living.onClimableCached() || living.jumping || living.hurtTime > 0 || living.activeEffects.size() > 0 || living.isFreezing() ) // Paper // Pufferfish - use cached
              {
                  return 1; // Paper
              }
