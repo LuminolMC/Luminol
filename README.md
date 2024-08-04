@@ -32,7 +32,7 @@
 
 ```kotlin
 dependencies {
-    compileOnly("me.earthme.luminol:luminol-api:1.20.6-R0.1-SNAPSHOT")
+    compileOnly("me.earthme.luminol:luminol-api:1.21-R0.1-SNAPSHOT")
 }
  ```
 
@@ -42,7 +42,7 @@ dependencies {
 <dependency>
   <groupId>me.earthme.luminol</groupId>
   <artifactId>luminol-api</artifactId>
-  <version>1.20.6-R0.1-SNAPSHOT</version>
+  <version>1.21-R0.1-SNAPSHOT</version>
 </dependency>
 ```
 
