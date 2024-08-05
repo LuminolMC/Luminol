@@ -83,10 +83,10 @@ index b5cb700e2cd1de2f78ad582245208c056fa6fa79..80123dd30328336b02a5e2e3414ece44
                      if (false && this.shouldDiscardEntity(entity)) { // CraftBukkit - We prevent spawning in general, so this butchering is not needed
                          entity.discard();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index c808b59b0461ccd78fa57932f51bbb268c1d965f..0c94d54a380968019aec07d0563f20ceb4fa2ce3 100644
+index d5ad15b95a4f1a0145821ca8a6362e4d5722bf7b..577a194e9d9828520560e3546dba8532ca18782a 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -429,6 +429,8 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -430,6 +430,8 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      private UUID originWorld;
      public boolean freezeLocked = false; // Paper - Freeze Tick Lock API
      public boolean fixedPose = false; // Paper - Expand Pose API

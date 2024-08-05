@@ -49,10 +49,10 @@ index 0000000000000000000000000000000000000000..15697d69659b6e1e776acf5094684b5f
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 32f027b67b9bd18e486eb321d8874a1e523c1a00..c808b59b0461ccd78fa57932f51bbb268c1d965f 100644
+index 44a08cc2e94d52747ba6a66e4b57543dfa5f66c2..d5ad15b95a4f1a0145821ca8a6362e4d5722bf7b 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -857,6 +857,12 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -858,6 +858,12 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      }
  
      public void tick() {
