@@ -30,10 +30,31 @@ index 0000000000000000000000000000000000000000..ea374875f529b30db17e8b8cb07b99a6
 +        return "allow_unsafe_teleportation";
 +    }
 +}
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 7a102b4e90fbc09b8653e5b566299efe24a04cf6..2a5db8f4ad54b772a0a8bce429fff8b539db81ed 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -4142,6 +4142,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+ 
+     public boolean endPortalLogicAsync(BlockPos portalPos) {
+         ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
++        if (me.earthme.luminol.config.modules.fixes.UnsafeTeleportationConfig.enabled && !(this instanceof Player)) return false; // Luminol - Unsafe teleportation
+ 
+         ServerLevel destination = this.getServer().getLevel(this.level().getTypeKey() == net.minecraft.world.level.dimension.LevelStem.END ? Level.OVERWORLD : Level.END);
+         if (destination == null) {
 diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-index 5d6b1a63a2a213f8a4e81c5e574847007a82007b..65582bd070b1a5a963abca1e91ff05bf177942c0 100644
+index 5d6b1a63a2a213f8a4e81c5e574847007a82007b..77ff2a526a1d2b9307dfc696f9862bfda7407475 100644
 --- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
+@@ -69,7 +69,7 @@ public class FallingBlockEntity extends Entity {
+     public float fallDamagePerDistance;
+     @Nullable
+     public CompoundTag blockData;
+-    public boolean forceTickAfterTeleportToDuplicate;
++    public boolean forceTickAfterTeleportToDuplicate = me.earthme.luminol.config.modules.fixes.UnsafeTeleportationConfig.enabled; // Luminol - Unsafe teleportation
+     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(FallingBlockEntity.class, EntityDataSerializers.BLOCK_POS);
+     public boolean autoExpire = true; // Paper - Expand FallingBlock API
+ 
 @@ -419,7 +419,7 @@ public class FallingBlockEntity extends Entity {
          boolean flag = (resourcekey1 == Level.END || resourcekey == Level.END) && resourcekey1 != resourcekey;
          Entity entity = super.changeDimension(teleportTarget);
@@ -43,3 +64,19 @@ index 5d6b1a63a2a213f8a4e81c5e574847007a82007b..65582bd070b1a5a963abca1e91ff05bf
          return entity;
      }
  }
+diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
+index 58e15d7a5f7997a7aec9edaa5d211807b2b1ef6b..8a71276715c380b5b8510503399f3fde0084c145 100644
+--- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
+@@ -70,6 +70,11 @@ public class EndPortalBlock extends BaseEntityBlock implements Portal {
+             world.getCraftServer().getPluginManager().callEvent(event);
+             if (event.isCancelled()) return; // Paper - make cancellable
+             // CraftBukkit end
++            // Luminol start - unsafe teleportation
++            if (me.earthme.luminol.config.modules.fixes.UnsafeTeleportationConfig.enabled && !(entity instanceof net.minecraft.world.entity.player.Player)) {
++                entity.endPortalLogicAsync(pos);
++            }
++            // Luminol end
+             if (!world.isClientSide && world.dimension() == Level.END && entity instanceof ServerPlayer) {
+                 ServerPlayer entityplayer = (ServerPlayer) entity;
+ 
