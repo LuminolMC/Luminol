@@ -5,7 +5,7 @@ Subject: [PATCH] Kaiiju Vanilla end portal teleportation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 39e96b21e77607782da13b4c74c65d8a68af2433..3958bc6d5172698af88555352a5321083c2367d3 100644
+index a90820a672379639e89c5bb71abcd9aa69227473..794f08a815672b18d22416fc5787f886f895f7be 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -109,6 +109,7 @@ import net.minecraft.world.level.block.Rotation;
@@ -16,7 +16,7 @@ index 39e96b21e77607782da13b4c74c65d8a68af2433..3958bc6d5172698af88555352a532108
  import net.minecraft.world.level.entity.EntityAccess;
  import net.minecraft.world.level.entity.EntityInLevelCallback;
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-@@ -4229,13 +4230,18 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4228,13 +4229,18 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
                          targetPos, 16, // load 16 blocks to be safe from block physics
                          ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor.Priority.HIGH,
                          (chunks) -> {
@@ -37,7 +37,7 @@ index 39e96b21e77607782da13b4c74c65d8a68af2433..3958bc6d5172698af88555352a532108
                                      DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET),
                                      org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.END_PORTAL
                                  )
-@@ -4432,6 +4438,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4431,6 +4437,10 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          if (!this.canPortalAsync(destination, takePassengers)) {
              return false;
          }
@@ -48,7 +48,7 @@ index 39e96b21e77607782da13b4c74c65d8a68af2433..3958bc6d5172698af88555352a532108
  
          Vec3 initialPosition = this.position();
          ChunkPos initialPositionChunk = new ChunkPos(
-@@ -4496,9 +4506,14 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4495,9 +4505,14 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
                          info.postDimensionTransition().onTransition(teleported);
                      }
  

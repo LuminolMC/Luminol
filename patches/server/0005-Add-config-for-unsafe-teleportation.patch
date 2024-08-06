@@ -30,18 +30,6 @@ index 0000000000000000000000000000000000000000..ea374875f529b30db17e8b8cb07b99a6
 +        return "allow_unsafe_teleportation";
 +    }
 +}
-diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 7a102b4e90fbc09b8653e5b566299efe24a04cf6..2a5db8f4ad54b772a0a8bce429fff8b539db81ed 100644
---- a/src/main/java/net/minecraft/world/entity/Entity.java
-+++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4142,6 +4142,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
- 
-     public boolean endPortalLogicAsync(BlockPos portalPos) {
-         ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
-+        if (me.earthme.luminol.config.modules.fixes.UnsafeTeleportationConfig.enabled && !(this instanceof Player)) return false; // Luminol - Unsafe teleportation
- 
-         ServerLevel destination = this.getServer().getLevel(this.level().getTypeKey() == net.minecraft.world.level.dimension.LevelStem.END ? Level.OVERWORLD : Level.END);
-         if (destination == null) {
 diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 index 5d6b1a63a2a213f8a4e81c5e574847007a82007b..77ff2a526a1d2b9307dfc696f9862bfda7407475 100644
 --- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
