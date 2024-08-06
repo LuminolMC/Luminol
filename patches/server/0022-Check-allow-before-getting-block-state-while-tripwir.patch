@@ -1,0 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Tue, 6 Aug 2024 21:06:31 +0800
+Subject: [PATCH] Check allow before getting block state while tripwire state
+ updating
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
+index 76aca266d3f3222502ff4c196228f08fcd88c5f8..82a6d0e3620aea26cd32296128488e13b6d43f44 100644
+--- a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
+@@ -202,7 +202,7 @@ public class TripWireHookBlock extends Block {
+                     BlockState iblockdata4 = aiblockdata[l];
+ 
+                     if (iblockdata4 != null) {
+-                        if (world.getBlockState(blockposition2).is(Blocks.TRIPWIRE) || io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.allowTripwireDisarmingExploits) { // Paper - Fix tripwire disarming not working as intended
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.allowTripwireDisarmingExploits || world.getBlockState(blockposition2).is(Blocks.TRIPWIRE)) { // Paper - Fix tripwire disarming not working as intended // Luminol - check allow first
+                         world.setBlock(blockposition2, (BlockState) iblockdata4.trySetValue(TripWireHookBlock.ATTACHED, flag4), 3);
+                         }
+                     }
