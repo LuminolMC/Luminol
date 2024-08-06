@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <wangxyper@163.com>
 Date: Tue, 6 Aug 2024 14:31:20 +0800
-Subject: [PATCH] Pufferfish SMID Utilities
+Subject: [PATCH] Pufferfish SIMD Utilities
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
@@ -23,11 +23,11 @@ index c2d3d699edfd60d773af96116c5663c812c691e9..1049681dfa7e48b4b6c29f4b1a09c689
  tasks.jar {
      archiveClassifier.set("dev")
  
-diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java
+diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/SIMDConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/SIMDConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b2e24ba49eaf7858bbd13872208b1beb7606b52d
+index 0000000000000000000000000000000000000000..35b79cfdef8c3c873491bd52f9a8e2b0f8112499
 --- /dev/null
-+++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java
++++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/SIMDConfig.java
 @@ -0,0 +1,53 @@
 +package me.earthme.luminol.config.modules.optimizations;
 +
@@ -40,7 +40,7 @@ index 0000000000000000000000000000000000000000..b2e24ba49eaf7858bbd13872208b1beb
 +import me.earthme.luminol.config.IConfigModule;
 +import org.slf4j.Logger;
 +
-+public class SMIDConfig implements IConfigModule {
++public class SIMDConfig implements IConfigModule {
 +    @DoNotLoad
 +    private static final Logger LOGGER = LogUtils.getLogger();
 +    @ConfigInfo(baseName = "enabled")
@@ -53,7 +53,7 @@ index 0000000000000000000000000000000000000000..b2e24ba49eaf7858bbd13872208b1beb
 +
 +    @Override
 +    public String getBaseName() {
-+        return "use_smid";
++        return "use_simd";
 +    }
 +
 +    @Override
@@ -78,7 +78,7 @@ index 0000000000000000000000000000000000000000..b2e24ba49eaf7858bbd13872208b1beb
 +            LOGGER.warn("SIMD operations are available for your server, but are not configured!");
 +            LOGGER.warn("To enable additional optimizations, add \"--add-modules=jdk.incubator.vector\" to your startup flags, BEFORE the \"-jar\".");
 +            LOGGER.warn("If you have already added this flag, then SIMD operations are not supported on your JVM or CPU.");
-+            LOGGER.warn("Debug: Java: " + System.getProperty("java.version") + ", test run: " + SIMDDetection.testRun);
++            LOGGER.warn("Debug: Java: {}, test run: {}", System.getProperty("java.version"), SIMDDetection.testRun);
 +        }
 +    }
 +}
