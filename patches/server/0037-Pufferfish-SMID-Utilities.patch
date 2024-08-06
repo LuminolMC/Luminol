@@ -25,14 +25,15 @@ index c2d3d699edfd60d773af96116c5663c812c691e9..1049681dfa7e48b4b6c29f4b1a09c689
  
 diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b2b4a91925145b331a604384afee23ab276d76be
+index 0000000000000000000000000000000000000000..b2e24ba49eaf7858bbd13872208b1beb7606b52d
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,53 @@
 +package me.earthme.luminol.config.modules.optimizations;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 +import com.mojang.logging.LogUtils;
++import gg.pufferfish.pufferfish.simd.SIMDDetection;
 +import me.earthme.luminol.config.ConfigInfo;
 +import me.earthme.luminol.config.DoNotLoad;
 +import me.earthme.luminol.config.EnumConfigCategory;
