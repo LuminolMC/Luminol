@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <wangxyper@163.com>
 Date: Tue, 6 Aug 2024 14:32:22 +0800
-Subject: [PATCH] Pufferfish SMID Utilities
+Subject: [PATCH] Pufferfish SIMD Utilities
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
