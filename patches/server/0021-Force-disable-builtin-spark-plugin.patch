@@ -1,0 +1,132 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Tue, 6 Aug 2024 17:53:07 +0800
+Subject: [PATCH] Force disable builtin spark plugin
+
+
+diff --git a/src/main/java/io/papermc/paper/plugin/provider/source/FileProviderSource.java b/src/main/java/io/papermc/paper/plugin/provider/source/FileProviderSource.java
+index 48604e7f96adc9e226e034054c5e2bad0b024eb5..99f0c1e4d3437154a1062b0a8f94b7a04dd935af 100644
+--- a/src/main/java/io/papermc/paper/plugin/provider/source/FileProviderSource.java
++++ b/src/main/java/io/papermc/paper/plugin/provider/source/FileProviderSource.java
+@@ -88,7 +88,7 @@ public class FileProviderSource implements ProviderSource<Path, Path> {
+         }
+ 
+         final PluginMeta config = type.getConfig(file);
+-        if ((config.getName().equals("spark") && config.getMainClass().equals("me.lucko.spark.bukkit.BukkitSparkPlugin")) && !SparksFly.isPluginPreferred()) {
++        if ((config.getName().equals("spark") && config.getMainClass().equals("me.lucko.spark.bukkit.BukkitSparkPlugin")) && !SparksFly.isPluginPreferred() && false) { // Luminol - Force disable builtin spark
+             LOGGER.info("The spark plugin will not be loaded as this server bundles the spark profiler.");
+             return;
+         }
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 242d990c55ddd0629eb5e55a7c5c46d6d51beb17..39c5af1e3a4c2abbd02ccc3574d73aa06affcdf2 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -778,8 +778,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         // Paper end - Configurable player collision
+ 
+         this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
+-        this.server.spark.registerCommandBeforePlugins(this.server); // Paper - spark
+-        this.server.spark.enableAfterPlugins(this.server); // Paper - spark
++        if (false) this.server.spark.registerCommandBeforePlugins(this.server); // Paper - spark // Luminol - Force disable builtin spark
++        if (false) this.server.spark.enableAfterPlugins(this.server); // Paper - spark // Luminol - Force disable builtin spark
+         if (io.papermc.paper.plugin.PluginInitializerManager.instance().pluginRemapper != null) io.papermc.paper.plugin.PluginInitializerManager.instance().pluginRemapper.pluginsEnabled(); // Paper - Remap plugins
+         io.papermc.paper.command.brigadier.PaperCommands.INSTANCE.setValid(); // Paper - reset invalid state for event fire below
+         io.papermc.paper.plugin.lifecycle.event.LifecycleEventRunner.INSTANCE.callReloadableRegistrarEvent(io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS, io.papermc.paper.command.brigadier.PaperCommands.INSTANCE, org.bukkit.plugin.Plugin.class, io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent.Cause.INITIAL); // Paper - call commands event for regular plugins
+@@ -1093,7 +1093,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         MinecraftServer.LOGGER.info("Stopping server");
+         Commands.COMMAND_SENDING_POOL.shutdownNow(); // Paper - Perf: Async command map building; Shutdown and don't bother finishing
+         MinecraftTimings.stopServer(); // Paper
+-        this.server.spark.disable(); // Paper - spark
++        if (false) this.server.spark.disable(); // Paper - spark // Luminol - Force disable builtin spark
+         // CraftBukkit start
+         if (this.server != null) {
+             this.server.disablePlugins();
+@@ -1309,7 +1309,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+             // tasks are default scheduled at -1 + delay, and first tick will tick at 1
+             final long actualDoneTimeMs = System.currentTimeMillis() - org.bukkit.craftbukkit.Main.BOOT_TIME.toEpochMilli(); // Paper - Add total time
+             LOGGER.info("Done ({})! For help, type \"help\"", String.format(java.util.Locale.ROOT, "%.3fs", actualDoneTimeMs / 1000.00D)); // Paper - Add total time
+-            this.server.spark.enableBeforePlugins(); // Paper - spark
++            if (false) this.server.spark.enableBeforePlugins(); // Paper - spark // Luminol - Force disable builtin spark
+             org.spigotmc.WatchdogThread.tick();
+             // Paper end - Improved Watchdog Support
+             org.spigotmc.WatchdogThread.hasStarted = true; // Paper
+@@ -1673,7 +1673,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         BooleanSupplier shouldKeepTicking = () -> {
+             return scheduledEnd - System.nanoTime() > targetBuffer;
+         };
+-        this.server.spark.tickStart(); // Paper - spark
++        if (false)this.server.spark.tickStart(); // Paper - spark // Luminol - Force disable builtin spark
+         new com.destroystokyo.paper.event.server.ServerTickStartEvent((int)region.getCurrentTick()).callEvent(); // Paper
+         // Folia end - region threading
+         co.aikar.timings.TimingsManager.FULL_SERVER_TICK.startTiming(); // Paper
+@@ -1759,7 +1759,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         long endTime = System.nanoTime();
+         long remaining = scheduledEnd - endTime; // Folia - region ticking
+         new com.destroystokyo.paper.event.server.ServerTickEndEvent((int)io.papermc.paper.threadedregions.RegionizedServer.getCurrentTick(), ((double)(endTime - startTime) / 1000000D), remaining).callEvent(); // Folia - region ticking
+-        this.server.spark.tickEnd(((double)(endTime - startTime) / 1000000D)); // Paper - spark // Folia - region ticking
++        if (false) this.server.spark.tickEnd(((double)(endTime - startTime) / 1000000D)); // Paper - spark // Folia - region ticking // Luminol - Force disable builtin spark
+         // Paper end - Server Tick Events
+         this.profiler.push("tallying");
+         // Folia - region threading
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 79b79a5d41dc3568ae6a3d7701e6ac6b91045e36..cd28f741343c443ff4728fc0aa5526b6d66d2d9b 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -228,7 +228,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         // Paper end - initialize global and world-defaults configuration
+         me.earthme.luminol.config.LuminolConfig.loadConfig(); //Luminol - load config file
+         me.earthme.luminol.config.LuminolConfig.setupLatch(); //Luminol - load config file
+-        this.server.spark.enableEarlyIfRequested(); // Paper - spark
++        if (false) this.server.spark.enableEarlyIfRequested(); // Paper - spark // Luminol - Force disable builtin spark
+         // Paper start - fix converting txt to json file; convert old users earlier after PlayerList creation but before file load/save
+         if (this.convertOldUsers()) {
+             this.getProfileCache().save(false); // Paper
+@@ -238,7 +238,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         org.spigotmc.WatchdogThread.doStart(org.spigotmc.SpigotConfig.timeoutTime, org.spigotmc.SpigotConfig.restartOnCrash); // Paper - start watchdog thread
+         thread.start(); // Paper - Enhance console tab completions for brigadier commands; start console thread after MinecraftServer.console & PaperConfig are initialized
+         io.papermc.paper.command.PaperCommands.registerCommands(this); // Paper - setup /paper command
+-        this.server.spark.registerCommandBeforePlugins(this.server); // Paper - spark
++        if (false) this.server.spark.registerCommandBeforePlugins(this.server); // Paper - spark // Luminol - Force disable builtin spark
+         com.destroystokyo.paper.Metrics.PaperMetrics.startMetrics(); // Paper - start metrics
+         com.destroystokyo.paper.VersionHistoryManager.INSTANCE.getClass(); // Paper - load version history now
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 60b10a6e1fcc06430c5cacd4c49d92e1de6e4778..050ec65f1b488677781b74b824b5b5dde184c7e0 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -309,7 +309,7 @@ public final class CraftServer implements Server {
+     public static Exception excessiveVelEx; // Paper - Velocity warnings
+     private final io.papermc.paper.logging.SysoutCatcher sysoutCatcher = new io.papermc.paper.logging.SysoutCatcher(); // Paper
+     private final io.papermc.paper.potion.PaperPotionBrewer potionBrewer; // Paper - Custom Potion Mixes
+-    public final io.papermc.paper.SparksFly spark; // Paper - spark
++    public io.papermc.paper.SparksFly spark; // Paper - spark // Luminol - Force disable builtin spark
+ 
+     // Paper start - Folia region threading API
+     private final io.papermc.paper.threadedregions.scheduler.FoliaRegionScheduler regionizedScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaRegionScheduler(); // Folia - region threading
+@@ -481,7 +481,7 @@ public final class CraftServer implements Server {
+         }
+         this.potionBrewer = new io.papermc.paper.potion.PaperPotionBrewer(console); // Paper - custom potion mixes
+         datapackManager = new io.papermc.paper.datapack.PaperDatapackManager(console.getPackRepository()); // Paper
+-        this.spark = new io.papermc.paper.SparksFly(this); // Paper - spark
++        if (false) this.spark = new io.papermc.paper.SparksFly(this); // Paper - spark // Luminol - Force disable builtin spark
+     }
+ 
+     public boolean getCommandBlockOverride(String command) {
+@@ -1144,7 +1144,7 @@ public final class CraftServer implements Server {
+         this.reloadData();
+         org.spigotmc.SpigotConfig.registerCommands(); // Spigot
+         io.papermc.paper.command.PaperCommands.registerCommands(this.console); // Paper
+-        this.spark.registerCommandBeforePlugins(this); // Paper - spark
++        if (false) this.spark.registerCommandBeforePlugins(this); // Paper - spark // Luminol - Force disable builtin spark
+         this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
+         this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
+ 
+@@ -1173,7 +1173,7 @@ public final class CraftServer implements Server {
+         this.loadPlugins();
+         this.enablePlugins(PluginLoadOrder.STARTUP);
+         this.enablePlugins(PluginLoadOrder.POSTWORLD);
+-        this.spark.registerCommandAfterPlugins(this); // Paper - spark
++        if (false) this.spark.registerCommandAfterPlugins(this); // Paper - spark // Luminol - Force disable builtin spark
+         if (io.papermc.paper.plugin.PluginInitializerManager.instance().pluginRemapper != null) io.papermc.paper.plugin.PluginInitializerManager.instance().pluginRemapper.pluginsEnabled(); // Paper - Remap plugins
+         // Paper start - brigadier command API
+         io.papermc.paper.command.brigadier.PaperCommands.INSTANCE.setValid(); // to clear invalid state for event fire below

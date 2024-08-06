@@ -5,7 +5,7 @@ Subject: [PATCH] FoliaPR Add TPS From Region
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 60b10a6e1fcc06430c5cacd4c49d92e1de6e4778..956207ae37269884ba2852123c6503fcc2e0b9ba 100644
+index 050ec65f1b488677781b74b824b5b5dde184c7e0..2d53fe0a34ccfdeac159d2912f062a5aea1e3717 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -3071,6 +3071,42 @@ public final class CraftServer implements Server {
