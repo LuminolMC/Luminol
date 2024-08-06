@@ -23,23 +23,24 @@ index c2d3d699edfd60d773af96116c5663c812c691e9..1049681dfa7e48b4b6c29f4b1a09c689
  tasks.jar {
      archiveClassifier.set("dev")
  
-diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java
+diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/SIMDConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/SIMDConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b2b4a91925145b331a604384afee23ab276d76be
+index 0000000000000000000000000000000000000000..61d7dc3eae26a1e27794054c424bf9c5ce61b17d
 --- /dev/null
-+++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java
-@@ -0,0 +1,52 @@
++++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/SIMDConfig.java
+@@ -0,0 +1,53 @@
 +package me.earthme.luminol.config.modules.optimizations;
 +
 +import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 +import com.mojang.logging.LogUtils;
++import gg.pufferfish.pufferfish.simd.SIMDDetection;
 +import me.earthme.luminol.config.ConfigInfo;
 +import me.earthme.luminol.config.DoNotLoad;
 +import me.earthme.luminol.config.EnumConfigCategory;
 +import me.earthme.luminol.config.IConfigModule;
 +import org.slf4j.Logger;
 +
-+public class SMIDConfig implements IConfigModule {
++public class SIMDConfig implements IConfigModule {
 +    @DoNotLoad
 +    private static final Logger LOGGER = LogUtils.getLogger();
 +    @ConfigInfo(baseName = "enabled")
@@ -52,7 +53,7 @@ index 0000000000000000000000000000000000000000..b2b4a91925145b331a604384afee23ab
 +
 +    @Override
 +    public String getBaseName() {
-+        return "use_smid";
++        return "use_simd";
 +    }
 +
 +    @Override
@@ -64,7 +65,7 @@ index 0000000000000000000000000000000000000000..b2b4a91925145b331a604384afee23ab
 +        // Attempt to detect vectorization
 +        try {
 +            SIMDDetection.isEnabled = SIMDDetection.canEnable(LOGGER);
-+            SIMDDetection.versionLimited = SIMDDetection.getJavaVersion() < 17 || SIMDDetection.getJavaVersion() > 21;
++            SIMDDetection.versionLimited = SIMDDetection.getJavaVersion() < 17;
 +        } catch (NoClassDefFoundError | Exception ignored) {
 +            ignored.printStackTrace();
 +        }
@@ -72,7 +73,7 @@ index 0000000000000000000000000000000000000000..b2b4a91925145b331a604384afee23ab
 +        if (SIMDDetection.isEnabled) {
 +            LOGGER.info("SIMD operations detected as functional. Will replace some operations with faster versions.");
 +        } else if (SIMDDetection.versionLimited) {
-+            LOGGER.warn("Will not enable SIMD! These optimizations are only safely supported on Java 17-21.");
++            LOGGER.warn("Will not enable SIMD! These optimizations are only safely supported on Java 17+.");
 +        } else {
 +            LOGGER.warn("SIMD operations are available for your server, but are not configured!");
 +            LOGGER.warn("To enable additional optimizations, add \"--add-modules=jdk.incubator.vector\" to your startup flags, BEFORE the \"-jar\".");
