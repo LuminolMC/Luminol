@@ -25,7 +25,7 @@ index c2d3d699edfd60d773af96116c5663c812c691e9..1049681dfa7e48b4b6c29f4b1a09c689
  
 diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/SIMDConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/SIMDConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..35b79cfdef8c3c873491bd52f9a8e2b0f8112499
+index 0000000000000000000000000000000000000000..76cea165bcef0794a66ef7c29721f7716869420f
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/SIMDConfig.java
 @@ -0,0 +1,53 @@
@@ -65,7 +65,7 @@ index 0000000000000000000000000000000000000000..35b79cfdef8c3c873491bd52f9a8e2b0
 +        // Attempt to detect vectorization
 +        try {
 +            SIMDDetection.isEnabled = SIMDDetection.canEnable(LOGGER);
-+            SIMDDetection.versionLimited = SIMDDetection.getJavaVersion() < 17 || SIMDDetection.getJavaVersion() > 21;
++            SIMDDetection.versionLimited = SIMDDetection.getJavaVersion() < 17;
 +        } catch (NoClassDefFoundError | Exception ignored) {
 +            ignored.printStackTrace();
 +        }
@@ -73,7 +73,7 @@ index 0000000000000000000000000000000000000000..35b79cfdef8c3c873491bd52f9a8e2b0
 +        if (SIMDDetection.isEnabled) {
 +            LOGGER.info("SIMD operations detected as functional. Will replace some operations with faster versions.");
 +        } else if (SIMDDetection.versionLimited) {
-+            LOGGER.warn("Will not enable SIMD! These optimizations are only safely supported on Java 17-21.");
++            LOGGER.warn("Will not enable SIMD! These optimizations are only safely supported on Java 17+.");
 +        } else {
 +            LOGGER.warn("SIMD operations are available for your server, but are not configured!");
 +            LOGGER.warn("To enable additional optimizations, add \"--add-modules=jdk.incubator.vector\" to your startup flags, BEFORE the \"-jar\".");
