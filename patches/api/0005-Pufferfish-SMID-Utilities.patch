@@ -1,0 +1,111 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Tue, 6 Aug 2024 14:32:22 +0800
+Subject: [PATCH] Pufferfish SMID Utilities
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 540fe7e2c110e79c3742f229b3ed8c54b101d260..3f04b36591899040a8b602db6475de492755ffb5 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -130,6 +130,13 @@ val generateApiVersioningFile by tasks.registering {
+     }
+ }
+ 
++// Pufferfish Start
++tasks.withType<JavaCompile> {
++    val compilerArgs = options.compilerArgs
++    compilerArgs.add("--add-modules=jdk.incubator.vector")
++}
++// Pufferfish End
++
+ tasks.jar {
+     from(generateApiVersioningFile.map { it.outputs.files.singleFile }) {
+         into("META-INF/maven/${project.group}/${project.name}")
+diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..3441cdad70da1bd523c5933b1a914688718c2657
+--- /dev/null
++++ b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
+@@ -0,0 +1,40 @@
++package gg.pufferfish.pufferfish.simd;
++
++import java.util.logging.Level;
++import java.util.logging.Logger;
++import jdk.incubator.vector.FloatVector;
++import jdk.incubator.vector.IntVector;
++import jdk.incubator.vector.VectorSpecies;
++
++/**
++ * Basically, java is annoying and we have to push this out to its own class.
++ */
++@Deprecated
++public class SIMDChecker {
++	
++	@Deprecated
++	public static boolean canEnable(Logger logger) {
++		try {
++			if (SIMDDetection.getJavaVersion() < 17 || SIMDDetection.getJavaVersion() > 21) {
++				return false;
++			} else {
++				SIMDDetection.testRun = true;
++				
++				VectorSpecies<Integer> ISPEC = IntVector.SPECIES_PREFERRED;
++				VectorSpecies<Float> FSPEC = FloatVector.SPECIES_PREFERRED;
++				
++				logger.log(Level.INFO, "Max SIMD vector size on this system is " + ISPEC.vectorBitSize() + " bits (int)");
++				logger.log(Level.INFO, "Max SIMD vector size on this system is " + FSPEC.vectorBitSize() + " bits (float)");
++				
++				if (ISPEC.elementSize() < 2 || FSPEC.elementSize() < 2) {
++					logger.log(Level.WARNING, "SIMD is not properly supported on this system!");
++					return false;
++				}
++
++				return true;
++			}
++		} catch (NoClassDefFoundError | Exception ignored) {} // Basically, we don't do anything. This lets us detect if it's not functional and disable it.
++		return false;
++	}
++	
++}
+diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDDetection.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDDetection.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..a84889d3e9cfc4d7ab5f867820a6484c6070711b
+--- /dev/null
++++ b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDDetection.java
+@@ -0,0 +1,35 @@
++package gg.pufferfish.pufferfish.simd;
++
++import java.util.logging.Logger;
++
++@Deprecated
++public class SIMDDetection {
++	
++	public static boolean isEnabled = false;
++	public static boolean versionLimited = false;
++	public static boolean testRun = false;
++	
++	@Deprecated
++	public static boolean canEnable(Logger logger) {
++		try {
++			return SIMDChecker.canEnable(logger);
++		} catch (NoClassDefFoundError | Exception ignored) {
++			return false;
++		}
++	}
++	
++	@Deprecated
++	public static int getJavaVersion() {
++		// https://stackoverflow.com/a/2591122
++		String version = System.getProperty("java.version");
++		if(version.startsWith("1.")) {
++			version = version.substring(2, 3);
++		} else {
++			int dot = version.indexOf(".");
++			if(dot != -1) { version = version.substring(0, dot); }
++		}
++		version = version.split("-")[0]; // Azul is stupid
++		return Integer.parseInt(version);
++	}
++	
++}

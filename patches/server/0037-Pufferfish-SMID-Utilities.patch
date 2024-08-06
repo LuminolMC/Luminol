@@ -1,0 +1,83 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Tue, 6 Aug 2024 14:31:20 +0800
+Subject: [PATCH] Pufferfish SMID Utilities
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index c2d3d699edfd60d773af96116c5663c812c691e9..1049681dfa7e48b4b6c29f4b1a09c689ac918500 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -76,6 +76,14 @@ paperweight {
+     craftBukkitPackageVersion.set("v1_21_R1") // also needs to be updated in MappingEnvironment
+ }
+ 
++
++// Pufferfish Start
++tasks.withType<JavaCompile> {
++    val compilerArgs = options.compilerArgs
++    compilerArgs.add("--add-modules=jdk.incubator.vector")
++}
++// Pufferfish End
++
+ tasks.jar {
+     archiveClassifier.set("dev")
+ 
+diff --git a/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java b/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..b2b4a91925145b331a604384afee23ab276d76be
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/optimizations/SMIDConfig.java
+@@ -0,0 +1,52 @@
++package me.earthme.luminol.config.modules.optimizations;
++
++import com.electronwill.nightconfig.core.file.CommentedFileConfig;
++import com.mojang.logging.LogUtils;
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.DoNotLoad;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++import org.slf4j.Logger;
++
++public class SMIDConfig implements IConfigModule {
++    @DoNotLoad
++    private static final Logger LOGGER = LogUtils.getLogger();
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = true;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.OPTIMIZATIONS;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "use_smid";
++    }
++
++    @Override
++    public void onLoaded(CommentedFileConfig configInstance) {
++        if (!enabled){
++            return;
++        }
++
++        // Attempt to detect vectorization
++        try {
++            SIMDDetection.isEnabled = SIMDDetection.canEnable(LOGGER);
++            SIMDDetection.versionLimited = SIMDDetection.getJavaVersion() < 17 || SIMDDetection.getJavaVersion() > 21;
++        } catch (NoClassDefFoundError | Exception ignored) {
++            ignored.printStackTrace();
++        }
++
++        if (SIMDDetection.isEnabled) {
++            LOGGER.info("SIMD operations detected as functional. Will replace some operations with faster versions.");
++        } else if (SIMDDetection.versionLimited) {
++            LOGGER.warn("Will not enable SIMD! These optimizations are only safely supported on Java 17-21.");
++        } else {
++            LOGGER.warn("SIMD operations are available for your server, but are not configured!");
++            LOGGER.warn("To enable additional optimizations, add \"--add-modules=jdk.incubator.vector\" to your startup flags, BEFORE the \"-jar\".");
++            LOGGER.warn("If you have already added this flag, then SIMD operations are not supported on your JVM or CPU.");
++            LOGGER.warn("Debug: Java: " + System.getProperty("java.version") + ", test run: " + SIMDDetection.testRun);
++        }
++    }
++}
