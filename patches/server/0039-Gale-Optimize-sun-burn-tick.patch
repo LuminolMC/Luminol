@@ -5,7 +5,7 @@ Subject: [PATCH] Gale Optimize sun burn tick
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 05b72a949821f9fdac227e09343e1dd98d4a810a..ab60afc23f8caa7603efe5e7eb26cf6e27801786 100644
+index 577a194e9d9828520560e3546dba8532ca18782a..6870db1f03e44e8023e173a0d7a6a7f09f41e989 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -315,7 +315,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
