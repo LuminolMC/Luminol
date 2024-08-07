@@ -5,7 +5,7 @@ Subject: [PATCH] Kaiiju Vanilla end portal teleportation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index a90820a672379639e89c5bb71abcd9aa69227473..794f08a815672b18d22416fc5787f886f895f7be 100644
+index a90820a672379639e89c5bb71abcd9aa69227473..2072a4ca67f131212b71570e1eeb0d4755b64993 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -109,6 +109,7 @@ import net.minecraft.world.level.block.Rotation;
@@ -33,7 +33,7 @@ index a90820a672379639e89c5bb71abcd9aa69227473..794f08a815672b18d22416fc5787f886
                              portalInfoCompletable.complete(
                                  new net.minecraft.world.level.portal.DimensionTransition(
 -                                    destination, Vec3.atBottomCenterOf(targetPos.below()), Vec3.ZERO, 90.0f, 0.0f,
-+                                    destination, Vec3.atBottomCenterOf(targetPos.below()), this.getDeltaMovement(), 90.0f, 0.0f, // Kaiiju - Vanilla end teleportation
++                                    destination, finalPos, this.getDeltaMovement(), 90.0f, 0.0f, // Kaiiju - Vanilla end teleportation
                                      DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET),
                                      org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.END_PORTAL
                                  )
