@@ -44,10 +44,10 @@ index ce388e0ef231d7d73f75f5778c58eb40f6402f0f..7f8473a6db78dc652e0ccfdb7cc03812
          private final Long2ReferenceOpenHashMap<ThreadedRegionSection<R, S>> sectionByKey = new Long2ReferenceOpenHashMap<>();
          private final ReferenceOpenHashSet<ThreadedRegionSection<R, S>> deadSections = new ReferenceOpenHashSet<>();
 diff --git a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
-index c43b263e6502ba48a876803385f8d05c5e84ba3e..bfabe758e61e196fd9f4abb3ee793ef3be420c6d 100644
+index a18da3f3f245031f0547efe9b52a1f2a219ef04a..5e390b2b88d3028f2b2eb07432a9b2a1b2851a3e 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/TickRegionScheduler.java
-@@ -357,6 +357,47 @@ public final class TickRegionScheduler {
+@@ -354,6 +354,47 @@ public final class TickRegionScheduler {
              return !this.markNotTicking() || this.cancelled.get() ? null : Boolean.valueOf(ret);
          }
  

@@ -2,9 +2,9 @@ name: Luminol CI - dev/1.21
 
 on:
     push:
-      branches: [ "dev/1.21" ]
+      branches: [ "dev/1.21.1" ]
     pull_request:
-      branches: [ "de/1.21" ]
+      branches: [ "de/1.21.1" ]
 
 permissions: write-all
 

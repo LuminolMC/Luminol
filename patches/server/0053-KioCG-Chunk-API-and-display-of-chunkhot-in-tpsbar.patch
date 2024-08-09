@@ -441,7 +441,7 @@ index c1b0cf6e09914404d1fcf302af03666342e1dc30..dd6c872b8e655119edab5f978067381a
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index e0359a8857387428d44c19af8dd0e2e743a0b2b5..79f96e698613fdd3bcdbfa3b67870555dc0be46d 100644
+index ea95a382561dcf2bb958a08351d493087a49336a..054587c3a072b0480a3cff0ef9148d708e600baf 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 @@ -92,6 +92,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
@@ -452,7 +452,7 @@ index e0359a8857387428d44c19af8dd0e2e743a0b2b5..79f96e698613fdd3bcdbfa3b67870555
  
      public LevelChunk(Level world, ChunkPos pos) {
          this(world, pos, UpgradeData.EMPTY, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, (LevelChunkSection[]) null, (LevelChunk.PostLoadProcessor) null, (BlendingData) null);
-@@ -1046,6 +1047,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
+@@ -1051,6 +1052,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
  
                          gameprofilerfiller.push(this::getType);
                          this.blockEntity.tickTimer.startTiming(); // Spigot
@@ -460,7 +460,7 @@ index e0359a8857387428d44c19af8dd0e2e743a0b2b5..79f96e698613fdd3bcdbfa3b67870555
                          profiler.startTimer(timerId); try { // Folia - profiler
                          BlockState iblockdata = LevelChunk.this.getBlockState(blockposition);
  
-@@ -1076,6 +1078,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
+@@ -1081,6 +1083,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
                      } finally {
                          this.blockEntity.tickTimer.stopTiming();
                          // Spigot end
