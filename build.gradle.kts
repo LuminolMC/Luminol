@@ -112,25 +112,11 @@ allprojects {
     publishing {
         repositories {
             maven {
-                name = "githubPackage"
-                url = uri("https://maven.pkg.github.com/LuminolMC/Luminol")
-
-                credentials.username = System.getenv("GITHUB_USERNAME")
-                credentials.password = System.getenv("GITHUB_TOKEN")
-            }
-
-            maven {
                 name = "moliaMavenRepo"
-                url = uri("https://maven.moliatopia.icu/repository/maven-releases/")
+                url = uri("https://maven.moliatopia.icu/repository/maven-snapshots/")
 
                 credentials.username = System.getenv("MAVEN_REPO_USER")
                 credentials.password = System.getenv("MAVEN_REPO_PASSWORD")
-            }
-
-            publications {
-                register<MavenPublication>("gpr") {
-                    from(components["java"])
-                }
             }
         }
     }
