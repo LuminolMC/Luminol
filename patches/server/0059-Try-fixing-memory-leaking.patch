@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Mon, 12 Aug 2024 10:03:27 +0800
+Subject: [PATCH] Try fixing memory leaking
+
+Thanks to PedroMPagani(https://github.com/PedroMPagani) for finding what caused this leaking issue
+
+diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionizedWorldData.java b/src/main/java/io/papermc/paper/threadedregions/RegionizedWorldData.java
+index 5dc4c8a5b896f519be5414d4a53a71144c225324..7d4f66752c2f380f3c6c552d5bc7907b9ad69c6e 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/RegionizedWorldData.java
++++ b/src/main/java/io/papermc/paper/threadedregions/RegionizedWorldData.java
+@@ -549,7 +549,7 @@ public final class RegionizedWorldData {
+ 
+     public void addLoadedEntity(final Entity entity) {
+         if (this.loadedEntities.add(entity)) {
+-            this.toProcessTrackingUnloading.remove(entity);
++            //this.toProcessTrackingUnloading.remove(entity); // Luminol - Try fixing memory leaking
+         }
+     }
+ 
+@@ -559,7 +559,7 @@ public final class RegionizedWorldData {
+ 
+     public void removeLoadedEntity(final Entity entity) {
+         if (this.loadedEntities.remove(entity)) {
+-            this.toProcessTrackingUnloading.add(entity);
++            //this.toProcessTrackingUnloading.add(entity);  // Luminol - Try fixing memory leaking
+         }
+     }
+ 
+@@ -567,6 +567,7 @@ public final class RegionizedWorldData {
+         return this.loadedEntities;
+     }
+ 
++    @java.lang.Deprecated  // Luminol - Try fixing memory leaking
+     public Entity[] takeTrackingUnloads() {
+         final Entity[] ret = Arrays.copyOf(this.toProcessTrackingUnloading.getRawData(), this.toProcessTrackingUnloading.size(), Entity[].class);
+ 
