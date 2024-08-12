@@ -5,7 +5,7 @@ Subject: [PATCH] Pufferfish SIMD Utilities
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 540fe7e2c110e79c3742f229b3ed8c54b101d260..3f04b36591899040a8b602db6475de492755ffb5 100644
+index 540fe7e2c110e79c3742f229b3ed8c54b101d260..3dff16a345086778a451067db90e0820943ca2a7 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -130,6 +130,13 @@ val generateApiVersioningFile by tasks.registering {
@@ -22,6 +22,14 @@ index 540fe7e2c110e79c3742f229b3ed8c54b101d260..3f04b36591899040a8b602db6475de49
  tasks.jar {
      from(generateApiVersioningFile.map { it.outputs.files.singleFile }) {
          into("META-INF/maven/${project.group}/${project.name}")
+@@ -188,6 +195,7 @@ tasks.withType<Javadoc> {
+             into("build/docs/javadoc")
+         }
+     }
++    options.addStringOption("-add-modules", "jdk.incubator.vector") // Pufferfish - SIMD support
+ }
+ 
+ tasks.test {
 diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..f00c008c03e2533f568085838cf13cb9b5b32cd9
