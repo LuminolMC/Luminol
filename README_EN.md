@@ -32,6 +32,12 @@ To build a paperclip jar, you need to run the following command. You can find th
 For gradle:
 
 ```kotlin
+repositories {
+    maven {
+        url = "http://maven.moliatopia.icu/repository/maven-snapshots/"
+    }
+}
+
 dependencies {
     compileOnly("me.earthme.luminol:luminol-api:1.20.6-R0.1-SNAPSHOT")
 }
@@ -40,11 +46,20 @@ dependencies {
 For maven
 
 ```xml
-<dependency>
-  <groupId>me.earthme.luminol</groupId>
-  <artifactId>luminol-api</artifactId>
-  <version>1.20.6-R0.1-SNAPSHOT</version>
-</dependency>
+<repositories>
+    <repository>
+        <id>moliatopia</id>
+        <url>http://maven.moliatopia.icu/repository/maven-snapshots/</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>me.earthme.luminol</groupId>
+        <artifactId>luminol-api</artifactId>
+        <version>1.20.6-R0.1-SNAPSHOT</version>
+    </dependency>
+</dependencies>
 ```
 
 ## Contact
