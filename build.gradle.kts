@@ -107,6 +107,14 @@ allprojects {
                 credentials.password = System.getenv("GITHUB_TOKEN")
             }
 
+            maven {
+                name = "moliaMavenRepo"
+                url = uri("https://maven.moliatopia.icu/repository/maven-releases/")
+
+                credentials.username = System.getenv("MAVEN_REPO_USER")
+                credentials.password = System.getenv("MAVEN_REPO_PASSWORD")
+            }
+
             publications {
                 register<MavenPublication>("gpr") {
                     from(components["java"])
@@ -114,7 +122,7 @@ allprojects {
             }
         }
     }
- }
+}
 
 publishing {
     if (project.hasProperty("publishDevBundle")) {
