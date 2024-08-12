@@ -36,7 +36,10 @@ jobs:
       - name: CreateJar
         run: gradle createMojmapBundlerJar createMojmapPaperclipJar
       - name: Publish to repo
-        run: sh scripts/PushToMaven.sh
+        run: |
+          export MAVEN_REPO_USER=${{ secrets.MAVEN_REPO_USER }}
+          export MAVEN_REPO_PASSWORD=${{ secrets.MAVEN_REPO_PASSWORD }}
+          ./gradlew publish -PpublishDevBundle=true
       - name: SetENV
         run: sh scripts/SetENV.sh
       - name: Upload Artifact
