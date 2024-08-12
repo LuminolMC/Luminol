@@ -12,6 +12,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: default
+    env:
+      MAVEN_REPO_USER: ${{ secrets.MAVEN_REPO_USER }}
+      MAVEN_REPO_PASSWORD: ${{ secrets.MAVEN_REPO_PASSWORD }}
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v4
