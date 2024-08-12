@@ -32,6 +32,13 @@ jobs:
         run: gradle applyPatches
       - name: CreateJar
         run: gradle createMojmapBundlerJar createMojmapPaperclipJar
+      - name: Publish to repo
+        run: |
+          export GITHUB_USERNAME=LuminolCI
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          export MAVEN_REPO_USER=${{ secrets.MAVEN_REPO_USER }}
+          export MAVEN_REPO_PASSWORD=${{ secrets.MAVEN_REPO_PASSWORD }}
+          ./gradlew publish -PpublishDevBundle=true
       - name: SetENV
         run: sh scripts/SetENV.sh
       - name: Upload Artifact
