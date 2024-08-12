@@ -1,4 +1,4 @@
-name: Luminol CI - dev/1.21
+name: Luminol CI - dev/1.21.1
 
 on:
     push:
