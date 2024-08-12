@@ -1,0 +1,106 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Mon, 12 Aug 2024 21:29:59 +0800
+Subject: [PATCH] Add config to disable async catchers
+
+
+diff --git a/src/main/java/io/papermc/paper/util/TickThread.java b/src/main/java/io/papermc/paper/util/TickThread.java
+index 906f1c9e619a924c622acc76652a4569305edc8d..aaa72fd0bb866ac18ee06e8f50b1374b24c4a8de 100644
+--- a/src/main/java/io/papermc/paper/util/TickThread.java
++++ b/src/main/java/io/papermc/paper/util/TickThread.java
+@@ -46,49 +46,49 @@ public class TickThread extends Thread {
+      */
+     @Deprecated
+     public static void ensureTickThread(final String reason) {
+-        if (!isTickThread()) {
++        if (!isTickThread() && !me.earthme.luminol.config.modules.experiment.DisableAsyncCatcherConfig.enabled) { // Luminol
+             MinecraftServer.LOGGER.error("Thread " + Thread.currentThread().getName() + " failed main thread check: " + reason, new Throwable());
+             throw new IllegalStateException(reason);
+         }
+     }
+ 
+     public static void ensureTickThread(final ServerLevel world, final BlockPos pos, final String reason) {
+-        if (!isTickThreadFor(world, pos)) {
++        if (!isTickThreadFor(world, pos) && !me.earthme.luminol.config.modules.experiment.DisableAsyncCatcherConfig.enabled) { // Luminol
+             MinecraftServer.LOGGER.error("Thread " + Thread.currentThread().getName() + " failed main thread check: " + reason, new Throwable());
+             throw new IllegalStateException(reason);
+         }
+     }
+ 
+     public static void ensureTickThread(final ServerLevel world, final ChunkPos pos, final String reason) {
+-        if (!isTickThreadFor(world, pos)) {
++        if (!isTickThreadFor(world, pos) && !me.earthme.luminol.config.modules.experiment.DisableAsyncCatcherConfig.enabled) { // Luminol
+             MinecraftServer.LOGGER.error("Thread " + Thread.currentThread().getName() + " failed main thread check: " + reason, new Throwable());
+             throw new IllegalStateException(reason);
+         }
+     }
+ 
+     public static void ensureTickThread(final ServerLevel world, final int chunkX, final int chunkZ, final String reason) {
+-        if (!isTickThreadFor(world, chunkX, chunkZ)) {
++        if (!isTickThreadFor(world, chunkX, chunkZ) && !me.earthme.luminol.config.modules.experiment.DisableAsyncCatcherConfig.enabled) { // Luminol
+             MinecraftServer.LOGGER.error("Thread " + Thread.currentThread().getName() + " failed main thread check: " + reason, new Throwable());
+             throw new IllegalStateException(reason);
+         }
+     }
+ 
+     public static void ensureTickThread(final Entity entity, final String reason) {
+-        if (!isTickThreadFor(entity)) {
++        if (!isTickThreadFor(entity) && !me.earthme.luminol.config.modules.experiment.DisableAsyncCatcherConfig.enabled) { // Luminol
+             MinecraftServer.LOGGER.error("Thread " + Thread.currentThread().getName() + " failed main thread check: " + reason, new Throwable());
+             throw new IllegalStateException(reason);
+         }
+     }
+ 
+     public static void ensureTickThread(final ServerLevel world, final AABB aabb, final String reason) {
+-        if (!isTickThreadFor(world, aabb)) {
++        if (!isTickThreadFor(world, aabb) && !me.earthme.luminol.config.modules.experiment.DisableAsyncCatcherConfig.enabled) { // Luminol
+             MinecraftServer.LOGGER.error("Thread " + Thread.currentThread().getName() + " failed main thread check: " + reason, new Throwable());
+             throw new IllegalStateException(reason);
+         }
+     }
+ 
+     public static void ensureTickThread(final ServerLevel world, final double blockX, final double blockZ, final String reason) {
+-        if (!isTickThreadFor(world, blockX, blockZ)) {
++        if (!isTickThreadFor(world, blockX, blockZ) && !me.earthme.luminol.config.modules.experiment.DisableAsyncCatcherConfig.enabled) { // Luminol
+             MinecraftServer.LOGGER.error("Thread " + Thread.currentThread().getName() + " failed main thread check: " + reason, new Throwable());
+             throw new IllegalStateException(reason);
+         }
+diff --git a/src/main/java/me/earthme/luminol/config/modules/experiment/DisableAsyncCatcherConfig.java b/src/main/java/me/earthme/luminol/config/modules/experiment/DisableAsyncCatcherConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..61f653eeca366672ded88c491cf5c59e546e7301
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/experiment/DisableAsyncCatcherConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.experiment;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class DisableAsyncCatcherConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.EXPERIMENT;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "disable_async_catchers";
++    }
++}
+diff --git a/src/main/java/org/spigotmc/AsyncCatcher.java b/src/main/java/org/spigotmc/AsyncCatcher.java
+index 2e074c16dab1ead47914070329da0398c3274048..0a9151125539bb20f94a3d8b307b328d4abbe010 100644
+--- a/src/main/java/org/spigotmc/AsyncCatcher.java
++++ b/src/main/java/org/spigotmc/AsyncCatcher.java
+@@ -9,7 +9,7 @@ public class AsyncCatcher
+ 
+     public static void catchOp(String reason)
+     {
+-        if (!(io.papermc.paper.util.TickThread.isTickThread())) // Paper
++        if (!(io.papermc.paper.util.TickThread.isTickThread()) && !me.earthme.luminol.config.modules.experiment.DisableAsyncCatcherConfig.enabled)  // Luminol
+         {
+             MinecraftServer.LOGGER.error("Thread " + Thread.currentThread().getName() + " failed main thread check: " + reason, new Throwable()); // Paper
+             throw new IllegalStateException( "Asynchronous " + reason + "!" );

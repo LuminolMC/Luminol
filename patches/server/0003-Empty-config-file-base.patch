@@ -125,17 +125,18 @@ index 0000000000000000000000000000000000000000..fffc5eb4be4b78a886f3c340bd60f3a2
 +}
 diff --git a/src/main/java/me/earthme/luminol/config/EnumConfigCategory.java b/src/main/java/me/earthme/luminol/config/EnumConfigCategory.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ac2a92fe0ddbebb71ea4dd8c96f461d06ec29a4c
+index 0000000000000000000000000000000000000000..7b75405c468d24ed8aea5aa54ae5ac339118bf60
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/config/EnumConfigCategory.java
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,19 @@
 +package me.earthme.luminol.config;
 +
 +public enum EnumConfigCategory {
 +    OPTIMIZATIONS("optimizations"),
 +    FIXES("fixes"),
 +    MISC("misc"),
-+    GAMEPLAY("gameplay");
++    GAMEPLAY("gameplay"),
++    EXPERIMENT("experiment");
 +
 +    private final String baseKeyName;
 +
@@ -414,7 +415,7 @@ index 0000000000000000000000000000000000000000..2b4e64796bf01b0a5fcb306850cd6083
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index bd333ffb44798069e180cad67c07d86425253024..bbd3b57b83b71ae9840124909f3864c36254f02c 100644
+index cc40d3e69a3635ca7895876159f2821091c14a9a..e456435e2f0606e840c7f4c0ff522e49da6e40e1 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -222,6 +222,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface

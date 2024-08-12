@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Mon, 12 Aug 2024 21:30:50 +0800
+Subject: [PATCH] Add config to disable entity tick catchers
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/experiment/DisableEntityCatchConfig.java b/src/main/java/me/earthme/luminol/config/modules/experiment/DisableEntityCatchConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..0fd71151a85dd87c2294033e2e7512ac365caa62
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/experiment/DisableEntityCatchConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.experiment;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class DisableEntityCatchConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.EXPERIMENT;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "disable_entity_exception_catchers";
++    }
++}
+diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
+index 75ecbdb5bdacb4d4b27d60fe1c1a35c3a9c16207..fc43204a9234ebac35003121e7ae29e566a6386b 100644
+--- a/src/main/java/net/minecraft/world/level/Level.java
++++ b/src/main/java/net/minecraft/world/level/Level.java
+@@ -1351,7 +1351,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+             tickConsumer.accept(entity);
+             MinecraftServer.getServer().executeMidTickTasks(); // Paper - execute chunk tasks mid tick
+         } catch (Throwable throwable) {
+-            if (throwable instanceof ThreadDeath) throw throwable; // Paper
++            if (throwable instanceof ThreadDeath || me.earthme.luminol.config.modules.experiment.DisableEntityCatchConfig.enabled) throw throwable; // Paper // Luminol
+             // Paper start - Prevent block entity and entity crashes
+             final String msg = String.format("Entity threw exception at %s:%s,%s,%s", entity.level().getWorld().getName(), entity.getX(), entity.getY(), entity.getZ());
+             MinecraftServer.LOGGER.error(msg, throwable);
