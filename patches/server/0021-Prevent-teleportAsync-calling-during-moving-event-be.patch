@@ -35,7 +35,7 @@ index 0000000000000000000000000000000000000000..8f1449545d6d217b46a9ffae705123da
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index a278097ed9a8a6bada11bef1af2eda617f040ea8..e36672e7eb8393f58326091976ac45b5aa905013 100644
+index dafc6723abdd2bf5d566829c547019b62531b4bd..4242fe25e36e45b0a54d3aa7e72fc181728cff74 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -335,6 +335,10 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -50,7 +50,7 @@ index a278097ed9a8a6bada11bef1af2eda617f040ea8..e36672e7eb8393f58326091976ac45b5
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 73057c695addefd9c8fa0949743803fdeab60dda..a6a05faf46aa236e6734cfe2f6a90d25cf857c4d 100644
+index 76ab54485b5354c10316ac71ce7073732b397865..828356b9d7ceb7cdc6720d7394c44bd57cb971f1 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -686,7 +686,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -63,7 +63,7 @@ index 73057c695addefd9c8fa0949743803fdeab60dda..a6a05faf46aa236e6734cfe2f6a90d25
  
                      // If the event is cancelled we move the player back to their old location.
                      if (event.isCancelled()) {
-@@ -1562,7 +1564,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -1557,7 +1559,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
                                      Location oldTo = to.clone();
                                      PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);

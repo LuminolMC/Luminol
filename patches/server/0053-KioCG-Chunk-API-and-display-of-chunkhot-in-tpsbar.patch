@@ -272,7 +272,7 @@ index 80123dd30328336b02a5e2e3414ece44ba040ad2..6f4d5312c8140e0a49646e4f069b027a
          } else {
              passenger.stopRiding();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index e36672e7eb8393f58326091976ac45b5aa905013..aa9cd58dab22ffbc1922868e55aedeb6314cebe1 100644
+index 4242fe25e36e45b0a54d3aa7e72fc181728cff74..8c14833675e64548c9c60aa2d07cf5066ba59d3b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -339,6 +339,26 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -425,10 +425,10 @@ index b3377ed06d703f54e01ba174e5a06dc928cdff96..80af7979f9a2078a6c40c958ced1d487
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index c1b0cf6e09914404d1fcf302af03666342e1dc30..dd6c872b8e655119edab5f978067381a287d70ca 100644
+index b6d72a24a61b30b7c4ad967c196c3fbaa9d68ee9..30aa99541b303ecd8eda8f95e628c38434b36640 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -429,4 +429,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -435,4 +435,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
  
          return DoubleDoubleImmutablePair.of(d0, d1);
      }
@@ -501,7 +501,7 @@ index 45e262308aebafa377a2353661acdd122933b99e..10b2261169d3cd10d736273fe7703f50
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 572c85579237afa65ffb3409fa3b70c7f86fcb0f..9097f5c05e625bb798cc1dd030f176cdaee1ddde 100644
+index f1cb17f33363da495c263829efbbd18d4bd192cd..816cc239a5377ea03e1bb748451862560fb1e54f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -3585,4 +3585,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
