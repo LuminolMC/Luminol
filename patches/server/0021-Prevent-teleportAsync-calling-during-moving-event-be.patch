@@ -35,7 +35,7 @@ index 0000000000000000000000000000000000000000..8f1449545d6d217b46a9ffae705123da
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index dafc6723abdd2bf5d566829c547019b62531b4bd..4242fe25e36e45b0a54d3aa7e72fc181728cff74 100644
+index 7da908cfc85e2406e995d860a240aaf3f999b6e6..23541e9c5734334a1cd6e7730288d6dd6028efb0 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -335,6 +335,10 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -50,10 +50,10 @@ index dafc6723abdd2bf5d566829c547019b62531b4bd..4242fe25e36e45b0a54d3aa7e72fc181
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 76ab54485b5354c10316ac71ce7073732b397865..828356b9d7ceb7cdc6720d7394c44bd57cb971f1 100644
+index 3bc578038655a8ac36618e8ad6083765ee482079..4881348897be17e86c288eadda751c2fd94d02c8 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -686,7 +686,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -695,7 +695,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
                      Location oldTo = to.clone();
                      PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -63,7 +63,7 @@ index 76ab54485b5354c10316ac71ce7073732b397865..828356b9d7ceb7cdc6720d7394c44bd5
  
                      // If the event is cancelled we move the player back to their old location.
                      if (event.isCancelled()) {
-@@ -1557,7 +1559,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -1602,7 +1604,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
                                      Location oldTo = to.clone();
                                      PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
