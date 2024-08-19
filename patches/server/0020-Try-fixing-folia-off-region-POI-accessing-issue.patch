@@ -59,24 +59,16 @@ index aac1df9e2c0652bc6348af0404deba7465f82d42..ad812fd30d21ee3b7727105c66f2fc49
              }
          });
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/YieldJobSite.java b/src/main/java/net/minecraft/world/entity/ai/behavior/YieldJobSite.java
-index d1a9b62d3304916275dd6b4c4e783cf1563b5e21..972fcb2282a20a75fbc7fc9e82c9fe71d32d4a74 100644
+index d1a9b62d3304916275dd6b4c4e783cf1563b5e21..7d90e57b59ca1be1cc64ff6b53c64ea1f1767ad0 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/YieldJobSite.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/YieldJobSite.java
-@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
- import net.minecraft.core.GlobalPos;
- import net.minecraft.core.Holder;
- import net.minecraft.network.protocol.game.DebugPackets;
-+import net.minecraft.server.level.ServerLevel;
- import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.PathfinderMob;
- import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
-@@ -33,7 +34,10 @@ public class YieldJobSite {
+@@ -33,7 +33,10 @@ public class YieldJobSite {
                                  } else if (entity.getVillagerData().getProfession() != VillagerProfession.NONE) {
                                      return false;
                                  } else {
 -                                    BlockPos blockPos = context.<GlobalPos>get(potentialJobSite).pos();
 +                                    final GlobalPos globalPos = context.<GlobalPos>get(potentialJobSite); //Luminol - Try fixing off main POI accessing
-+                                    final ServerLevel targetLevel = net.minecraft.server.MinecraftServer.getServer().getLevel(globalPos.dimension()); //Luminol - Try fixing off main POI accessing
++                                    final net.minecraft.server.level.ServerLevel targetLevel = net.minecraft.server.MinecraftServer.getServer().getLevel(globalPos.dimension()); //Luminol - Try fixing off main POI accessing
 +                                    BlockPos blockPos = globalPos.pos(); //Luminol - Try fixing off main POI accessing
 +                                    if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(targetLevel, blockPos) && me.earthme.luminol.config.modules.fixes.FoliaPOIAccessOffRegionFixConfig.enabled) return true; //Luminol - Try fixing off main POI accessing
                                      Optional<Holder<PoiType>> optional = world.getPoiManager().getType(blockPos);
