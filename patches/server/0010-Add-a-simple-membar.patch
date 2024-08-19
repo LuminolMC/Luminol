@@ -115,12 +115,13 @@ index 0000000000000000000000000000000000000000..b632c4a636974535bf001f010de1dcb6
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8c98e26667465d2976751b01d5e0bb1458e3d996
+index 0000000000000000000000000000000000000000..47809d78392fe0cb30ad68ca1c331784f1843269
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerMemoryBar.java
 @@ -0,0 +1,186 @@
 +package me.earthme.luminol.functions;
 +
++import com.mojang.logging.LogUtils;
 +import io.papermc.paper.threadedregions.ThreadedRegionizer;
 +import io.papermc.paper.threadedregions.TickRegions;
 +import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
@@ -132,12 +133,11 @@ index 0000000000000000000000000000000000000000..8c98e26667465d2976751b01d5e0bb14
 +import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 +import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.server.level.ServerPlayer;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.entity.CraftPlayer;
 +import org.bukkit.entity.Player;
 +import org.jetbrains.annotations.NotNull;
++import org.slf4j.Logger;
 +
 +import java.lang.management.ManagementFactory;
 +import java.lang.management.MemoryUsage;
@@ -147,7 +147,7 @@ index 0000000000000000000000000000000000000000..8c98e26667465d2976751b01d5e0bb14
 +    protected static final NullPlugin NULL_PLUGIN = new NullPlugin();
 +    protected static final Map<UUID, BossBar> uuid2Bossbars = new HashMap<>();
 +    protected static volatile ScheduledTask membarTask = null;
-+    private static final Logger logger = LogManager.getLogger();
++    private static final Logger logger = LogUtils.getLogger();
 +
 +    public static void init(){
 +        cancelBarUpdateTask();
@@ -157,7 +157,7 @@ index 0000000000000000000000000000000000000000..8c98e26667465d2976751b01d5e0bb14
 +            try {
 +                update();
 +            }catch (Exception e){
-+                logger.error(e);
++                logger.error(e.getLocalizedMessage());
 +            }
 +        },1, MembarConfig.updateInterval);
 +    }
@@ -318,7 +318,7 @@ index 690d0f59daf8c4630c3d70b6fb690c2e1cedd402..8bd9baba560051e681277b8cea9d1374
          //Util.shutdownExecutors(); // Paper - moved into super
          SkullBlockEntity.clear();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 466928317a9777318aeb08e38d2bcf4c49de4cd8..dc95bd8ed9db016f8d5419f832b11e0b77097c0b 100644
+index d9907ab4161f65328b989cd41564ec34f6ffcb14..a737fb8dac485303d2ee7399d4dae8dbbff2f7fe 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -304,6 +304,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -330,7 +330,7 @@ index 466928317a9777318aeb08e38d2bcf4c49de4cd8..dc95bd8ed9db016f8d5419f832b11e0b
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
      private final ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.ViewDistanceHolder viewDistanceHolder = new ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.ViewDistanceHolder();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index e77b7d98f53676010b2b7d91eeab2addaca1241a..61683135b0462770cfe93e16fd0d0c1bca13e045 100644
+index dcee0b573f952f2b5c80e9c164724964d42577d8..f13128a9e5462ae1047987ad29d35c72f74c5412 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -2392,6 +2392,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {

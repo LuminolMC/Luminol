@@ -117,12 +117,13 @@ index 0000000000000000000000000000000000000000..aafb2f5052c7c8e5971a47308253badb
 +}
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e456c54b4ac3906a0a0310bdfba5ef39dc02c4ef
+index 0000000000000000000000000000000000000000..026807e0851d67c6d57e81f573ac1bf8fedc6109
 --- /dev/null
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
-@@ -0,0 +1,225 @@
+@@ -0,0 +1,224 @@
 +package me.earthme.luminol.functions;
 +
++import com.mojang.logging.LogUtils;
 +import io.papermc.paper.threadedregions.ThreadedRegionizer;
 +import io.papermc.paper.threadedregions.TickData;
 +import io.papermc.paper.threadedregions.TickRegions;
@@ -135,21 +136,19 @@ index 0000000000000000000000000000000000000000..e456c54b4ac3906a0a0310bdfba5ef39
 +import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 +import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.server.level.ServerPlayer;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.entity.CraftPlayer;
 +import org.bukkit.entity.Player;
 +import org.jetbrains.annotations.NotNull;
++import org.slf4j.Logger;
 +
 +import java.util.*;
-+import java.util.concurrent.TimeUnit;
 +
 +public class GlobalServerTpsBar {
 +    protected static final NullPlugin NULL_PLUGIN = new NullPlugin();
 +    protected static final Map<UUID,BossBar> uuid2Bossbars = new HashMap<>();
 +    protected static volatile ScheduledTask tpsbarTask = null;
-+    private static final Logger logger = LogManager.getLogger();
++    private static final Logger logger = LogUtils.getLogger();
 +
 +    public static void init(){
 +        cancelBarUpdateTask();
@@ -159,7 +158,7 @@ index 0000000000000000000000000000000000000000..e456c54b4ac3906a0a0310bdfba5ef39
 +            try {
 +                update();
 +            }catch (Exception e){
-+                logger.error(e);
++                logger.error(e.getLocalizedMessage());
 +            }
 +        },1,TpsBarConfig.updateInterval);
 +    }
@@ -359,7 +358,7 @@ index 0755e8f460f59e2dbc00cac73026bb441c04e9ea..690d0f59daf8c4630c3d70b6fb690c2e
          //Util.shutdownExecutors(); // Paper - moved into super
          SkullBlockEntity.clear();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 2480166aa0f7acefc1302bc44bc31b6ad48c0711..466928317a9777318aeb08e38d2bcf4c49de4cd8 100644
+index d681ec617590a3718f926cd5a9749952d5ac52bd..d9907ab4161f65328b989cd41564ec34f6ffcb14 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -303,7 +303,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -372,7 +371,7 @@ index 2480166aa0f7acefc1302bc44bc31b6ad48c0711..466928317a9777318aeb08e38d2bcf4c
      private ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.PlayerChunkLoaderData chunkLoader;
      private final ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.ViewDistanceHolder viewDistanceHolder = new ca.spottedleaf.moonrise.patches.chunk_system.player.RegionizedPlayerChunkLoader.ViewDistanceHolder();
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index eb1e14be98b3731e0557726324593dee2eadd31b..e77b7d98f53676010b2b7d91eeab2addaca1241a 100644
+index 28c6923c90ca106256ca75769828cd62d5542ca7..dcee0b573f952f2b5c80e9c164724964d42577d8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -2389,6 +2389,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {

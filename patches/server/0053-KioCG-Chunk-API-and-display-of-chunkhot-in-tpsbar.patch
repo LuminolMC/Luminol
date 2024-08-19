@@ -132,10 +132,10 @@ index aafb2f5052c7c8e5971a47308253badb3027093c..9fe7ac7ba83bbcc9a2a851a5cace4764
      public static int updateInterval = 15;
  
 diff --git a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
-index e456c54b4ac3906a0a0310bdfba5ef39dc02c4ef..0c6ae960cc1d1a39f625295f649169d3381f3b2d 100644
+index 026807e0851d67c6d57e81f573ac1bf8fedc6109..c45f6bd60d1cf7a915aa6ceea07c0929507b86e2 100644
 --- a/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
 +++ b/src/main/java/me/earthme/luminol/functions/GlobalServerTpsBar.java
-@@ -139,7 +139,8 @@ public class GlobalServerTpsBar {
+@@ -138,7 +138,8 @@ public class GlobalServerTpsBar {
                  TpsBarConfig.tpsBarFormat,
                  Placeholder.component("tps",getTpsComponent(tps)),
                  Placeholder.component("mspt",getMsptComponent(mspt)),
@@ -145,7 +145,7 @@ index e456c54b4ac3906a0a0310bdfba5ef39dc02c4ef..0c6ae960cc1d1a39f625295f649169d3
          ));
          bar.color(barColorFromTps(tps));
          bar.progress((float) Math.min((float)1,Math.max(mspt / 50,0)));
-@@ -181,6 +182,32 @@ public class GlobalServerTpsBar {
+@@ -180,6 +181,32 @@ public class GlobalServerTpsBar {
          return MiniMessage.miniMessage().deserialize(replaced,Placeholder.parsed("text", String.format("%.2f", mspt)));
      }
  
@@ -272,7 +272,7 @@ index 80123dd30328336b02a5e2e3414ece44ba040ad2..6f4d5312c8140e0a49646e4f069b027a
          } else {
              passenger.stopRiding();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 4242fe25e36e45b0a54d3aa7e72fc181728cff74..8c14833675e64548c9c60aa2d07cf5066ba59d3b 100644
+index 23541e9c5734334a1cd6e7730288d6dd6028efb0..26fce0d5804db517db08a308abc1cd902060f6ab 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -339,6 +339,26 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
