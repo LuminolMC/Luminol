@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: bridge <ctibeheerder@gmail.com>
+Date: Fri, 23 Aug 2024 22:44:57 +0200
+Subject: [PATCH] Fix Concurrency issue in ServerEntity#sendDirtyEntityData()
+
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerEntity.java b/src/main/java/net/minecraft/server/level/ServerEntity.java
+index 16373e0c5ea38199fab3eb289bf2a5fcf0dd7439..da03bd8fc88a4bbc756e6335ef0adc15ee6eb97e 100644
+--- a/src/main/java/net/minecraft/server/level/ServerEntity.java
++++ b/src/main/java/net/minecraft/server/level/ServerEntity.java
+@@ -3,13 +3,8 @@ package net.minecraft.server.level;
+ import com.google.common.collect.Lists;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.logging.LogUtils;
+-import java.util.ArrayList;
+-import java.util.Collection;
+-import java.util.Collections;
+-import java.util.Iterator;
+-import java.util.List;
+-import java.util.Objects;
+-import java.util.Set;
++
++import java.util.*;
+ import java.util.function.Consumer;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
+@@ -392,7 +387,7 @@ public class ServerEntity {
+         }
+ 
+         if (this.entity instanceof LivingEntity) {
+-            Set<AttributeInstance> set = ((LivingEntity) this.entity).getAttributes().getDirtyAttributes();
++            Set<AttributeInstance> set = new HashSet<>(((LivingEntity) this.entity).getAttributes().getDirtyAttributes());
+ 
+             if (!set.isEmpty()) {
+                 // CraftBukkit start - Send scaled max health
+@@ -403,7 +398,7 @@ public class ServerEntity {
+                 this.broadcastAndSend(new ClientboundUpdateAttributesPacket(this.entity.getId(), set));
+             }
+ 
+-            set.clear();
++            ((LivingEntity) this.entity).getAttributes().getDirtyAttributes().clear();
+         }
+ 
+     }
