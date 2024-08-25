@@ -39,10 +39,10 @@ index e8984feea7fb06600329bae05b15d317f8ae78a0..071de4ddcff846f469d510b4147c3ed3
          this.absMoveTo(x, y, z);
          this.absRotateTo(yaw, pitch);
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 2384a9e68f99b61382d9d8a46523d226786ee584..73c65124d6996b4a74a044e562f04eda573589fc 100644
+index 5f43c6bb541e811e51f00fb205624c157cef0483..c4d499536f443200c059c83b142f644e4724db1c 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1774,13 +1774,29 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1781,13 +1781,29 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
      protected void playAttackSound() {}
  

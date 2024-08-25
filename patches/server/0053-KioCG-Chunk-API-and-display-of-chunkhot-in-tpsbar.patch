@@ -359,10 +359,10 @@ index 4f701788bd21b61cad251a3a88f9bc416fb99051..86caa40a91ee0385bc32fd19d0fec6bd
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 73c65124d6996b4a74a044e562f04eda573589fc..b87a1b054998a062e1f69b56daff520e3e4e0b6a 100644
+index c4d499536f443200c059c83b142f644e4724db1c..e6484f7e04a5b5ad831c3f720a196a83b2ab1008 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1850,4 +1850,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1857,4 +1857,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
          return itemmonsteregg == null ? null : new ItemStack(itemmonsteregg);
      }
