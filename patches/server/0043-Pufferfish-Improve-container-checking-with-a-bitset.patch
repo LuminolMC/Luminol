@@ -284,7 +284,7 @@ index 9549eee0d92f322bd5232abd7e695213660c2e22..2cd8ac8840c2c0346fbf209c5ae3bb67
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
-index 15fd1fe1b55b6421d2c09e8385c9f69fa0152e56..21c747f00892a8372c3ef239f63d59ccaa315295 100644
+index 2ddf349fde5b310ec3f74baee1f3d33e09d5286c..b87a4781a4b567e939057ba7528a54868562ee33 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 @@ -119,19 +119,7 @@ public abstract class BaseContainerBlockEntity extends BlockEntity implements Co
@@ -387,7 +387,7 @@ index b88aa184cd06a0485146f58a5b61a56a50911209..7b64c57795fe27d8397500bfa41f71f9
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index 1280c358748bbb08f0361acd4ebc095bf6bc3496..957c217653a664bab26db476724d288b18d87102 100644
+index 779ffcf390d1ebdf37653454063d3c7d1fc35875..e56034e6dd674637321382e23e05ce41f6ab1d05 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -47,7 +47,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
@@ -442,7 +442,7 @@ index 1280c358748bbb08f0361acd4ebc095bf6bc3496..957c217653a664bab26db476724d288b
          if (!this.tryLoadLootTable(nbt)) {
              ContainerHelper.loadAllItems(nbt, this.items, registryLookup);
          }
-@@ -537,6 +563,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -542,6 +568,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
      }
  
      private static boolean isFullContainer(Container inventory, Direction direction) {
@@ -450,7 +450,7 @@ index 1280c358748bbb08f0361acd4ebc095bf6bc3496..957c217653a664bab26db476724d288b
          int[] aint = HopperBlockEntity.getSlots(inventory, direction);
          int[] aint1 = aint;
          int i = aint.length;
-@@ -736,7 +763,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -745,7 +772,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
          if (HopperBlockEntity.canPlaceItemInContainer(to, stack, slot, side)) {
              boolean flag = false;
@@ -459,7 +459,7 @@ index 1280c358748bbb08f0361acd4ebc095bf6bc3496..957c217653a664bab26db476724d288b
  
              if (itemstack1.isEmpty()) {
                  // Spigot start - SPIGOT-6693, InventorySubcontainer#setItem
-@@ -924,7 +951,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -933,7 +960,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
      @Override
      protected void setItems(NonNullList<ItemStack> inventory) {

@@ -50,7 +50,7 @@ index bdcf43104a53f530453615b17bd690c7a5c0a78d..8ec763f933e79a1c8e7a7d3b3c0277ca
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 2ae2527bbe5a08af98eb6405a8403c2199052f19..7ddb7d5aa1047eb8151aef01d5db694d2683cf51 100644
+index e16d24bd83cddce7ead70a2a3847d09e988c715e..dcbfc99e0877f9e87d6329542ec11664d527e7e4 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -695,7 +695,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -63,7 +63,7 @@ index 2ae2527bbe5a08af98eb6405a8403c2199052f19..7ddb7d5aa1047eb8151aef01d5db694d
  
                      // If the event is cancelled we move the player back to their old location.
                      if (event.isCancelled()) {
-@@ -1612,7 +1614,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -1610,7 +1612,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
                                      Location oldTo = to.clone();
                                      PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
