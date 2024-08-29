@@ -33,10 +33,10 @@ index 0000000000000000000000000000000000000000..dd45cf1fde5ee4cf8347064f106c64b8
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index a4ddf384bc1f58ceac5f49721aca652276ad62eb..ca86705ec7cec72c911fde296149a4e5aec56329 100644
+index 1cb0029739a487d930e4f10371c82d3a03a46de4..a98d47cb24b2664a497863fc0676b2ef95a89ab2 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -943,12 +943,12 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -940,12 +940,12 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
              return;
          }
          // Paper end - Allow nerfed mobs to jump and float

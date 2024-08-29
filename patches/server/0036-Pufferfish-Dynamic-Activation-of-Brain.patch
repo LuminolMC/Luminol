@@ -83,7 +83,7 @@ index b5cb700e2cd1de2f78ad582245208c056fa6fa79..80123dd30328336b02a5e2e3414ece44
                      if (false && this.shouldDiscardEntity(entity)) { // CraftBukkit - We prevent spawning in general, so this butchering is not needed
                          entity.discard();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 88ee5f9f8fc453d0dc18547a8c2823fa56ce8579..e8984feea7fb06600329bae05b15d317f8ae78a0 100644
+index d68328d4c429d4fc95c19e9477d0795beba2f53f..ff729667384bc07746f4bfa3fe18d09547cc86a2 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -430,6 +430,8 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -108,7 +108,7 @@ index 293ec464b1cb4db1734d0c059e59f60bfeb2b7eb..5d3e5262d9b7565ddf045ce9f97ec190
      private String descriptionId;
      @Nullable
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index ca86705ec7cec72c911fde296149a4e5aec56329..03eed9e17816ba60c1ff5cd1560b3794215802e4 100644
+index a98d47cb24b2664a497863fc0676b2ef95a89ab2..121e9cbeb07a41febac0086f5fce5a172a4ad15e 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -244,10 +244,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
@@ -124,7 +124,7 @@ index ca86705ec7cec72c911fde296149a4e5aec56329..03eed9e17816ba60c1ff5cd1560b3794
              this.targetSelector.tick();
          }
      }
-@@ -952,16 +952,20 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -949,16 +949,20 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
          if (i % 2 != 0 && this.tickCount > 1) {
              gameprofilerfiller.push("targetSelector");

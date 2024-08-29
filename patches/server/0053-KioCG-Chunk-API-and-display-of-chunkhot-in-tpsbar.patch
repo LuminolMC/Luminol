@@ -332,7 +332,7 @@ index 1859477e96709368683fe5707327e92f56fbfc8e..4c4814094552fa4382b1cbe649f24f47
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index aeeef108f7d45c3a420874c7de769e4fb9097af0..3d304852c51eb6aec99c766fb73fc4cb7382ad0b 100644
+index 1e38ffc28036a221da9adeff8c07c8c02e736cb8..ea1098d2ff613ff634c710b6be6994215719391f 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -5856,4 +5856,6 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -359,10 +359,10 @@ index 4f701788bd21b61cad251a3a88f9bc416fb99051..86caa40a91ee0385bc32fd19d0fec6bd
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index c4d499536f443200c059c83b142f644e4724db1c..e6484f7e04a5b5ad831c3f720a196a83b2ab1008 100644
+index bc20ef314b20de38412522edcab99aaa4ba9ac32..33a895183ddb34626a4d2b40b97ff9a5c7bbfb82 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1857,4 +1857,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+@@ -1854,4 +1854,11 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
  
          return itemmonsteregg == null ? null : new ItemStack(itemmonsteregg);
      }
