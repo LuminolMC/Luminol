@@ -5,7 +5,7 @@ Subject: [PATCH] Pufferfish Cache climbing check for activation
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 8ccc18881d047e2b06ab3494a25f27e209931413..30bd7101cca4a93df592f0e3c0dd4aac0f347d07 100644
+index bd544eee8d7439a466f0f82e7d7a51a63b7294c0..a279d742c5743027219482d9aebe345751e68a72 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -157,7 +157,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;

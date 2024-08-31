@@ -5,7 +5,7 @@ Subject: [PATCH] Fix-MC-2025
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 3d304852c51eb6aec99c766fb73fc4cb7382ad0b..701c3513e5c11204336502b822b79f2f333ad2e3 100644
+index ea1098d2ff613ff634c710b6be6994215719391f..3a0279991d1f65f65aeb8e228f04202761b3e85b 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -2623,6 +2623,16 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess

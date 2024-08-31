@@ -5,7 +5,7 @@ Subject: [PATCH] Sparkly Paper Optimize canSee checks
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 31f2f6e841179a2fba2199afa7d6211eb68d3c07..1bc460051ded5faa7010f999dfee0904bce1a31e 100644
+index 728454fcfbeddcfe1b0a95e89827f33d7f7838bc..adc1e7867dfd7caf1a3a4ad515b6540d277c6b7f 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -1221,7 +1221,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
@@ -18,7 +18,7 @@ index 31f2f6e841179a2fba2199afa7d6211eb68d3c07..1bc460051ded5faa7010f999dfee0904
                  }
                  // CraftBukkit end
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 61683135b0462770cfe93e16fd0d0c1bca13e045..572c85579237afa65ffb3409fa3b70c7f86fcb0f 100644
+index f13128a9e5462ae1047987ad29d35c72f74c5412..f1cb17f33363da495c263829efbbd18d4bd192cd 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -200,7 +200,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
