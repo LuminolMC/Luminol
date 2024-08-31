@@ -425,10 +425,10 @@ index b3377ed06d703f54e01ba174e5a06dc928cdff96..80af7979f9a2078a6c40c958ced1d487
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index b6d72a24a61b30b7c4ad967c196c3fbaa9d68ee9..30aa99541b303ecd8eda8f95e628c38434b36640 100644
+index 5110ca77adcf6daa7ce2247d4fc8af0835b7bd7e..8169536f95e2355e59b00e6d4a7df1ec59da5b5b 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -435,4 +435,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -440,4 +440,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
  
          return DoubleDoubleImmutablePair.of(d0, d1);
      }
