@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Sat, 31 Aug 2024 11:00:47 +0800
+Subject: [PATCH] Add experiment config for command block command execution
+
+
+diff --git a/src/main/java/me/earthme/luminol/config/modules/experiment/CommandBlockConfig.java b/src/main/java/me/earthme/luminol/config/modules/experiment/CommandBlockConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..3eafc59cc015569d3da8b1d8c4bfd046af17e0be
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/experiment/CommandBlockConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.experiment;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class CommandBlockConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enable")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.EXPERIMENT;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "force_enable_command_block_execution";
++    }
++}
+diff --git a/src/main/java/net/minecraft/world/level/BaseCommandBlock.java b/src/main/java/net/minecraft/world/level/BaseCommandBlock.java
+index b8a571fcc44f67ac8f6089e039a8620bf6c40603..c973535eba031f102c6cae8f9b75547ba3a95376 100644
+--- a/src/main/java/net/minecraft/world/level/BaseCommandBlock.java
++++ b/src/main/java/net/minecraft/world/level/BaseCommandBlock.java
+@@ -117,7 +117,7 @@ public abstract class BaseCommandBlock implements CommandSource {
+     }
+ 
+     public boolean performCommand(Level world) {
+-        if (true) return false; // Folia - region threading
++        if (!me.earthme.luminol.config.modules.experiment.CommandBlockConfig.enabled) return false; // Folia - region threading // Luminol
+         if (!world.isClientSide && world.getGameTime() != this.lastExecution) {
+             if ("Searge".equalsIgnoreCase(this.command)) {
+                 this.lastOutput = Component.literal("#itzlipofutzli");
