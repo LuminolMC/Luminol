@@ -1,0 +1,142 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MrHua269 <wangxyper@163.com>
+Date: Wed, 18 Sep 2024 23:10:47 +0800
+Subject: [PATCH] Add experimental config for folia scheduled issue fixing
+
+
+diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
+index a1e1782d87403ca8934d37361be7ba66ddba133f..ae5e7d119a63b0877f54517a3624ae7a1c9e007c 100644
+--- a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
++++ b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
+@@ -48,8 +48,27 @@ public final class RegionizedTaskQueue {
+ 
+     public PrioritisedExecutor.PrioritisedTask queueChunkTask(final ServerLevel world, final int chunkX, final int chunkZ,
+                                                               final Runnable run, final PrioritisedExecutor.Priority priority) {
+-        final PrioritisedExecutor.PrioritisedTask ret = this.createChunkTask(world, chunkX, chunkZ, run, priority);
+-        ret.queue();
++        final PrioritisedExecutor.PrioritisedTask ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, true, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled); // Luminol
++        // Luminol start
++        if (!me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled){
++            ret.queue();
++            return ret;
++        }
++
++        for (;;) {
++            boolean result;
++
++            try {
++                result = ret.queue();
++            }catch (me.earthme.luminol.utils.TaskCancelledException ignored) {
++                result = true;
++            }
++
++            if (result) {
++                break;
++            }
++        }
++        // Luminol end
+         return ret;
+     }
+ 
+@@ -60,8 +79,27 @@ public final class RegionizedTaskQueue {
+ 
+     public PrioritisedExecutor.PrioritisedTask queueTickTaskQueue(final ServerLevel world, final int chunkX, final int chunkZ,
+                                                                   final Runnable run, final PrioritisedExecutor.Priority priority) {
+-        final PrioritisedExecutor.PrioritisedTask ret = this.createTickTaskQueue(world, chunkX, chunkZ, run, priority);
+-        ret.queue();
++        final PrioritisedExecutor.PrioritisedTask ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, false, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled); // Luminol
++        // Luminol start
++        if (!me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled){
++            ret.queue();
++            return ret;
++        }
++
++        for (;;) {
++            boolean result;
++
++            try {
++                result = ret.queue();
++            }catch (me.earthme.luminol.utils.TaskCancelledException ignored) {
++                result = true;
++            }
++
++            if (result) {
++                break;
++            }
++        }
++        // Luminol end
+         return ret;
+     }
+ 
+@@ -449,6 +487,13 @@ public final class RegionizedTaskQueue {
+             private Runnable run;
+             private volatile PrioritisedExecutor.Priority priority;
+             private static final VarHandle PRIORITY_HANDLE = ConcurrentUtil.getVarHandle(ChunkBasedPriorityTask.class, "priority", PrioritisedExecutor.Priority.class);
++            private boolean softThrowWhenCancelled = false; // Luminol
++
++            ChunkBasedPriorityTask(final WorldRegionTaskData world, final int chunkX, final int chunkZ, final boolean isChunkTask,
++                                   final Runnable run, final PrioritisedExecutor.Priority priority, boolean sft) { // Luminol
++                this(world, chunkX, chunkZ, isChunkTask, run, priority);
++                this.softThrowWhenCancelled = sft;
++            }
+ 
+             ChunkBasedPriorityTask(final WorldRegionTaskData world, final int chunkX, final int chunkZ, final boolean isChunkTask,
+                                    final Runnable run, final PrioritisedExecutor.Priority priority) {
+@@ -574,6 +619,11 @@ public final class RegionizedTaskQueue {
+                         // the task never could be polled from the queue, so we return false
+                         // don't decrement reference count, as we were certainly cancelled by another thread, which
+                         // will decrement the reference count
++                        // Luminol start
++                        if (this.softThrowWhenCancelled) {
++                            throw new me.earthme.luminol.utils.TaskCancelledException();
++                        }
++                        // Luminol end
+                         return false;
+                     }
+ 
+@@ -584,6 +634,9 @@ public final class RegionizedTaskQueue {
+                         // we were cancelled
+                         // don't decrement reference count, as we were certainly cancelled by another thread, which
+                         // will decrement the reference count
++                        if (this.softThrowWhenCancelled) {
++                            throw new me.earthme.luminol.utils.TaskCancelledException();
++                        }
+                         return false;
+                     }
+ 
+diff --git a/src/main/java/me/earthme/luminol/config/modules/experiment/FoliaTaskQueueFixConfig.java b/src/main/java/me/earthme/luminol/config/modules/experiment/FoliaTaskQueueFixConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..47e0339ecb0d96010c41e739c66f3d024aad95eb
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/config/modules/experiment/FoliaTaskQueueFixConfig.java
+@@ -0,0 +1,20 @@
++package me.earthme.luminol.config.modules.experiment;
++
++import me.earthme.luminol.config.ConfigInfo;
++import me.earthme.luminol.config.EnumConfigCategory;
++import me.earthme.luminol.config.IConfigModule;
++
++public class FoliaTaskQueueFixConfig implements IConfigModule {
++    @ConfigInfo(baseName = "enabled")
++    public static boolean enabled = false;
++
++    @Override
++    public EnumConfigCategory getCategory() {
++        return EnumConfigCategory.EXPERIMENT;
++    }
++
++    @Override
++    public String getBaseName() {
++        return "queue_until_task_queued";
++    }
++}
+diff --git a/src/main/java/me/earthme/luminol/utils/TaskCancelledException.java b/src/main/java/me/earthme/luminol/utils/TaskCancelledException.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..c7b55489f4d3a57320b0963e45cd1c87e6c0ec88
+--- /dev/null
++++ b/src/main/java/me/earthme/luminol/utils/TaskCancelledException.java
+@@ -0,0 +1,4 @@
++package me.earthme.luminol.utils;
++
++public class TaskCancelledException extends RuntimeException{
++}
