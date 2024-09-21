@@ -5,16 +5,16 @@ Subject: [PATCH] Add experimental config for folia scheduled issue fixing
 
 
 diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
-index a1e1782d87403ca8934d37361be7ba66ddba133f..ae5e7d119a63b0877f54517a3624ae7a1c9e007c 100644
+index a1e1782d87403ca8934d37361be7ba66ddba133f..4c69f45f55cc3c94c46bf8440a8842652499fdfb 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
-@@ -48,8 +48,27 @@ public final class RegionizedTaskQueue {
+@@ -48,8 +48,28 @@ public final class RegionizedTaskQueue {
  
      public PrioritisedExecutor.PrioritisedTask queueChunkTask(final ServerLevel world, final int chunkX, final int chunkZ,
                                                                final Runnable run, final PrioritisedExecutor.Priority priority) {
 -        final PrioritisedExecutor.PrioritisedTask ret = this.createChunkTask(world, chunkX, chunkZ, run, priority);
 -        ret.queue();
-+        final PrioritisedExecutor.PrioritisedTask ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, true, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled); // Luminol
++        PrioritisedExecutor.PrioritisedTask ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, true, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled); // Luminol
 +        // Luminol start
 +        if (!me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled){
 +            ret.queue();
@@ -27,7 +27,8 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..ae5e7d119a63b0877f54517a3624ae7a
 +            try {
 +                result = ret.queue();
 +            }catch (me.earthme.luminol.utils.TaskCancelledException ignored) {
-+                result = true;
++                ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, true, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled);
++                result = false;
 +            }
 +
 +            if (result) {
@@ -38,13 +39,13 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..ae5e7d119a63b0877f54517a3624ae7a
          return ret;
      }
  
-@@ -60,8 +79,27 @@ public final class RegionizedTaskQueue {
+@@ -60,8 +80,28 @@ public final class RegionizedTaskQueue {
  
      public PrioritisedExecutor.PrioritisedTask queueTickTaskQueue(final ServerLevel world, final int chunkX, final int chunkZ,
                                                                    final Runnable run, final PrioritisedExecutor.Priority priority) {
 -        final PrioritisedExecutor.PrioritisedTask ret = this.createTickTaskQueue(world, chunkX, chunkZ, run, priority);
 -        ret.queue();
-+        final PrioritisedExecutor.PrioritisedTask ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, false, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled); // Luminol
++        PrioritisedExecutor.PrioritisedTask ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, false, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled); // Luminol
 +        // Luminol start
 +        if (!me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled){
 +            ret.queue();
@@ -57,7 +58,8 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..ae5e7d119a63b0877f54517a3624ae7a
 +            try {
 +                result = ret.queue();
 +            }catch (me.earthme.luminol.utils.TaskCancelledException ignored) {
-+                result = true;
++                ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, false, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled);
++                result = false;
 +            }
 +
 +            if (result) {
@@ -68,7 +70,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..ae5e7d119a63b0877f54517a3624ae7a
          return ret;
      }
  
-@@ -449,6 +487,13 @@ public final class RegionizedTaskQueue {
+@@ -449,6 +489,13 @@ public final class RegionizedTaskQueue {
              private Runnable run;
              private volatile PrioritisedExecutor.Priority priority;
              private static final VarHandle PRIORITY_HANDLE = ConcurrentUtil.getVarHandle(ChunkBasedPriorityTask.class, "priority", PrioritisedExecutor.Priority.class);
@@ -82,7 +84,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..ae5e7d119a63b0877f54517a3624ae7a
  
              ChunkBasedPriorityTask(final WorldRegionTaskData world, final int chunkX, final int chunkZ, final boolean isChunkTask,
                                     final Runnable run, final PrioritisedExecutor.Priority priority) {
-@@ -574,6 +619,11 @@ public final class RegionizedTaskQueue {
+@@ -574,6 +621,11 @@ public final class RegionizedTaskQueue {
                          // the task never could be polled from the queue, so we return false
                          // don't decrement reference count, as we were certainly cancelled by another thread, which
                          // will decrement the reference count
@@ -94,7 +96,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..ae5e7d119a63b0877f54517a3624ae7a
                          return false;
                      }
  
-@@ -584,6 +634,9 @@ public final class RegionizedTaskQueue {
+@@ -584,6 +636,9 @@ public final class RegionizedTaskQueue {
                          // we were cancelled
                          // don't decrement reference count, as we were certainly cancelled by another thread, which
                          // will decrement the reference count
