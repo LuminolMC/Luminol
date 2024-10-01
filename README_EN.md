@@ -1,4 +1,4 @@
-<img src="./public/image/Luminol_5.png" alt="Logo" align="right" width="250">
+![图片](https://github.com/user-attachments/assets/3aa825dd-43b4-44a8-94c0-9425135c9711)<img src="./public/image/Luminol_5.png" alt="Logo" align="right" width="250">
 
 # Luminol
 <h4>Luminol is a Folia fork with many useful optimizations, configurable vanilla features, and more API supports, and it was designed for survival and anarchy servers</h4>
@@ -33,12 +33,12 @@ For gradle:
 ```kotlin
 repositories {
     maven {
-        url = "http://maven.moliatopia.icu/repository/maven-snapshots/"
+        url = "http://maven.nostal.ink/repository/maven-snapshots/"
     }
 }
 
 dependencies {
-    compileOnly("me.earthme.luminol:luminol-api:1.20.6-R0.1-SNAPSHOT")
+    compileOnly("me.earthme.luminol:luminol-api:1.20.4-R0.1-20241001.135101-1")
 }
  ```
 
@@ -47,8 +47,8 @@ For maven
 ```xml
 <repositories>
     <repository>
-        <id>moliatopia</id>
-        <url>http://maven.moliatopia.icu/repository/maven-snapshots/</url>
+        <id>nostal</id>
+        <url>http://maven.nostal.ink/repository/maven-snapshots/</url>
     </repository>
 </repositories>
 
@@ -56,7 +56,7 @@ For maven
     <dependency>
         <groupId>me.earthme.luminol</groupId>
         <artifactId>luminol-api</artifactId>
-        <version>1.20.6-R0.1-SNAPSHOT</version>
+        <version>1.20.4-R0.1-20241001.135101-1</version>
     </dependency>
 </dependencies>
 ```
