@@ -34,12 +34,12 @@ For gradle:
 ```kotlin
 repositories {
     maven {
-        url = "http://maven.moliatopia.icu/repository/maven-snapshots/"
+        url = "http://maven.nostal.ink/repository/maven-snapshots/"
     }
 }
 
 dependencies {
-    compileOnly("me.earthme.luminol:luminol-api:1.21.1-R0.1-20240817.053347-3")
+    compileOnly("me.earthme.luminol:luminol-api:1.21.1-R0.1-20241001.135225-1")
 }
  ```
 
@@ -49,7 +49,7 @@ For maven
 <repositories>
     <repository>
         <id>moliatopia</id>
-        <url>http://maven.moliatopia.icu/repository/maven-snapshots/</url>
+        <url>http://maven.nostal.ink/repository/maven-snapshots/</url>
     </repository>
 </repositories>
 
@@ -57,7 +57,7 @@ For maven
     <dependency>
         <groupId>me.earthme.luminol</groupId>
         <artifactId>luminol-api</artifactId>
-        <version>1.21.1-R0.1-20240817.053347-3</version>
+        <version>1.21.1-R0.1-20241001.135225-1</version>
     </dependency>
 </dependencies>
 ```
