@@ -48,7 +48,7 @@ For maven
 ```xml
 <repositories>
     <repository>
-        <id>moliatopia</id>
+        <id>nostal</id>
         <url>http://maven.nostal.ink/repository/maven-snapshots/</url>
     </repository>
 </repositories>
