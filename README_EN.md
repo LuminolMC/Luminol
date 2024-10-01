@@ -1,5 +1,3 @@
-![图片](https://github.com/user-attachments/assets/3aa825dd-43b4-44a8-94c0-9425135c9711)<img src="./public/image/Luminol_5.png" alt="Logo" align="right" width="250">
-
 # Luminol
 <h4>Luminol is a Folia fork with many useful optimizations, configurable vanilla features, and more API supports, and it was designed for survival and anarchy servers</h4>
 
