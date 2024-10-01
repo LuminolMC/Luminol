@@ -107,7 +107,7 @@ allprojects {
 
             maven {
                 name = "moliaMavenRepo"
-                url = uri("https://maven.moliatopia.icu/repository/maven-releases/")
+                url = uri("https://maven.nostal.ink/repository/maven-snapshots/")
 
                 credentials.username = System.getenv("MAVEN_REPO_USER")
                 credentials.password = System.getenv("MAVEN_REPO_PASSWORD")
