@@ -5,7 +5,7 @@ Subject: [PATCH] Add experimental config for folia scheduled issue fixing
 
 
 diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
-index a1e1782d87403ca8934d37361be7ba66ddba133f..4c69f45f55cc3c94c46bf8440a8842652499fdfb 100644
+index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1377695d6 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
 @@ -48,8 +48,28 @@ public final class RegionizedTaskQueue {
@@ -70,7 +70,105 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..4c69f45f55cc3c94c46bf8440a884265
          return ret;
      }
  
-@@ -449,6 +489,13 @@ public final class RegionizedTaskQueue {
+@@ -136,6 +176,82 @@ public final class RegionizedTaskQueue {
+             }
+         }
+ 
++        // Luminol start - Try fixing scheduling
++        private void luminolReplaced$decrementReference(final AtomicLong reference, final long coord) {
++            final long val = reference.decrementAndGet();
++            if (val == 0L) {
++                final int chunkX = CoordinateUtils.getChunkX(coord);
++                final int chunkZ = CoordinateUtils.getChunkZ(coord);
++                final ca.spottedleaf.concurrentutil.lock.ReentrantAreaLock.Node ticketLock = this.world.moonrise$getChunkTaskScheduler().chunkHolderManager.ticketLockArea.lock(chunkX, chunkZ);
++                try {
++                    if (this.referenceCounters.remove(coord, reference) == reference) {
++                        WorldRegionTaskData.this.removeTicket(coord);
++                    } // else: race condition, something replaced our reference - not our issue anymore
++                } finally {
++                    this.world.moonrise$getChunkTaskScheduler().chunkHolderManager.ticketLockArea.unlock(ticketLock);
++                }
++            } else if (val < 0L) {
++                throw new IllegalStateException("Reference count < 0: " + val);
++            }
++
++        }
++
++        private AtomicLong luminolReplaced$incrementReference(final long coord){
++            final AtomicLong result;
++
++            final AtomicLong replace = new AtomicLong(1L);
++            final AtomicLong valueInMap = this.referenceCounters.putIfAbsent(coord, replace);
++
++            // slow acquire
++            final int chunkX = CoordinateUtils.getChunkX(coord);
++            final int chunkZ = CoordinateUtils.getChunkZ(coord);
++            final boolean processTicketUpdates;
++
++            final ca.spottedleaf.concurrentutil.lock.ReentrantAreaLock.Node ticketLock = this.world.moonrise$getChunkTaskScheduler().chunkHolderManager.ticketLockArea.lock(chunkX, chunkZ);
++            try {
++                if (valueInMap == null) {
++                    // replaced, we should usually be here
++                    this.addTicket(coord);
++                    result = replace;
++                    processTicketUpdates = true;
++                } else {
++                    processTicketUpdates = false;
++                    int failures = 0;
++                    for (long curr = valueInMap.get();;) {
++                        if (curr == 0L) {
++                            // don't need to add ticket here, since ticket is only removed during the lock
++                            // we just need to replace the value in the map so that the thread removing fails and doesn't
++                            // remove the ticket (see decrementReference)
++                            this.referenceCounters.put(coord, replace);
++                            result = replace;
++                            break;
++                        }
++
++                        for (int i = 0; i < failures; ++i) {
++                            ConcurrentUtil.backoff();
++                        }
++
++                        if (curr == (curr = valueInMap.compareAndExchange(curr, curr + 1L))) {
++                            // acquired
++                            result = valueInMap;
++                            break;
++                        }
++
++                        ++failures;
++                    }
++                }
++            } finally {
++                this.world.moonrise$getChunkTaskScheduler().chunkHolderManager.ticketLockArea.unlock(ticketLock);
++            }
++
++            if (processTicketUpdates) {
++                this.processTicketUpdates(coord);
++            }
++
++            return result;
++        }
++        // Luminol end
++
+         private AtomicLong incrementReference(final long coord) {
+             final AtomicLong ret = this.referenceCounters.get(coord);
+             if (ret != null) {
+@@ -428,7 +544,13 @@ public final class RegionizedTaskQueue {
+             try {
+                 task.executeInternal();
+             } finally {
+-                task.world.decrementReference(referenceCounter, task.sectionLowerLeftCoord);
++                // Luminol start - Try fixing schedule
++                if (me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled) {
++                    task.world.luminolReplaced$decrementReference(referenceCounter, task.sectionLowerLeftCoord);
++                }else {
++                    task.world.decrementReference(referenceCounter, task.sectionLowerLeftCoord);
++                }
++                // Luminol end
+             }
+ 
+             return true;
+@@ -449,6 +571,13 @@ public final class RegionizedTaskQueue {
              private Runnable run;
              private volatile PrioritisedExecutor.Priority priority;
              private static final VarHandle PRIORITY_HANDLE = ConcurrentUtil.getVarHandle(ChunkBasedPriorityTask.class, "priority", PrioritisedExecutor.Priority.class);
@@ -84,7 +182,41 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..4c69f45f55cc3c94c46bf8440a884265
  
              ChunkBasedPriorityTask(final WorldRegionTaskData world, final int chunkX, final int chunkZ, final boolean isChunkTask,
                                     final Runnable run, final PrioritisedExecutor.Priority priority) {
-@@ -574,6 +621,11 @@ public final class RegionizedTaskQueue {
+@@ -533,7 +662,13 @@ public final class RegionizedTaskQueue {
+                         }
+                     } finally {
+                         if (curr != REFERENCE_COUNTER_NOT_SET) {
+-                            this.world.decrementReference(curr, this.sectionLowerLeftCoord);
++                            // Luminol start - Try fixing scheduling
++                            if (me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled) {
++                                this.world.luminolReplaced$decrementReference(curr, this.sectionLowerLeftCoord);
++                            }else {
++                                this.world.decrementReference(curr, this.sectionLowerLeftCoord);
++                            }
++                            // Luminol end
+                         }
+                     }
+ 
+@@ -547,10 +682,16 @@ public final class RegionizedTaskQueue {
+                     return false;
+                 }
+ 
+-                final AtomicLong referenceCounter = this.world.incrementReference(this.sectionLowerLeftCoord);
++                final AtomicLong referenceCounter = me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled ? this.world.luminolReplaced$incrementReference(this.sectionLowerLeftCoord) : this.world.incrementReference(this.sectionLowerLeftCoord);
+                 if (this.compareAndExchangeReferenceCounter(REFERENCE_COUNTER_NOT_SET, referenceCounter) != REFERENCE_COUNTER_NOT_SET) {
+                     // we don't expect race conditions here, so it is OK if we have to needlessly reference count
+-                    this.world.decrementReference(referenceCounter, this.sectionLowerLeftCoord);
++                    // Luminol start - Try fixing scheduling
++                    if (me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled) {
++                        this.world.luminolReplaced$decrementReference(referenceCounter, this.sectionLowerLeftCoord);
++                    }else {
++                        this.world.decrementReference(referenceCounter, this.sectionLowerLeftCoord);
++                    }
++                    // Luminol end
+                     return false;
+                 }
+ 
+@@ -574,6 +715,11 @@ public final class RegionizedTaskQueue {
                          // the task never could be polled from the queue, so we return false
                          // don't decrement reference count, as we were certainly cancelled by another thread, which
                          // will decrement the reference count
@@ -96,7 +228,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..4c69f45f55cc3c94c46bf8440a884265
                          return false;
                      }
  
-@@ -584,6 +636,9 @@ public final class RegionizedTaskQueue {
+@@ -584,6 +730,9 @@ public final class RegionizedTaskQueue {
                          // we were cancelled
                          // don't decrement reference count, as we were certainly cancelled by another thread, which
                          // will decrement the reference count
