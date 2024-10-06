@@ -36,18 +36,32 @@ index 0000000000000000000000000000000000000000..01f8c6ff3662569be5a4ff998bcd4fbb
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 92e9860b146b6e3e1dc593bfd5bfddab3318761d..bdcf43104a53f530453615b17bd690c7a5c0a78d 100644
+index 92e9860b146b6e3e1dc593bfd5bfddab3318761d..da9f78e56a44084242c58040dfe8a515a4bf5750 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -894,6 +894,11 @@ public class ServerPlayer extends Player {
+@@ -894,9 +894,24 @@ public class ServerPlayer extends Player {
          }
  
          Entity entity = this.getCamera();
 +        //Luminol start - Fix folia spector teleportation
-+        if (!io.papermc.paper.util.TickThread.isTickThreadFor(entity) && me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
++        if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(entity) && me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
 +            this.setCamera(this);
 +        }
 +        //Luminol end
  
          if (entity != this) {
-             if (entity.isAlive()) {
+-            if (entity.isAlive()) {
++            // Luminol start - Fix folia spector teleportation
++            var flag = false;
++            var cameraPos = entity.blockPosition();
++            var cameraLevel = entity.level();
++            if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(cameraLevel, cameraPos) && me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
++                this.setCamera(this);
++                flag = true;
++            }
++            // Luminol end
++
++            if (entity.isAlive() && !flag) { // Luminol - Fix folia spector teleportation
+                 this.absMoveTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
+                 this.serverLevel().getChunkSource().move(this);
+                 if (this.wantsToStopRiding()) {
