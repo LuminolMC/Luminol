@@ -36,7 +36,7 @@ index 0000000000000000000000000000000000000000..01f8c6ff3662569be5a4ff998bcd4fbb
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 92e9860b146b6e3e1dc593bfd5bfddab3318761d..da9f78e56a44084242c58040dfe8a515a4bf5750 100644
+index 92e9860b146b6e3e1dc593bfd5bfddab3318761d..cd411f0a178e3c4c20f1b5aecee2617a2ce6c8f3 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -894,9 +894,24 @@ public class ServerPlayer extends Player {
@@ -44,7 +44,7 @@ index 92e9860b146b6e3e1dc593bfd5bfddab3318761d..da9f78e56a44084242c58040dfe8a515
  
          Entity entity = this.getCamera();
 +        //Luminol start - Fix folia spector teleportation
-+        if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(entity) && me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
++        if (!io.papermc.paper.util.TickThread.isTickThreadFor(entity) && me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
 +            this.setCamera(this);
 +        }
 +        //Luminol end
@@ -55,7 +55,7 @@ index 92e9860b146b6e3e1dc593bfd5bfddab3318761d..da9f78e56a44084242c58040dfe8a515
 +            var flag = false;
 +            var cameraPos = entity.blockPosition();
 +            var cameraLevel = entity.level();
-+            if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(cameraLevel, cameraPos) && me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
++            if (!io.papermc.paper.util.TickThread.isTickThreadFor((ServerLevel) cameraLevel, cameraPos) && me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
 +                this.setCamera(this);
 +                flag = true;
 +            }
