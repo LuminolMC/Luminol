@@ -5,7 +5,7 @@ Subject: [PATCH] Add experimental config for folia scheduled issue fixing
 
 
 diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
-index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b92692474 100644
+index a1e1782d87403ca8934d37361be7ba66ddba133f..75a5d32c9b9f0d75c768dbf65cd081f69c842825 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
 @@ -48,8 +48,29 @@ public final class RegionizedTaskQueue {
@@ -72,7 +72,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b
          return ret;
      }
  
-@@ -136,6 +178,82 @@ public final class RegionizedTaskQueue {
+@@ -136,6 +178,83 @@ public final class RegionizedTaskQueue {
              }
          }
  
@@ -99,16 +99,17 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b
 +        private AtomicLong luminolReplaced$incrementReference(final long coord){
 +            final AtomicLong result;
 +
-+            final AtomicLong replace = new AtomicLong(1L);
-+            final AtomicLong valueInMap = this.referenceCounters.putIfAbsent(coord, replace);
-+
 +            // slow acquire
 +            final int chunkX = CoordinateUtils.getChunkX(coord);
 +            final int chunkZ = CoordinateUtils.getChunkZ(coord);
++
 +            final boolean processTicketUpdates;
 +
 +            final ca.spottedleaf.concurrentutil.lock.ReentrantAreaLock.Node ticketLock = this.world.moonrise$getChunkTaskScheduler().chunkHolderManager.ticketLockArea.lock(chunkX, chunkZ);
 +            try {
++                final AtomicLong replace = new AtomicLong(1L);
++                final AtomicLong valueInMap = this.referenceCounters.putIfAbsent(coord, replace);
++
 +                if (valueInMap == null) {
 +                    // replaced, we should usually be here
 +                    this.addTicket(coord);
@@ -155,7 +156,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b
          private AtomicLong incrementReference(final long coord) {
              final AtomicLong ret = this.referenceCounters.get(coord);
              if (ret != null) {
-@@ -428,7 +546,13 @@ public final class RegionizedTaskQueue {
+@@ -428,7 +547,13 @@ public final class RegionizedTaskQueue {
              try {
                  task.executeInternal();
              } finally {
@@ -170,7 +171,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b
              }
  
              return true;
-@@ -449,6 +573,13 @@ public final class RegionizedTaskQueue {
+@@ -449,6 +574,13 @@ public final class RegionizedTaskQueue {
              private Runnable run;
              private volatile PrioritisedExecutor.Priority priority;
              private static final VarHandle PRIORITY_HANDLE = ConcurrentUtil.getVarHandle(ChunkBasedPriorityTask.class, "priority", PrioritisedExecutor.Priority.class);
@@ -184,7 +185,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b
  
              ChunkBasedPriorityTask(final WorldRegionTaskData world, final int chunkX, final int chunkZ, final boolean isChunkTask,
                                     final Runnable run, final PrioritisedExecutor.Priority priority) {
-@@ -533,7 +664,13 @@ public final class RegionizedTaskQueue {
+@@ -533,7 +665,13 @@ public final class RegionizedTaskQueue {
                          }
                      } finally {
                          if (curr != REFERENCE_COUNTER_NOT_SET) {
@@ -199,7 +200,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b
                          }
                      }
  
-@@ -547,10 +684,16 @@ public final class RegionizedTaskQueue {
+@@ -547,10 +685,16 @@ public final class RegionizedTaskQueue {
                      return false;
                  }
  
@@ -218,7 +219,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b
                      return false;
                  }
  
-@@ -574,6 +717,11 @@ public final class RegionizedTaskQueue {
+@@ -574,6 +718,11 @@ public final class RegionizedTaskQueue {
                          // the task never could be polled from the queue, so we return false
                          // don't decrement reference count, as we were certainly cancelled by another thread, which
                          // will decrement the reference count
@@ -230,7 +231,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b
                          return false;
                      }
  
-@@ -584,6 +732,9 @@ public final class RegionizedTaskQueue {
+@@ -584,6 +733,9 @@ public final class RegionizedTaskQueue {
                          // we were cancelled
                          // don't decrement reference count, as we were certainly cancelled by another thread, which
                          // will decrement the reference count
