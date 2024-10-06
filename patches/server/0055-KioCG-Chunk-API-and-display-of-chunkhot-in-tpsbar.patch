@@ -234,7 +234,7 @@ index 39c5af1e3a4c2abbd02ccc3574d73aa06affcdf2..97ca9a33a369d9f6f44c99fae72f11a7
          int playerSaveInterval = io.papermc.paper.configuration.GlobalConfiguration.get().playerAutoSave.rate;
          if (playerSaveInterval < 0) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 80123dd30328336b02a5e2e3414ece44ba040ad2..6f4d5312c8140e0a49646e4f069b027a9e1bd5ad 100644
+index cc56ebbd47399a2f5591db9b075c8b1a54e9d74c..441f10913528fe67a81ad3760623429616eb6712 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1377,6 +1377,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
@@ -272,7 +272,7 @@ index 80123dd30328336b02a5e2e3414ece44ba040ad2..6f4d5312c8140e0a49646e4f069b027a
          } else {
              passenger.stopRiding();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 23541e9c5734334a1cd6e7730288d6dd6028efb0..26fce0d5804db517db08a308abc1cd902060f6ab 100644
+index 84588c32ada812015fa970a38b36843492af779f..5f58fe6e78ea80f7fd8d5f759577e705b9a926b1 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -339,6 +339,26 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -302,7 +302,7 @@ index 23541e9c5734334a1cd6e7730288d6dd6028efb0..26fce0d5804db517db08a308abc1cd90
      public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, ClientInformation clientOptions) {
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
-@@ -960,6 +980,12 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -970,6 +990,12 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          this.trackEnteredOrExitedLavaOnVehicle();
          this.updatePlayerAttributes();
          this.advancements.flushDirty(this);

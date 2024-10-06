@@ -35,11 +35,24 @@ index 0000000000000000000000000000000000000000..01f8c6ff3662569be5a4ff998bcd4fbb
 +        return "folia.fix_spector_teleportation";
 +    }
 +}
+diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
+index b5cb700e2cd1de2f78ad582245208c056fa6fa79..aff22200bcf59772b3559811682c28cccd6dc1ed 100644
+--- a/src/main/java/net/minecraft/server/level/ServerLevel.java
++++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
+@@ -382,7 +382,7 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+ 
+     @Override
+     public final ca.spottedleaf.moonrise.patches.chunk_system.io.RegionFileIOThread.ChunkDataController moonrise$getPoiChunkDataController() {
+-        return this.poiDataController;
++        return this.poiDataController;ServerPlayer
+     }
+ 
+     @Override
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index a737fb8dac485303d2ee7399d4dae8dbbff2f7fe..7da908cfc85e2406e995d860a240aaf3f999b6e6 100644
+index a737fb8dac485303d2ee7399d4dae8dbbff2f7fe..a810ffe411897a3155ae175418b8bbb0504cf923 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -929,6 +929,11 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
+@@ -929,9 +929,24 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
          }
  
          Entity entity = this.getCamera();
@@ -50,4 +63,18 @@ index a737fb8dac485303d2ee7399d4dae8dbbff2f7fe..7da908cfc85e2406e995d860a240aaf3
 +        //Luminol end
  
          if (entity != this) {
-             if (entity.isAlive()) {
+-            if (entity.isAlive()) {
++            // Luminol start - Fix folia spector teleportation
++            var flag = false;
++            var cameraPos = entity.blockPosition();
++            var cameraLevel = entity.level();
++            if (!ca.spottedleaf.moonrise.common.util.TickThread.isTickThreadFor(cameraLevel, cameraPos) && me.earthme.luminol.config.modules.fixes.FoliaSpectorTeleportationFixConfig.fixSpectorTeleportFolia){
++                this.setCamera(this);
++                flag = true;
++            }
++            // Luminol end
++
++            if (entity.isAlive() && !flag) { // Luminol - Fix folia spector teleportation
+                 this.absMoveTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
+                 this.serverLevel().getChunkSource().move(this);
+                 if (this.wantsToStopRiding()) {
