@@ -5,10 +5,10 @@ Subject: [PATCH] Add experimental config for folia scheduled issue fixing
 
 
 diff --git a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
-index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1377695d6 100644
+index a1e1782d87403ca8934d37361be7ba66ddba133f..f6f49052152ba0ead3317aa24b44347b92692474 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/RegionizedTaskQueue.java
-@@ -48,8 +48,28 @@ public final class RegionizedTaskQueue {
+@@ -48,8 +48,29 @@ public final class RegionizedTaskQueue {
  
      public PrioritisedExecutor.PrioritisedTask queueChunkTask(final ServerLevel world, final int chunkX, final int chunkZ,
                                                                final Runnable run, final PrioritisedExecutor.Priority priority) {
@@ -27,19 +27,20 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1
 +            try {
 +                result = ret.queue();
 +            }catch (me.earthme.luminol.utils.TaskCancelledException ignored) {
-+                ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, true, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled);
-+                result = false;
++                result = true;
 +            }
 +
 +            if (result) {
 +                break;
 +            }
++
++            ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, true, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled);
 +        }
 +        // Luminol end
          return ret;
      }
  
-@@ -60,8 +80,28 @@ public final class RegionizedTaskQueue {
+@@ -60,8 +81,29 @@ public final class RegionizedTaskQueue {
  
      public PrioritisedExecutor.PrioritisedTask queueTickTaskQueue(final ServerLevel world, final int chunkX, final int chunkZ,
                                                                    final Runnable run, final PrioritisedExecutor.Priority priority) {
@@ -58,19 +59,20 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1
 +            try {
 +                result = ret.queue();
 +            }catch (me.earthme.luminol.utils.TaskCancelledException ignored) {
-+                ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, false, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled);
-+                result = false;
++                result = true;
 +            }
 +
 +            if (result) {
 +                break;
 +            }
++
++            ret = new PrioritisedQueue.ChunkBasedPriorityTask(world.taskQueueRegionData, chunkX, chunkZ, false, run, priority, me.earthme.luminol.config.modules.experiment.FoliaTaskQueueFixConfig.enabled);
 +        }
 +        // Luminol end
          return ret;
      }
  
-@@ -136,6 +176,82 @@ public final class RegionizedTaskQueue {
+@@ -136,6 +178,82 @@ public final class RegionizedTaskQueue {
              }
          }
  
@@ -153,7 +155,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1
          private AtomicLong incrementReference(final long coord) {
              final AtomicLong ret = this.referenceCounters.get(coord);
              if (ret != null) {
-@@ -428,7 +544,13 @@ public final class RegionizedTaskQueue {
+@@ -428,7 +546,13 @@ public final class RegionizedTaskQueue {
              try {
                  task.executeInternal();
              } finally {
@@ -168,7 +170,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1
              }
  
              return true;
-@@ -449,6 +571,13 @@ public final class RegionizedTaskQueue {
+@@ -449,6 +573,13 @@ public final class RegionizedTaskQueue {
              private Runnable run;
              private volatile PrioritisedExecutor.Priority priority;
              private static final VarHandle PRIORITY_HANDLE = ConcurrentUtil.getVarHandle(ChunkBasedPriorityTask.class, "priority", PrioritisedExecutor.Priority.class);
@@ -182,7 +184,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1
  
              ChunkBasedPriorityTask(final WorldRegionTaskData world, final int chunkX, final int chunkZ, final boolean isChunkTask,
                                     final Runnable run, final PrioritisedExecutor.Priority priority) {
-@@ -533,7 +662,13 @@ public final class RegionizedTaskQueue {
+@@ -533,7 +664,13 @@ public final class RegionizedTaskQueue {
                          }
                      } finally {
                          if (curr != REFERENCE_COUNTER_NOT_SET) {
@@ -197,7 +199,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1
                          }
                      }
  
-@@ -547,10 +682,16 @@ public final class RegionizedTaskQueue {
+@@ -547,10 +684,16 @@ public final class RegionizedTaskQueue {
                      return false;
                  }
  
@@ -216,7 +218,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1
                      return false;
                  }
  
-@@ -574,6 +715,11 @@ public final class RegionizedTaskQueue {
+@@ -574,6 +717,11 @@ public final class RegionizedTaskQueue {
                          // the task never could be polled from the queue, so we return false
                          // don't decrement reference count, as we were certainly cancelled by another thread, which
                          // will decrement the reference count
@@ -228,7 +230,7 @@ index a1e1782d87403ca8934d37361be7ba66ddba133f..09a4293f4c2558e8789fe474547cf5f1
                          return false;
                      }
  
-@@ -584,6 +730,9 @@ public final class RegionizedTaskQueue {
+@@ -584,6 +732,9 @@ public final class RegionizedTaskQueue {
                          // we were cancelled
                          // don't decrement reference count, as we were certainly cancelled by another thread, which
                          // will decrement the reference count
