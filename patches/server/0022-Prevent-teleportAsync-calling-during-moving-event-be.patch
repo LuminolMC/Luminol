@@ -35,7 +35,7 @@ index 0000000000000000000000000000000000000000..8f1449545d6d217b46a9ffae705123da
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 7da908cfc85e2406e995d860a240aaf3f999b6e6..23541e9c5734334a1cd6e7730288d6dd6028efb0 100644
+index a810ffe411897a3155ae175418b8bbb0504cf923..84588c32ada812015fa970a38b36843492af779f 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -335,6 +335,10 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
