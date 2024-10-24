@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <wangxyper@163.com>
-Date: Wed, 31 Jul 2024 11:59:44 +0800
+Date: Fri, 25 Oct 2024 00:05:33 +0800
 Subject: [PATCH] Add config for unsafe teleportation
 
 
@@ -53,18 +53,19 @@ index 5d6b1a63a2a213f8a4e81c5e574847007a82007b..77ff2a526a1d2b9307dfc696f9862bfd
      }
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
-index 58e15d7a5f7997a7aec9edaa5d211807b2b1ef6b..8a71276715c380b5b8510503399f3fde0084c145 100644
+index e1c071e0b25c4678bf08313b6c60cf895a54aa02..13c3527cd4852356ce8f39c739d1c5015ef69b16 100644
 --- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
-@@ -70,6 +70,11 @@ public class EndPortalBlock extends BaseEntityBlock implements Portal {
-             world.getCraftServer().getPluginManager().callEvent(event);
+@@ -71,7 +71,11 @@ public class EndPortalBlock extends BaseEntityBlock implements Portal {
              if (event.isCancelled()) return; // Paper - make cancellable
              // CraftBukkit end
+             // Folia - region threading - do not show credits
+-
 +            // Luminol start - unsafe teleportation
 +            if (me.earthme.luminol.config.modules.fixes.UnsafeTeleportationConfig.enabled && !(entity instanceof net.minecraft.world.entity.player.Player)) {
 +                entity.endPortalLogicAsync(pos);
 +            }
 +            // Luminol end
-             if (!world.isClientSide && world.dimension() == Level.END && entity instanceof ServerPlayer) {
-                 ServerPlayer entityplayer = (ServerPlayer) entity;
+             entity.setAsInsidePortal(this, pos);
+         }
  

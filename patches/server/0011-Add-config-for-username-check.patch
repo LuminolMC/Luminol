@@ -31,10 +31,10 @@ index 0000000000000000000000000000000000000000..c7e4724cc4ab8d911bcaf0106c098b26
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index d0f8a81ed0363764d185682c3de667703d30e8eb..c785b7fdc7cdba1598e841703df1bd5edded4757 100644
+index 8098b1a447a7c054e15edc09d2fa50e48f73e926..b6a65bdddc8eaf64931d9aa3f4801dc8e128801b 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -173,7 +173,8 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -178,7 +178,8 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
      public void handleHello(ServerboundHelloPacket packet) {
          Validate.validState(this.state == ServerLoginPacketListenerImpl.State.HELLO, "Unexpected hello packet", new Object[0]);
          // Paper start - Validate usernames

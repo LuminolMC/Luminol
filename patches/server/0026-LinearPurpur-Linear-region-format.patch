@@ -5,7 +5,7 @@ Subject: [PATCH] LinearPurpur Linear region format
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 6ad2e95ef99790fd30a20201ebe623b9be54f284..eb708f155a19496dcd19e69540274000611f4eee 100644
+index 7615702d87b04699b2dd381c3b0c7e700602af8b..7b11c45914392c01b4d28b104f80e6ed34eb9955 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -31,6 +31,10 @@ dependencies {
@@ -17,7 +17,7 @@ index 6ad2e95ef99790fd30a20201ebe623b9be54f284..eb708f155a19496dcd19e69540274000
 +    implementation("org.lz4:lz4-java:1.8.0")
 +    // LinearPaper end
      implementation("org.apache.logging.log4j:log4j-iostreams:2.22.1") // Paper - remove exclusion
-     implementation("org.ow2.asm:asm-commons:9.7")
+     implementation("org.ow2.asm:asm-commons:9.7.1")
      implementation("org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT") // Paper - config files
 diff --git a/src/main/java/ca/spottedleaf/moonrise/patches/chunk_system/io/ChunkSystemRegionFileStorage.java b/src/main/java/ca/spottedleaf/moonrise/patches/chunk_system/io/ChunkSystemRegionFileStorage.java
 index 73df26b27146bbad2106d57b22dd3c792ed3dd1d..d2f209dd61f4412478a4b8fbe3489787d30bf74b 100644
@@ -120,10 +120,10 @@ index 0000000000000000000000000000000000000000..fda9177bc2c5cc0176f816b9774a2b7d
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 2874c9c9901aeb0f356dbeb07153abd5f6cd0179..39c5af1e3a4c2abbd02ccc3574d73aa06affcdf2 100644
+index 05871b8addafaf11ce10f16a0fc8d0ad9619e3d0..abe3dbe11066469f030e4f7381f98d38537443d4 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1004,10 +1004,10 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1003,10 +1003,10 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              while (iterator1.hasNext()) {
                  ServerLevel worldserver2 = (ServerLevel) iterator1.next();
  

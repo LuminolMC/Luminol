@@ -18,10 +18,10 @@ index 48604e7f96adc9e226e034054c5e2bad0b024eb5..99f0c1e4d3437154a1062b0a8f94b7a0
              return;
          }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 05b8f509b119b8166012567f865b99a23ad84ae2..2874c9c9901aeb0f356dbeb07153abd5f6cd0179 100644
+index 5bd02c4f65327b9b848b08e61820c262e0a71731..05871b8addafaf11ce10f16a0fc8d0ad9619e3d0 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -778,8 +778,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -777,8 +777,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          // Paper end - Configurable player collision
  
          this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
@@ -32,7 +32,7 @@ index 05b8f509b119b8166012567f865b99a23ad84ae2..2874c9c9901aeb0f356dbeb07153abd5
          if (io.papermc.paper.plugin.PluginInitializerManager.instance().pluginRemapper != null) io.papermc.paper.plugin.PluginInitializerManager.instance().pluginRemapper.pluginsEnabled(); // Paper - Remap plugins
          io.papermc.paper.command.brigadier.PaperCommands.INSTANCE.setValid(); // Paper - reset invalid state for event fire below
          io.papermc.paper.plugin.lifecycle.event.LifecycleEventRunner.INSTANCE.callReloadableRegistrarEvent(io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS, io.papermc.paper.command.brigadier.PaperCommands.INSTANCE, org.bukkit.plugin.Plugin.class, io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent.Cause.INITIAL); // Paper - call commands event for regular plugins
-@@ -1093,7 +1093,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1092,7 +1092,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          MinecraftServer.LOGGER.info("Stopping server");
          Commands.COMMAND_SENDING_POOL.shutdownNow(); // Paper - Perf: Async command map building; Shutdown and don't bother finishing
          MinecraftTimings.stopServer(); // Paper
@@ -41,7 +41,7 @@ index 05b8f509b119b8166012567f865b99a23ad84ae2..2874c9c9901aeb0f356dbeb07153abd5
          // CraftBukkit start
          if (this.server != null) {
              this.server.disablePlugins();
-@@ -1309,7 +1309,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1308,7 +1308,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              // tasks are default scheduled at -1 + delay, and first tick will tick at 1
              final long actualDoneTimeMs = System.currentTimeMillis() - org.bukkit.craftbukkit.Main.BOOT_TIME.toEpochMilli(); // Paper - Add total time
              LOGGER.info("Done ({})! For help, type \"help\"", String.format(java.util.Locale.ROOT, "%.3fs", actualDoneTimeMs / 1000.00D)); // Paper - Add total time
@@ -50,7 +50,7 @@ index 05b8f509b119b8166012567f865b99a23ad84ae2..2874c9c9901aeb0f356dbeb07153abd5
              org.spigotmc.WatchdogThread.tick();
              // Paper end - Improved Watchdog Support
              org.spigotmc.WatchdogThread.hasStarted = true; // Paper
-@@ -1673,7 +1673,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1671,7 +1671,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          BooleanSupplier shouldKeepTicking = () -> {
              return scheduledEnd - System.nanoTime() > targetBuffer;
          };
@@ -59,7 +59,7 @@ index 05b8f509b119b8166012567f865b99a23ad84ae2..2874c9c9901aeb0f356dbeb07153abd5
          new com.destroystokyo.paper.event.server.ServerTickStartEvent((int)region.getCurrentTick()).callEvent(); // Paper
          // Folia end - region threading
          co.aikar.timings.TimingsManager.FULL_SERVER_TICK.startTiming(); // Paper
-@@ -1759,7 +1759,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1757,7 +1757,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          long endTime = System.nanoTime();
          long remaining = scheduledEnd - endTime; // Folia - region ticking
          new com.destroystokyo.paper.event.server.ServerTickEndEvent((int)io.papermc.paper.threadedregions.RegionizedServer.getCurrentTick(), ((double)(endTime - startTime) / 1000000D), remaining).callEvent(); // Folia - region ticking
@@ -91,7 +91,7 @@ index 79b79a5d41dc3568ae6a3d7701e6ac6b91045e36..cd28f741343c443ff4728fc0aa5526b6
          com.destroystokyo.paper.VersionHistoryManager.INSTANCE.getClass(); // Paper - load version history now
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 39e4493ef5c7d4bfd903da18b76e14235a535ab5..be126a3139b1519e7a0ad3d521d72bf0817ccb1c 100644
+index dee23b4b96b7f2c6af54a6affe385b183479f8cc..07c6f858596e4926397b467ef5e22cab7e7f999b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -309,7 +309,7 @@ public final class CraftServer implements Server {
@@ -103,7 +103,7 @@ index 39e4493ef5c7d4bfd903da18b76e14235a535ab5..be126a3139b1519e7a0ad3d521d72bf0
  
      // Paper start - Folia region threading API
      private final io.papermc.paper.threadedregions.scheduler.FoliaRegionScheduler regionizedScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaRegionScheduler(); // Folia - region threading
-@@ -481,7 +481,7 @@ public final class CraftServer implements Server {
+@@ -482,7 +482,7 @@ public final class CraftServer implements Server {
          }
          this.potionBrewer = new io.papermc.paper.potion.PaperPotionBrewer(console); // Paper - custom potion mixes
          datapackManager = new io.papermc.paper.datapack.PaperDatapackManager(console.getPackRepository()); // Paper
@@ -112,7 +112,7 @@ index 39e4493ef5c7d4bfd903da18b76e14235a535ab5..be126a3139b1519e7a0ad3d521d72bf0
      }
  
      public boolean getCommandBlockOverride(String command) {
-@@ -1144,7 +1144,7 @@ public final class CraftServer implements Server {
+@@ -1146,7 +1146,7 @@ public final class CraftServer implements Server {
          this.reloadData();
          org.spigotmc.SpigotConfig.registerCommands(); // Spigot
          io.papermc.paper.command.PaperCommands.registerCommands(this.console); // Paper
@@ -121,7 +121,7 @@ index 39e4493ef5c7d4bfd903da18b76e14235a535ab5..be126a3139b1519e7a0ad3d521d72bf0
          this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
          this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
  
-@@ -1173,7 +1173,7 @@ public final class CraftServer implements Server {
+@@ -1175,7 +1175,7 @@ public final class CraftServer implements Server {
          this.loadPlugins();
          this.enablePlugins(PluginLoadOrder.STARTUP);
          this.enablePlugins(PluginLoadOrder.POSTWORLD);

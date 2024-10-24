@@ -5,7 +5,7 @@ Subject: [PATCH] Gale Optimize sun burn tick
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index ff729667384bc07746f4bfa3fe18d09547cc86a2..70e10a88a70608f4067018dfeb1d60127b4a9c25 100644
+index 6497ecce4a826776c487e0e2fcb077f21e02ecda..9b87aa41f03056721757348151b1119016421650 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -315,7 +315,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -17,7 +17,7 @@ index ff729667384bc07746f4bfa3fe18d09547cc86a2..70e10a88a70608f4067018dfeb1d6012
      private BlockPos blockPosition;
      private ChunkPos chunkPosition;
      private Vec3 deltaMovement;
-@@ -2122,9 +2122,19 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -2124,9 +2124,19 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      /** @deprecated */
      @Deprecated
      public float getLightLevelDependentMagicValue() {

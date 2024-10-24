@@ -5,7 +5,7 @@ Subject: [PATCH] Gale Skip entity move if movement is zero
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 70e10a88a70608f4067018dfeb1d60127b4a9c25..1e38ffc28036a221da9adeff8c07c8c02e736cb8 100644
+index 9b87aa41f03056721757348151b1119016421650..e20533b2ab9f39fc942271b704d644fb382376f7 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -324,6 +324,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -16,7 +16,7 @@ index 70e10a88a70608f4067018dfeb1d60127b4a9c25..1e38ffc28036a221da9adeff8c07c8c0
      public boolean onGround;
      public boolean horizontalCollision;
      public boolean verticalCollision;
-@@ -1137,6 +1138,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -1139,6 +1140,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      //Luminol end
  
      public void move(MoverType movementType, Vec3 movement) {
@@ -28,7 +28,7 @@ index 70e10a88a70608f4067018dfeb1d60127b4a9c25..1e38ffc28036a221da9adeff8c07c8c0
          final Vec3 originalMovement = movement; // Paper - Expose pre-collision velocity
          // Paper start - detailed watchdog information
          ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread("Cannot move an entity off-main");
-@@ -4977,6 +4983,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4981,6 +4987,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
      }
  
      public final void setBoundingBox(AABB boundingBox) {

@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MrHua269 <wangxyper@163.com>
-Date: Thu, 1 Aug 2024 10:57:48 +0800
+Date: Fri, 25 Oct 2024 00:09:17 +0800
 Subject: [PATCH] KioCG Chunk API and display of chunkhot in tpsbar
 
 
@@ -179,10 +179,10 @@ index 026807e0851d67c6d57e81f573ac1bf8fedc6109..c45f6bd60d1cf7a915aa6ceea07c0929
          if (mspt == -1){
              return BossBar.Color.valueOf(TpsBarConfig.tpsColors.get(3));
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 39c5af1e3a4c2abbd02ccc3574d73aa06affcdf2..97ca9a33a369d9f6f44c99fae72f11a730f2f213 100644
+index abe3dbe11066469f030e4f7381f98d38537443d4..870036b5f0d2eea249591b45a8f1071382652440 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1717,6 +1717,29 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1715,6 +1715,29 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
          // Folia end - region threading
  
@@ -212,7 +212,7 @@ index 39c5af1e3a4c2abbd02ccc3574d73aa06affcdf2..97ca9a33a369d9f6f44c99fae72f11a7
          // Folia - region threading
          if (region == null) this.tickRateManager.tick(); // Folia - region threading
          this.tickChildren(shouldKeepTicking, region); // Folia - region threading
-@@ -1726,6 +1749,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1724,6 +1747,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
  
          // Folia - region threading
@@ -234,7 +234,7 @@ index 39c5af1e3a4c2abbd02ccc3574d73aa06affcdf2..97ca9a33a369d9f6f44c99fae72f11a7
          int playerSaveInterval = io.papermc.paper.configuration.GlobalConfiguration.get().playerAutoSave.rate;
          if (playerSaveInterval < 0) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index cc56ebbd47399a2f5591db9b075c8b1a54e9d74c..441f10913528fe67a81ad3760623429616eb6712 100644
+index 3ebea71bbc6ced0d0a325c519436a0199666fafb..2f9ba0b4298206f458d7cd7ca73c132477a0d7b7 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -1377,6 +1377,8 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
@@ -272,7 +272,7 @@ index cc56ebbd47399a2f5591db9b075c8b1a54e9d74c..441f10913528fe67a81ad37606234296
          } else {
              passenger.stopRiding();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 84588c32ada812015fa970a38b36843492af779f..5f58fe6e78ea80f7fd8d5f759577e705b9a926b1 100644
+index 8cfaa94da67bcdd5c3d30479379d384c20b4a1ac..8559d14e4136c9e70c4190db3eb04500c9e530f0 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -339,6 +339,26 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -332,10 +332,10 @@ index 1859477e96709368683fe5707327e92f56fbfc8e..4c4814094552fa4382b1cbe649f24f47
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 1e38ffc28036a221da9adeff8c07c8c02e736cb8..ea1098d2ff613ff634c710b6be6994215719391f 100644
+index e20533b2ab9f39fc942271b704d644fb382376f7..7c54abc8480b4184dc3712f02bd2ae2189ac0cc8 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -5856,4 +5856,6 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -5860,4 +5860,6 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          return ((net.minecraft.server.level.ServerChunkCache) level.getChunkSource()).isPositionTicking(this);
      }
      // Paper end - Expose entity id counter
@@ -425,10 +425,10 @@ index b3377ed06d703f54e01ba174e5a06dc928cdff96..80af7979f9a2078a6c40c958ced1d487
 +    // KioCG end
  }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 5110ca77adcf6daa7ce2247d4fc8af0835b7bd7e..8169536f95e2355e59b00e6d4a7df1ec59da5b5b 100644
+index 2f0a40134ef2fcccf407a5381994c3454040097e..4abfdad701a91b9c20b22064adb943c7e3d5a9a1 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -440,4 +440,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -437,4 +437,11 @@ public abstract class Projectile extends Entity implements TraceableEntity {
  
          return DoubleDoubleImmutablePair.of(d0, d1);
      }
@@ -501,13 +501,13 @@ index 45e262308aebafa377a2353661acdd122933b99e..10b2261169d3cd10d736273fe7703f50
 +    // KioCG end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index f1cb17f33363da495c263829efbbd18d4bd192cd..816cc239a5377ea03e1bb748451862560fb1e54f 100644
+index 4dfc7186b7ee0f77e681911fc93edc455e7bf19f..4fb1abfa81b02198c823d6e175bde611a321edd3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -3585,4 +3585,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
-         ((ca.spottedleaf.moonrise.patches.chunk_system.player.ChunkSystemServerPlayer)this.getHandle())
-             .moonrise$getViewDistanceHolder().setSendViewDistance(viewDistance);
+@@ -3599,4 +3599,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         this.getHandle().connection.send(new net.minecraft.network.protocol.game.ClientboundEntityEventPacket(((CraftEntity) target).getHandle(), effect.getData()));
      }
+     // Paper end - entity effect API
 +
 +    // KioCG start - ChunkHot
 +    @Override

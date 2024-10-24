@@ -35,7 +35,7 @@ index 0000000000000000000000000000000000000000..8f1449545d6d217b46a9ffae705123da
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index a810ffe411897a3155ae175418b8bbb0504cf923..84588c32ada812015fa970a38b36843492af779f 100644
+index d57fd6e4aacb611526a741fbd98165f124b7b8ef..8cfaa94da67bcdd5c3d30479379d384c20b4a1ac 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -335,6 +335,10 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
@@ -50,7 +50,7 @@ index a810ffe411897a3155ae175418b8bbb0504cf923..84588c32ada812015fa970a38b368434
          super(world, world.getSharedSpawnPos(), world.getSharedSpawnAngle(), profile);
          this.chatVisibility = ChatVisiblity.FULL;
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 804166bf2da81927ab449811be9fcf67e74eed00..fda2075b848612eae057ffc644a1ecf4ea841956 100644
+index 18d9e92f2fdc2cb25229005ffc08bffe555e0583..f0e063afa941aae051e950808fa7435e52d39456 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -695,7 +695,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
@@ -63,7 +63,7 @@ index 804166bf2da81927ab449811be9fcf67e74eed00..fda2075b848612eae057ffc644a1ecf4
  
                      // If the event is cancelled we move the player back to their old location.
                      if (event.isCancelled()) {
-@@ -1606,7 +1608,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -1609,7 +1611,9 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
                                      Location oldTo = to.clone();
                                      PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
@@ -74,10 +74,10 @@ index 804166bf2da81927ab449811be9fcf67e74eed00..fda2075b848612eae057ffc644a1ecf4
                                      // If the event is cancelled we move the player back to their old location.
                                      if (event.isCancelled()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 622de6624132abd9aecf4d4ab5c9630446549e5c..91b57934e8acf8fc6f23ba01db04bd7a315b06dd 100644
+index 25a5f36ff19ff3f9cea051a1a6bf671b6288b799..bacc88b735619998927c59ce7b828bfff7574fa8 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4073,6 +4073,18 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4075,6 +4075,18 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
                                         java.util.function.Consumer<Entity> teleportComplete) {
          ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this, "Cannot teleport entity async");
  
@@ -97,7 +97,7 @@ index 622de6624132abd9aecf4d4ab5c9630446549e5c..91b57934e8acf8fc6f23ba01db04bd7a
              return false;
          }
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-index f403fc311a974558233028663dbe14c27b27d3f9..fbc936a218bc972866486f384baaa44949b29580 100644
+index a38ce400550893f63640e3bb5bb801ab40f06266..236e87790fe9357d948af40d411af56d958132c9 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 @@ -375,7 +375,21 @@ public abstract class AbstractMinecart extends VehicleEntity {
